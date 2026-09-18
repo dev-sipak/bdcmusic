@@ -1,0 +1,53 @@
+/*=========================================================
+CUSTOM CURSOR
+=========================================================*/
+
+.aw-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 255, 255, .65);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition:
+    background .3s,
+    border-color .3s;
+}
+
+.aw-cursor.active {
+  background: rgba(228, 0, 43, .22);
+  border-color: #E4002B;
+}
+
+.aw-cursor-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.aw-cursor-text {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: white;
+  transform: translateY(28px);
+  pointer-events: none;
+}
+
+@media (max-width: 992px) {
+  .aw-cursor {
+    display: none;
+  }
+}

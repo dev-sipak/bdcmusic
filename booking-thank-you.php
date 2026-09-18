@@ -2,15 +2,15 @@
 session_start();
 include_once 'header.php';
 
-$booking = $_SESSION['booking_success'] ?? null;
+$booking   = $_SESSION['booking_success'] ?? null;
 $bookingId = $_GET['booking_id'] ?? '';
 
-if (!$booking && $bookingId) {
+if ( ! $booking && $bookingId ) {
     $path = __DIR__ . '/data/bookings.json';
-    if (file_exists($path)) {
-        $bookings = json_decode(file_get_contents($path), true) ?: [];
-        foreach ($bookings as $entry) {
-            if (($entry['booking_id'] ?? '') === $bookingId) {
+    if ( file_exists( $path ) ) {
+        $bookings = json_decode( file_get_contents( $path ), true ) ?: [];
+        foreach ( $bookings as $entry ) {
+            if ( $bookingId === ( $entry['booking_id'] ?? '' ) ) {
                 $booking = $entry;
                 break;
             }
@@ -18,22 +18,14 @@ if (!$booking && $bookingId) {
     }
 }
 
-if (!$booking) {
+if ( ! $booking ) {
     echo '<main class="booking-page"><div class="container"><div class="booking-shell"><div class="booking-body"><h1>Booking not found</h1><p>We could not find your booking details.</p></div></div></div></main>';
     include_once 'footer.php';
     exit;
 }
 ?>
 
-<style>
-    .booking-page { padding: 120px 0 80px; }
-    .booking-shell { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); overflow: hidden; }
-    .booking-body { padding: 40px; }
-    .thanks-box { background: #f7fff9; border: 1px solid #ccefd0; border-radius: 18px; padding: 24px; margin-top: 20px; }
-    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
-    .detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px; }
-    @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } .booking-body { padding: 24px; } }
-</style>
+<link rel="stylesheet" href="assets/css/booking-thank-you.css">
 
 <main class="booking-page">
     <div class="container">
@@ -46,19 +38,23 @@ if (!$booking) {
                 <div class="thanks-box">
                     <h3>Booking Details</h3>
                     <div class="detail-grid">
-                        <div class="detail-card"><strong>Booking ID</strong><br><?= htmlspecialchars($booking['booking_id'] ?? '') ?></div>
-                        <div class="detail-card"><strong>Invoice No</strong><br><?= htmlspecialchars($booking['invoice_no'] ?? '') ?></div>
-                        <div class="detail-card"><strong>Service</strong><br><?= htmlspecialchars($booking['service'] ?? '') ?></div>
-                        <div class="detail-card"><strong>Price</strong><br>₹<?= number_format($booking['price'] ?? 0) ?></div>
-                        <div class="detail-card"><strong>Status</strong><br><?= htmlspecialchars($booking['status'] ?? 'Pending Confirmation') ?></div>
-                        <div class="detail-card"><strong>Payment Status</strong><br><?= htmlspecialchars($booking['payment_status'] ?? 'Awaiting Payment') ?></div>
+                        <div class="detail-card"><strong>Booking ID</strong><br><?= htmlspecialchars( $booking['booking_id'] ?? '' ) ?></div>
+                        <div class="detail-card"><strong>Invoice No</strong><br><?= htmlspecialchars( $booking['invoice_no'] ?? '' ) ?></div>
+                        <div class="detail-card"><strong>Service</strong><br><?= htmlspecialchars( $booking['service'] ?? '' ) ?></div>
+                        <div class="detail-card"><strong>Price</strong><br>₹<?= number_format( $booking['price'] ?? 0 ) ?></div>
+                        <div class="detail-card"><strong>Status</strong><br><?= htmlspecialchars( $booking['status'] ?? 'Pending Confirmation' ) ?></div>
+                        <div class="detail-card"><strong>Payment Status</strong><br><?= htmlspecialchars( $booking['payment_status'] ?? 'Awaiting Payment' ) ?></div>
                     </div>
                 </div>
 
                 <div class="thanks-box">
                     <h3>What happens next?</h3>
                     <ul>
-                        <li>Your account has been created automatically for future bookings.</li>
+                        <?php if ( ! empty( $booking['auto_password'] ) ) : ?>
+                            <li>A guest account has been created for you. Your login email is <strong><?= htmlspecialchars( $booking['customer_email'] ?? '' ) ?></strong> and your temporary password is <strong><?= htmlspecialchars( $booking['auto_password'] ) ?></strong>. Please save this or reset your password after logging in.</li>
+                        <?php else : ?>
+                            <li>You can manage your bookings from your dashboard.</li>
+                        <?php endif; ?>
                         <li>The studio owner will review your request and contact you shortly.</li>
                         <li>You will receive email updates for your booking confirmation and service details.</li>
                     </ul>

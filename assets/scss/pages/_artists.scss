@@ -1,0 +1,63 @@
+.people {
+  background: var(--dark);
+}
+
+.person-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  background: var(--card);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.06);
+}
+
+.person-card img {
+  aspect-ratio: 3.4 / 5;
+  object-fit: cover;
+  transition: transform 0.45s ease;
+}
+
+.person-card:hover img {
+  transform: scale(1.04);
+}
+
+.person-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(230, 17, 57, 0.94) 100%);
+}
+
+.person-tag {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(228, 0, 42, 0.89);
+  color: var(--primary);
+  border: 1px solid rgba(228, 0, 43, 0.14);
+  margin-bottom: 10px;
+}
+
+.person-card h3 {
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.person-card .role,
+.person-card .location {
+  color: #fff0f0;
+  font-size: 0.94rem;
+  font-family: $font-body;
+}
+
+.person-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 2vw;
+}

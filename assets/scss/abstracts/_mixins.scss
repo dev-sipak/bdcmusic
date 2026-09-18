@@ -1,0 +1,215 @@
+/*==================================================
+MIXINS
+==================================================*/
+
+// ─── Responsive ─────────────────────────────────
+
+@mixin respond($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin respond-up($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: (map-get($breakpoints, $breakpoint) + 1px)) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint: #{$breakpoint}.";
+  }
+}
+
+@mixin respond-between($min, $max) {
+  @if map-has-key($breakpoints, $min) and map-has-key($breakpoints, $max) {
+    @media (min-width: (map-get($breakpoints, $min) + 1px)) and (max-width: map-get($breakpoints, $max)) {
+      @content;
+    }
+  } @else {
+    @warn "Unknown breakpoint in range: #{$min} or #{$max}.";
+  }
+}
+
+// ─── Flexbox ────────────────────────────────────
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@mixin flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@mixin inline-flex-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Grid Helpers ───────────────────────────────
+
+@mixin grid($columns: 1fr, $gap: 20px) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+}
+
+@mixin grid-fit($min: 250px, $gap: 20px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min, 1fr));
+  gap: $gap;
+}
+
+@mixin grid-fill($min: 250px, $gap: 20px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($min, 1fr));
+  gap: $gap;
+}
+
+// ─── Card Surface ───────────────────────────────
+
+@mixin card-surface($radius: var(--radius), $padding: 30px) {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: var(--shadow);
+}
+
+// ─── Text ───────────────────────────────────────
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ─── Positioning ────────────────────────────────
+
+@mixin absolute($top: null, $right: null, $bottom: null, $left: null) {
+  position: absolute;
+  @if $top != null { top: $top; }
+  @if $right != null { right: $right; }
+  @if $bottom != null { bottom: $bottom; }
+  @if $left != null { left: $left; }
+}
+
+@mixin absolute-fill {
+  position: absolute;
+  inset: 0;
+}
+
+@mixin fixed-fill {
+  position: fixed;
+  inset: 0;
+}
+
+@mixin sticky($top: 0) {
+  position: sticky;
+  top: $top;
+}
+
+// ─── Scrollbar ──────────────────────────────────
+
+@mixin scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ─── Screen Reader ──────────────────────────────
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ─── Size ───────────────────────────────────────
+
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+// ─── Aspect Ratio ───────────────────────────────
+
+@mixin aspect-ratio($ratio: 16/9) {
+  aspect-ratio: $ratio;
+}
+
+// ─── Visibility ─────────────────────────────────
+
+@mixin responsive-visibility($name) {
+  .d-none#{$name} {
+    display: none !important;
+  }
+
+  .d-block#{$name} {
+    display: block !important;
+  }
+
+  .d-inline-block#{$name} {
+    display: inline-block !important;
+  }
+
+  .d-flex#{$name} {
+    display: flex !important;
+  }
+
+  .d-inline-flex#{$name} {
+    display: inline-flex !important;
+  }
+}

@@ -1,0 +1,282 @@
+.form-panel {
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	padding: 45px;
+	box-shadow: var(--shadow);
+}
+
+.booking-section h2,
+.booking-section .section-intro {
+	text-align: center;
+}
+
+.booking-section h2 {
+	font-size: 2.3rem;
+	margin-bottom: 12px;
+	text-align: center;
+}
+
+.booking-section .section-intro {
+	max-width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 8px;
+}
+
+.booking-content {
+	margin-top: 28px;
+}
+
+.form-grid {
+	display: grid;
+	gap: 18px;
+}
+
+.form-grid--single {
+	grid-template-columns: 1fr;
+}
+
+.form-grid--two {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid--three {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.form-field,
+.field,
+.field-block {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.form-field--full,
+.field.full,
+.field-block.full {
+	grid-column: 1 / -1;
+}
+
+.form-field label,
+.field label,
+.field-block label {
+	color: var(--text);
+	font-weight: 600;
+}
+
+.required-star {
+	color: var(--primary);
+	font-weight: 700;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea,
+.field input,
+.field select,
+.field textarea,
+.field-block input,
+.field-block select,
+.field-block textarea {
+	width: 100%;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 12px 14px;
+	background: #fff;
+	color: var(--text);
+	font: inherit;
+	transition: var(--transition);
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover,
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+	border-color: #c0c0c0;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus,
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.field-block input:focus,
+.field-block select:focus,
+.field-block textarea:focus {
+	border-color: var(--primary) !important;
+	box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 245, 158, 11), 0.12);
+	outline: none;
+}
+
+.form-field textarea,
+.field textarea,
+.field-block textarea {
+	min-height: 120px;
+	resize: vertical;
+}
+
+.form-field input::placeholder,
+.field input::placeholder,
+.field-block input::placeholder,
+.form-field textarea::placeholder,
+.field textarea::placeholder,
+.field-block textarea::placeholder {
+	color: #aaa;
+}
+
+.form-field input[type="file"],
+.field input[type="file"],
+.field-block input[type="file"] {
+	padding: 10px 14px;
+	background: #fafafa;
+	cursor: pointer;
+}
+
+.radio-group,
+.checkbox-group,
+.chip-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.radio-card,
+.checkbox-card,
+.chip-card,
+.choice-card,
+.upload-card {
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	padding: 14px 16px;
+	background: #fff;
+	cursor: pointer;
+	transition: var(--transition);
+}
+
+.radio-card:hover,
+.checkbox-card:hover,
+.chip-card:hover,
+.choice-card:hover,
+.upload-card:hover {
+	border-color: var(--primary);
+	box-shadow: 0 16px 34px rgba(17, 17, 17, .07);
+}
+
+.radio-card:has(input:checked),
+.checkbox-card:has(input:checked) {
+	border-color: var(--primary);
+	background: #fffbeb;
+}
+
+input[type="radio"],
+input[type="checkbox"]:focus {
+	accent-color: #e4002b;
+}
+
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+	outline: 0px !important;
+}
+
+input[type="checkbox"]:checked {
+	accent-color: #e4002b;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	outline: none;
+}
+
+.policy-check {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--muted);
+	margin-top: 15px;
+}
+
+.policy-check input {
+	width: auto;
+}
+
+.policy-check a {
+	color: var(--primary);
+	font-weight: 700;
+}
+
+.form-actions,
+.btn-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 24px;
+}
+form .row{
+	gap: 2vw;
+}
+.form-actions .btn {
+	min-width: 200px;
+	padding: 14px 32px;
+	font-weight: 600;
+}
+
+.notice {
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin-bottom: 18px;
+}
+
+.notice.error {
+	background: #fff1f3;
+	border: 1px solid #f4b3c0;
+	color: #931c35;
+}
+
+.notice.success {
+	background: #f0fff5;
+	border: 1px solid #bbeccf;
+	color: #1d6d3d;
+}
+
+@media (max-width: 900px) {
+	.form-panel {
+		padding: 30px;
+	}
+
+	.form-grid--three {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.form-panel .col-lg-6 {
+		grid-column: span 12;
+	}
+}
+
+@media (max-width: 640px) {
+	.form-panel {
+		padding: 20px;
+	}
+
+	.form-grid--two,
+	.form-grid--three {
+		grid-template-columns: 1fr;
+	}
+
+	.form-panel .col-6,
+	.form-panel .col-md-6 {
+		grid-column: span 12;
+	}
+
+	.form-actions .btn,
+	.btn-row .btn {
+		width: 100%;
+	}
+}

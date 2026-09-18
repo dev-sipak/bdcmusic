@@ -1,0 +1,20 @@
+{
+  "name": "bdcmusic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SCSS build pipeline for BDC Music.",
+  "scripts": {
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
+    "mini-css-extract-plugin": "^2.9.2",
+    "playwright": "^1.63.0",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  }
+}

@@ -1,0 +1,49 @@
+/*==================================================
+MAIN STYLESHEET
+==================================================*/
+
+// Abstracts
+@import 'abstracts/variables';
+@import 'abstracts/functions';
+@import 'abstracts/mixins';
+@import 'abstracts/animations';
+
+// Base
+@import 'base/reset';
+@import 'base/global';
+@import 'base/typography';
+
+// Layout
+@import 'layout/container';
+@import 'layout/grid';
+@import 'layout/header';
+@import 'layout/navigation';
+@import 'layout/footer';
+
+// Components
+@import 'components/breadcrumb';
+@import 'components/buttons';
+@import 'components/cards';
+@import 'components/loader';
+@import 'components/gallery';
+@import 'components/faq';
+@import 'components/testimonial';
+@import 'components/cursor';
+@import 'components/form';
+@import 'components/table';
+
+// Pages
+@import 'pages/home';
+@import 'pages/service';
+@import 'pages/digitalmusic';
+@import 'pages/about';
+@import 'pages/legal';
+@import 'pages/artists';
+@import 'pages/blog';
+@import 'pages/contact';
+@import 'pages/login';
+@import 'pages/dashboard';
+@import 'pages/admin';
+
+// Utilities (loaded last so they can override)
+@import 'base/utilities';

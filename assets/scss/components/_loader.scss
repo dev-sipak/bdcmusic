@@ -1,0 +1,42 @@
+/*==================================================
+MOTION LOADER
+==================================================*/
+
+.motion-loader {
+  position: fixed;
+  inset: 0;
+  background: var(--dark);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.loader-mask {
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+}
+
+.loader-logo {
+  font-size: clamp(2rem, 5vw, 5rem);
+  font-weight: 800;
+  letter-spacing: 12px;
+  color: var(--text);
+  z-index: 2;
+}
+
+/*==================================================
+LOADER PLACEHOLDER
+==================================================*/
+
+.skeleton {
+  background:
+    linear-gradient(90deg,
+      #ececec 25%,
+      #f7f7f7 50%,
+      #ececec 75%);
+  background-size: 300px 100%;
+  animation: shimmer 1.4s infinite linear;
+}

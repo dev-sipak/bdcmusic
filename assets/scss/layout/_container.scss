@@ -1,0 +1,24 @@
+.container {
+  --container-gutter: #{$gutter-desktop};
+  width: min(#{$container-max-width}, calc(100% - (var(--container-gutter) * 2)));
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.container-fluid {
+  width: 100%;
+  margin-inline: auto;
+  min-width: 0;
+}
+
+@media (max-width: 1400px) {
+  .container {
+    width: min(#{$container-max-width-compact}, calc(100% - (var(--container-gutter) * 2)));
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    --container-gutter: #{$gutter-mobile};
+  }
+}

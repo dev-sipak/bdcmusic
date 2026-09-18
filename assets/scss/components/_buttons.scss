@@ -1,0 +1,246 @@
+/*==================================================
+BUTTONS
+==================================================*/
+
+// ─── Base Button ────────────────────────────────
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 16px 34px;
+  min-height: 56px;
+  border: none;
+  border-radius: $radius-pill;
+  background: var(--primary);
+  color: var(--dark);
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-base;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    background .3s ease,
+    color .3s ease;
+}
+
+.btn:hover {
+  box-shadow: 0 15px 40px rgba(255, 77, 45, .35);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -120%;
+  transition: left .6s ease;
+}
+
+.btn:hover::before {
+  left: 120%;
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  left: var(--mx);
+  top: var(--my);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, .35),
+    transparent 70%
+  );
+  transition: opacity .25s ease;
+}
+
+.btn:hover::after {
+  opacity: 1;
+}
+
+// ─── Button Sizes ───────────────────────────────
+
+.btn-sm {
+  padding: 10px 20px;
+  min-height: 40px;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 18px 40px;
+  min-height: 64px;
+  font-size: 1.125rem;
+}
+
+// ─── Button Variants ────────────────────────────
+
+.btn-secondary {
+  background: var(--text);
+  color: var(--card);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+}
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+}
+
+.btn-success:hover {
+  box-shadow: 0 15px 40px rgba(16, 185, 129, .35);
+}
+
+.btn-danger {
+  background: var(--error);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  box-shadow: 0 15px 40px rgba(239, 68, 68, .35);
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: var(--text);
+}
+
+.btn-info {
+  background: var(--info);
+  color: #fff;
+}
+
+// ─── Outline Buttons ────────────────────────────
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, .15);
+  color: inherit;
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline-light {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, .24);
+  color: #fff;
+}
+
+.btn-outline-light:hover {
+  background: #fff;
+  color: var(--primary);
+}
+
+.btn-outline-primary {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+  color: var(--dark);
+}
+
+// ─── Button States ──────────────────────────────
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-icon {
+  padding: 12px;
+  min-height: auto;
+  min-width: auto;
+  border-radius: 50%;
+}
+
+// ─── Button Group ───────────────────────────────
+
+.btn-group {
+  display: inline-flex;
+
+  .btn {
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: $radius-pill 0 0 $radius-pill;
+    }
+
+    &:last-child {
+      border-radius: 0 $radius-pill $radius-pill 0;
+    }
+
+    & + .btn {
+      margin-left: -2px;
+    }
+  }
+}
+
+// ─── Close Button ───────────────────────────────
+
+.btn-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+  font-size: 1rem;
+}
+
+.btn-close:hover {
+  background: #fee2e2;
+  color: var(--error);
+  border-color: #fca5a5;
+}
+
+// ─── Responsive ─────────────────────────────────
+
+@include respond(md) {
+  .btn {
+    padding: 14px 28px;
+    min-height: 50px;
+    font-size: .95rem;
+  }
+}
+
+@include respond(sm) {
+  .btn {
+    width: 100%;
+    padding: 14px 20px;
+    min-height: 48px;
+    font-size: .95rem;
+  }
+}
+
+@include respond(xs) {
+  .btn {
+    padding: 13px 18px;
+    min-height: 46px;
+    font-size: .9rem;
+  }
+}

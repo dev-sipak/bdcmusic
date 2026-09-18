@@ -1,0 +1,317 @@
+.features {
+  display: grid;
+  gap: 26px;
+  margin-bottom: 45px;
+}
+
+.feature {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.feature i {
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  background: var(--primary);
+  border-radius: 50%;
+  font-size: 22px;
+  color: var(--dark);
+  flex-shrink: 0;
+}
+
+.feature h4 {
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+}
+
+/*==================================================
+SERVICES
+==================================================*/
+
+.services {
+  background: var(--dark);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.card {
+  padding: 45px 35px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease,
+    background .35s ease,
+    color .35s ease;
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  border-color: var(--primary);
+  box-shadow: 0 9px 20px rgba(155, 155, 155, 0.35);
+}
+
+.card i {
+  font-size: 40px;
+  margin-bottom: 26px;
+  color: var(--primary);
+}
+
+.card h3 {
+  margin-bottom: 18px;
+  font-size: 1.45rem;
+}
+
+.card p {
+  color: var(--muted);
+}
+
+/*==================================================
+COUNTERS
+==================================================*/
+
+.counter {
+  background: #FFFFFF;
+  padding: 90px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 30px;
+}
+
+.counter-grid > div {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 50px 25px;
+  transition: var(--transition);
+}
+
+.counter-grid > div:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.counter-grid h2 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.counter-grid p {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+/*==================================================
+SECTION REVEAL
+==================================================*/
+
+.section-heading,
+.card,
+.person-card,
+.blog-grid article,
+.counter-grid > div,
+.gallery-grid img,
+.feature {
+  animation: fadeUp .8s ease both;
+}
+
+.card:nth-child(2),
+.person-card:nth-child(2),
+.blog-grid article:nth-child(2) {
+  animation-delay: .15s;
+}
+
+.card:nth-child(3),
+.person-card:nth-child(3),
+.blog-grid article:nth-child(3) {
+  animation-delay: .3s;
+}
+
+.card:nth-child(4) {
+  animation-delay: .45s;
+}
+
+.card:nth-child(5) {
+  animation-delay: .6s;
+}
+
+.card:nth-child(6) {
+  animation-delay: .75s;
+}
+
+/*==================================================
+HOVER EFFECTS
+==================================================*/
+
+.blog-grid article,
+.counter-grid > div,
+.gallery-grid img,
+.btn,
+.social a {
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease,
+    background .35s ease,
+    color .35s ease;
+}
+
+.blog-grid article:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 9px 20px rgba(155, 155, 155, 0.35);
+}
+
+.gallery-grid img:hover {
+  transform: scale(.97);
+  filter: brightness(.7);
+}
+
+/*=========================================================
+PART 3B
+=========================================================*/
+
+.blog-grid article {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card img,
+.blog-grid img,
+.gallery-item img {
+  will-change: transform;
+}
+
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+img.red-svg {
+  filter: brightness(0) saturate(100%)
+    invert(16%) sepia(94%) saturate(7475%)
+    hue-rotate(345deg) brightness(91%) contrast(115%);
+  width: 32px;
+}
+
+.eco-card {
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.72);
+  transition: border-color 0.35s ease, background 0.35s ease;
+  box-shadow: 0 12px 28px rgba(17, 17, 17, 0.04);
+}
+
+.eco-card:hover {
+  border-color: rgba(228, 0, 43, 0.28);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.eco-card i {
+  font-size: 1.6rem;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.craeteive-categories .eco-card i{
+	margin-bottom: 0px;
+}
+
+.craeteive-categories .eco-card:hover i{
+	color: var(--white) !important;
+}
+
+.eco-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  border-radius: 18px;
+  background: rgba(228, 0, 43, .08);
+  border: 1px solid rgba(228, 0, 43, .18);
+  transition: .35s ease;
+}
+
+.eco-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: #E4002B;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.eco-card:hover .eco-icon {
+  background: #E4002B;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(228, 0, 43, .25);
+}
+
+.eco-card:hover img.red-svg {
+  filter: brightness(0) invert(1);
+}
+
+.eco-card:hover .eco-icon svg {
+  stroke: #fff;
+}
+
+.eco-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* Shared card-grid transitions. Page styles should only define grids that are
+   genuinely unique to that page. */
+@include respond(xl) {
+.feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ecosystem-grid,
+  .person-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include respond(lg) {
+  .counter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include respond(md) {
+  .feature-grid,
+  .counter-grid,
+  .ecosystem-grid,
+  .person-grid {
+    grid-template-columns: 1fr;
+  }
+}

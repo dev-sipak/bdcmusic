@@ -1,0 +1,66 @@
+/*==================================================
+TYPOGRAPHY
+==================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  font-optical-sizing: auto;
+  font-weight: 706;
+  font-style: normal;
+  font-variation-settings:
+    "SOFT" 53.5,
+    "WONK" 0;
+}
+
+h1 {
+  font-size: map-get($type-scale, h1);
+  line-height: map-get($line-height-scale, h1);
+}
+
+h2 {
+  font-size: map-get($type-scale, h2);
+  line-height: map-get($line-height-scale, h2);
+}
+
+h3 {
+  font-size: map-get($type-scale, h3);
+  line-height: map-get($line-height-scale, h3);
+}
+
+h4 {
+  font-size: map-get($type-scale, h4);
+  line-height: map-get($line-height-scale, h4);
+}
+
+h5 {
+  font-size: map-get($type-scale, h5);
+  line-height: map-get($line-height-scale, h5);
+}
+
+h6 {
+  font-size: map-get($type-scale, h6);
+  line-height: map-get($line-height-scale, h6);
+}
+
+p {
+  font-family: $font-body;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.hero h1 .char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.hero p {
+  will-change: transform, filter, opacity;
+}
+
+.nav li,
+.logo,
+.hero-buttons .btn,
+.hero-stats div {
+  will-change: transform, opacity;
+}

@@ -1,0 +1,397 @@
+/*==================================================
+UTILITY CLASSES
+Bootstrap-like utility framework.
+==================================================*/
+
+// ─── Display ────────────────────────────────────
+
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+.d-inline-grid { display: inline-grid !important; }
+
+// ─── Flexbox ────────────────────────────────────
+
+.flex-row { flex-direction: row; }
+.flex-column { flex-direction: column; }
+.flex-row-reverse { flex-direction: row-reverse; }
+.flex-column-reverse { flex-direction: column-reverse; }
+
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+.flex-wrap-reverse { flex-wrap: wrap-reverse; }
+
+.flex-fill { flex: 1 1 auto; }
+.flex-grow-0 { flex-grow: 0; }
+.flex-grow-1 { flex-grow: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.flex-shrink-1 { flex-shrink: 1; }
+
+.align-start { align-items: flex-start; }
+.align-center { align-items: center; }
+.align-end { align-items: flex-end; }
+.align-stretch { align-items: stretch; }
+.align-baseline { align-items: baseline; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+.justify-evenly { justify-content: space-evenly; }
+
+.align-self-auto { align-self: auto; }
+.align-self-start { align-self: flex-start; }
+.align-self-center { align-self: center; }
+.align-self-end { align-self: flex-end; }
+.align-self-stretch { align-self: stretch; }
+
+.order-first { order: -1; }
+.order-last { order: 1; }
+.order-0 { order: 0; }
+
+// ─── Spacing ────────────────────────────────────
+
+@each $size, $value in $spacing {
+  // Margin (all sides)
+  .m-#{$size} { margin: $value; }
+  .mx-#{$size} { margin-left: $value; margin-right: $value; }
+  .my-#{$size} { margin-top: $value; margin-bottom: $value; }
+  .mt-#{$size} { margin-top: $value; }
+  .mb-#{$size} { margin-bottom: $value; }
+  .ms-#{$size} { margin-left: $value; }
+  .me-#{$size} { margin-right: $value; }
+  .ml-#{$size} { margin-left: $value; }
+  .mr-#{$size} { margin-right: $value; }
+
+  // Padding (all sides)
+  .p-#{$size} { padding: $value; }
+  .px-#{$size} { padding-left: $value; padding-right: $value; }
+  .py-#{$size} { padding-top: $value; padding-bottom: $value; }
+  .pt-#{$size} { padding-top: $value; }
+  .pb-#{$size} { padding-bottom: $value; }
+  .ps-#{$size} { padding-left: $value; }
+  .pe-#{$size} { padding-right: $value; }
+  .pl-#{$size} { padding-left: $value; }
+  .pr-#{$size} { padding-right: $value; }
+}
+
+// Auto margins
+.mx-auto { margin-left: auto; margin-right: auto; }
+.ms-auto { margin-left: auto; }
+.me-auto { margin-right: auto; }
+.ml-auto { margin-left: auto; }
+.mr-auto { margin-right: auto; }
+
+// Special spacing (existing patterns)
+.mbs-8 { margin-block-start: 8vw; }
+
+// ─── Text Alignment ─────────────────────────────
+
+.text-start { text-align: left; }
+.text-center { text-align: center; }
+.text-end { text-align: right; }
+
+// ─── Text Transformation ────────────────────────
+
+.text-uppercase { text-transform: uppercase; }
+.text-lowercase { text-transform: lowercase; }
+.text-capitalize { text-transform: capitalize; }
+
+// ─── Text Decoration ────────────────────────────
+
+.text-decoration-none { text-decoration: none; }
+.text-decoration-underline { text-decoration: underline; }
+
+// ─── Text Overflow ──────────────────────────────
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-nowrap { white-space: nowrap; }
+.text-wrap { white-space: normal; }
+
+// ─── Text Colors ────────────────────────────────
+
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.text-muted { color: var(--muted); }
+.text-dark { color: var(--text); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+.text-info { color: var(--info); }
+.text-white { color: #fff; }
+
+// ─── Font Size ──────────────────────────────────
+
+.fs-xs { font-size: 0.75rem; }
+.fs-sm { font-size: 0.875rem; }
+.fs-base { font-size: 1rem; }
+.fs-lg { font-size: 1.125rem; }
+.fs-xl { font-size: 1.25rem; }
+.fs-2xl { font-size: 1.5rem; }
+.fs-3xl { font-size: 2rem; }
+
+// ─── Font Weight ────────────────────────────────
+
+.fw-light { font-weight: $font-weight-light; }
+.fw-normal { font-weight: $font-weight-normal; }
+.fw-medium { font-weight: $font-weight-medium; }
+.fw-semibold { font-weight: $font-weight-semibold; }
+.fw-bold { font-weight: $font-weight-bold; }
+
+// ─── Line Height ────────────────────────────────
+
+.lh-tight { line-height: 1.2; }
+.lh-snug { line-height: 1.375; }
+.lh-normal { line-height: 1.5; }
+.lh-relaxed { line-height: 1.625; }
+.lh-loose { line-height: 2; }
+
+// ─── Width ──────────────────────────────────────
+
+.w-25 { width: 25%; }
+.w-50 { width: 50%; }
+.w-75 { width: 75%; }
+.w-100 { width: 100%; }
+.w-auto { width: auto; }
+.w-fit { width: fit-content; }
+.w-min { width: min-content; }
+.w-max { width: max-content; }
+
+// ─── Height ─────────────────────────────────────
+
+.h-25 { height: 25%; }
+.h-50 { height: 50%; }
+.h-75 { height: 75%; }
+.h-100 { height: 100%; }
+.h-auto { height: auto; }
+.h-fit { height: fit-content; }
+.h-screen { height: 100vh; }
+.h-dvh { height: 100dvh; }
+
+// ─── Min/Max Width ──────────────────────────────
+
+.min-w-0 { min-width: 0; }
+.max-w-none { max-width: none; }
+.max-w-full { max-width: 100%; }
+
+// ─── Position ───────────────────────────────────
+
+.position-static { position: static; }
+.position-relative { position: relative; }
+.position-absolute { position: absolute; }
+.position-fixed { position: fixed; }
+.position-sticky { position: sticky; }
+
+.top-0 { top: 0; }
+.right-0 { right: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+.inset-0 { inset: 0; }
+
+// ─── Overflow ───────────────────────────────────
+
+.overflow-auto { overflow: auto; }
+.overflow-hidden { overflow: hidden; }
+.overflow-visible { overflow: visible; }
+.overflow-scroll { overflow: scroll; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-y-auto { overflow-y: auto; }
+.overflow-x-hidden { overflow-x: hidden; }
+.overflow-y-hidden { overflow-y: hidden; }
+
+// ─── Z-Index ────────────────────────────────────
+
+.z-0 { z-index: 0; }
+.z-1 { z-index: 1; }
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+.z-auto { z-index: auto; }
+
+// ─── Visibility ─────────────────────────────────
+
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+// ─── Pointer Events ─────────────────────────────
+
+.pointer-events-none { pointer-events: none; }
+.pointer-events-auto { pointer-events: auto; }
+
+// ─── Opacity ────────────────────────────────────
+
+.opacity-0 { opacity: 0; }
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
+
+// ─── Border ─────────────────────────────────────
+
+.border { border: 1px solid var(--border); }
+.border-0 { border: 0; }
+.border-top { border-top: 1px solid var(--border); }
+.border-bottom { border-bottom: 1px solid var(--border); }
+.border-start { border-left: 1px solid var(--border); }
+.border-end { border-right: 1px solid var(--border); }
+
+// ─── Border Radius ──────────────────────────────
+
+.rounded { border-radius: var(--radius); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-pill { border-radius: var(--radius-pill); }
+.rounded-0 { border-radius: 0; }
+
+// ─── Shadow ─────────────────────────────────────
+
+.shadow { box-shadow: var(--shadow); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-none { box-shadow: none; }
+
+// ─── Background ─────────────────────────────────
+
+.bg-primary { background-color: var(--primary); }
+.bg-secondary { background-color: var(--secondary); }
+.bg-dark { background-color: var(--dark); }
+.bg-card { background-color: var(--card); }
+.bg-transparent { background-color: transparent; }
+.bg-white { background-color: #fff; }
+
+// ─── Cursor ─────────────────────────────────────
+
+.cursor-pointer { cursor: pointer; }
+.cursor-default { cursor: default; }
+.cursor-not-allowed { cursor: not-allowed; }
+
+// ─── User Select ────────────────────────────────
+
+.user-select-none { user-select: none; }
+.user-select-all { user-select: all; }
+.user-select-auto { user-select: auto; }
+
+// ─── Transitions ────────────────────────────────
+
+.transition { transition: var(--transition); }
+.transition-fast { transition: var(--transition-fast); }
+.transition-slow { transition: transition-slow; }
+.transition-none { transition: none; }
+
+// ─── Float ──────────────────────────────────────
+
+.float-start { float: left; }
+.float-end { float: right; }
+.float-none { float: none; }
+
+// ─── Clearfix ───────────────────────────────────
+
+.clearfix::after {
+  display: block;
+  clear: both;
+  content: "";
+}
+
+// ─── Screen Reader Only ─────────────────────────
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ─── Container Utilities ────────────────────────
+
+.container-narrow {
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.container-wide {
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+// ─── Scrollbar Hide ─────────────────────────────
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ─── Glass Panel ────────────────────────────────
+
+.glass {
+  background: rgba(255, 255, 255, .7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(17, 17, 17, .06);
+}
+
+// ─── Animation Helpers ──────────────────────────
+
+.fade-up { animation: fadeUp .8s ease both; }
+.fade-left { animation: fadeLeft .8s ease both; }
+.fade-right { animation: fadeRight .8s ease both; }
+.zoom-in { animation: zoomIn .8s ease both; }
+.glow { animation: borderGlow 3s ease infinite; }
+.float { animation: floatImage 5s ease-in-out infinite; }
+.rotate { animation: rotateGlow 12s linear infinite; }
+
+// ─── Hover Effects ──────────────────────────────
+
+.shadow-hover:hover {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, .45);
+}
+
+.scale-hover {
+  transition: transform .35s ease;
+}
+
+.scale-hover:hover {
+  transform: scale(1.04);
+}
+
+// ─── Reveal (scroll animation) ──────────────────
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// ─── Highlight (alias) ──────────────────────────
+
+.highlight-text { color: var(--primary); }
