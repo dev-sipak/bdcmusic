@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || (int) $_SESSION['user_role'] !== 2 ) {
+if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
     header( 'Location: ' . $basePath . 'login' );
     exit;
 }
@@ -14,23 +14,30 @@ $currentPage     = 'bdc-admin';
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminOrders = array();
+$adminFiles  = array();
 $services    = array();
 try {
     $pdo  = db_connect();
     $stmt = $pdo->query(
-        'SELECT b.booking_id AS id, b.customer_name AS customer, b.customer_email AS email,
-                b.service, b.service AS item, b.status,
+        'SELECT b.booking_id AS id, u.name AS customer, u.email AS email,
+                s.name AS service, s.name AS item, b.status,
                 DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date,
                 b.price AS amount
          FROM bookings b
+         LEFT JOIN users u ON b.customer_id = u.id
+         JOIN services s ON b.service_id = s.id
          ORDER BY b.created_at DESC'
     );
     $adminOrders = $stmt->fetchAll();
 
-    $svcStmt = $pdo->query( 'SELECT DISTINCT service FROM bookings ORDER BY service' );
+    $fStmt = $pdo->query( 'SELECT booking_id, original_name, file_path, mime_type, file_size FROM uploaded_files ORDER BY uploaded_at DESC' );
+    $adminFiles = $fStmt->fetchAll();
+
+    $svcStmt = $pdo->query( 'SELECT name AS service FROM services ORDER BY name' );
     $services = $svcStmt->fetchAll( PDO::FETCH_COLUMN );
 } catch ( Exception $e ) {
     $adminOrders = array();
+    $adminFiles  = array();
     $services    = array();
 }
 ?>
@@ -157,11 +164,11 @@ try {
                     <div class="adm-filter-bar">
                         <select class="adm-filter-select" id="admin-order-status">
                             <option value="all">All Statuses</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                         <select class="adm-filter-select" id="admin-order-service">
                             <option value="all">All Services</option>
@@ -184,7 +191,6 @@ try {
                                     <th>Order ID</th>
                                     <th>Customer</th>
                                     <th>Service</th>
-                                    <th>Item</th>
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Status</th>
@@ -267,11 +273,11 @@ try {
                 <div class="modal-status-control">
                     <label class="panel-label">Update Status</label>
                     <select class="adm-filter-select" id="modal-status-select">
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                     <button type="button" class="btn modal-update-btn" id="modal-update-btn">
                         Update Status
@@ -285,6 +291,7 @@ try {
 <script>
 var adminDashboardConfig = {
     orders: <?php echo json_encode( $adminOrders ); ?>,
+    files: <?php echo json_encode( $adminFiles ); ?>,
     basePath: '<?php echo $basePath; ?>'
 };
 </script>

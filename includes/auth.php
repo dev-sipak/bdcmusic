@@ -63,16 +63,16 @@ if ( $action === 'login' ) {
     $_SESSION['user_id']    = $user['id'];
     $_SESSION['user_name']  = $user['name'];
     $_SESSION['user_email'] = $user['email'];
-    $_SESSION['user_role']  = (int) $user['role'];
+    $_SESSION['user_role']  = $user['role'];
 
-    $redirectUrl = (int) $user['role'] === 2
+    $redirectUrl = $user['role'] === 'admin'
         ? ( $basePath ?? '/' ) . 'bdc-admin/'
-        : ( $basePath ?? '/' ) . 'dashboard/customer-dashboard.php';
+        : ( $basePath ?? '/' ) . 'dashboard/customer-dashboard';
 
     echo json_encode( [
         'success'    => true,
         'message'    => 'Signed in successfully! Redirecting...',
-        'role'       => (int) $user['role'],
+        'role'       => $user['role'],
         'redirect'   => $redirectUrl,
     ] );
     exit;
@@ -138,7 +138,7 @@ if ( $action === 'login' ) {
     $_SESSION['user_email'] = strtolower( $email );
     $_SESSION['user_role']  = 1;
 
-    $redirectUrl = ( $basePath ?? '/' ) . 'dashboard/customer-dashboard.php';
+    $redirectUrl = ( $basePath ?? '/' ) . 'dashboard/customer-dashboard';
 
     echo json_encode( [
         'success'  => true,

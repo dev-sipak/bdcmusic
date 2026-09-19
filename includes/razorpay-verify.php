@@ -135,7 +135,7 @@ if ( 'rzp_test_demo' === $keyId || 'demo_secret' === $keySecret ) {
 
         echo json_encode( [
             'success'    => true,
-            'booking_id' => $booking['booking_id'] ?? 'AV-' . time(),
+            'booking_id' => $booking['booking_id'] ?? generate_booking_id(),
             'message'    => 'Payment verified and booking confirmed.',
         ] );
         exit;
@@ -231,7 +231,7 @@ if ( hash_equals( $expectedSignature, $razorpaySignature ) ) {
 
         echo json_encode( [
             'success'    => true,
-            'booking_id' => $booking['booking_id'] ?? 'AV-' . time(),
+            'booking_id' => $booking['booking_id'] ?? generate_booking_id(),
             'message'    => 'Payment verified and booking confirmed.',
         ] );
         exit;

@@ -56,7 +56,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['audio_video_booking
 
         $storedFiles = [];
         if ( ! empty( $_FILES['project_upload']['name'][0] ) ) {
-            $bookingId = 'AV-' . time();
+            $bookingId = generate_booking_id();
             $uploadDir = get_upload_dir( 'audio-video', $bookingId );
             $storedFiles = process_multiple_uploads(
                 $_FILES['project_upload'],

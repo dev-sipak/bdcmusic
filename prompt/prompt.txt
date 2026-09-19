@@ -1,4 +1,1 @@
-upon logout from admin taking to http://localhost/bdcmusic/includes/login.php  it should take to http://localhost/bdcmusic/login
-upon customer loing http://localhost/bdcmusic/dashboard/customer-dashboard.php seeing .php extension in the url
-login as cutomer neha on she has one order BDC-1004 but in dash seeing multiple order 
-same upon logout from customer taking to http://localhost/bdcmusic/includes/login.php
+on online offline classes by default hide choose package and choose course col-12 upon choose the course choose pacakage should dispaly then both will have col-6

@@ -4,10 +4,10 @@ require_once __DIR__ . '/includes/config.php';
 
 // Redirect if already logged in
 if ( isset( $_SESSION['user_id'] ) && isset( $_SESSION['user_role'] ) ) {
-    if ( (int) $_SESSION['user_role'] === 2 ) {
+    if ( $_SESSION['user_role'] === 'admin' ) {
         header( 'Location: ' . $basePath . 'bdc-admin/' );
     } else {
-        header( 'Location: ' . $basePath . 'dashboard/customer-dashboard.php' );
+        header( 'Location: ' . $basePath . 'dashboard/customer-dashboard' );
     }
     exit;
 }

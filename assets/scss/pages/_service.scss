@@ -4,26 +4,26 @@ SERVICE PAGE
 
 /* Page Layout */
 .page-hero {
-  padding: 140px 0 80px;
+	padding: 140px 0 80px;
 }
 
 .section-block {
-  padding: 90px 0;
+	padding: 90px 0;
 
-  > h2 {
-    margin-bottom: 12px;
-    font-size: 2.3rem;
-    text-align: center;
-  }
+	>h2 {
+		margin-bottom: 12px;
+		font-size: 2.3rem;
+		text-align: center;
+	}
 
-  > .section-intro {
-    max-width: 760px;
-    margin: 0 auto;
-    color: var(--muted);
-    line-height: 1.8;
-    text-align: center;
-	margin-bottom: 20px;
-  }
+	>.section-intro {
+		max-width: 760px;
+		margin: 0 auto;
+		color: var(--muted);
+		line-height: 1.8;
+		text-align: center;
+		margin-bottom: 20px;
+	}
 }
 
 /*==================================================
@@ -31,61 +31,61 @@ SERVICE HERO
 ==================================================*/
 
 .section-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 460px;
-  padding: 50px;
-  overflow: hidden;
-  border-radius: 32px;
-  isolation: isolate;
-  box-shadow: 0 30px 80px rgba(43, 43, 43, .09);
+	position: relative;
+	display: flex;
+	align-items: center;
+	min-height: 460px;
+	padding: 50px;
+	overflow: hidden;
+	border-radius: 32px;
+	isolation: isolate;
+	box-shadow: 0 30px 80px rgba(43, 43, 43, .09);
 
-  .highlight {
-    color: var(--primary);
-    font-style: italic;
-  }
+	.highlight {
+		color: var(--primary);
+		font-style: italic;
+	}
 
-  h1 {
-    margin-bottom: 18px;
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-  }
+	h1 {
+		margin-bottom: 18px;
+		font-size: clamp(2.2rem, 4vw, 3.2rem);
+	}
 
-  p {
-    max-width: 760px;
-    margin-bottom: 24px;
-    font-size: 1.05rem;
-  }
+	p {
+		max-width: 760px;
+		margin-bottom: 24px;
+		font-size: 1.05rem;
+	}
 }
 
 .section-hero-content {
-  position: relative;
-  z-index: 5;
-  max-width: 650px;
+	position: relative;
+	z-index: 5;
+	max-width: 650px;
 }
 
 .audio-video-bg {
-  background: url("../../assets/images/audio-video-breadcrumb-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/audio-video-breadcrumb-bg.webp") center right / cover no-repeat;
 }
 
 .music-distribution-bg {
-  background: url("../../assets/images/music-distribution-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/music-distribution-bg.webp") center right / cover no-repeat;
 }
 
 .iprs-bg {
-  background: url("../../assets/images/iprs-service-breadcrumb-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/iprs-service-breadcrumb-bg.webp") center right / cover no-repeat;
 }
 
 .online-offline-bg {
-  background: url("../../assets/images/classes-breadcrumb-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/classes-breadcrumb-bg.webp") center right / cover no-repeat;
 }
 
 .promotional-bg {
-  background: url("../../assets/images/promotional-breadcrumb-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/promotional-breadcrumb-bg.webp") center right / cover no-repeat;
 }
 
 .creator-marketplace-bg {
-  background: url("../../assets/images/creator-marketplace-bg.webp") center right / cover no-repeat;
+	background: url("../../assets/images/creator-marketplace-bg.webp") center right / cover no-repeat;
 }
 
 /*==================================================
@@ -93,25 +93,25 @@ SERVICE CARDS
 ==================================================*/
 
 .category-block {
-  padding: 40px;
-  margin-bottom: 36px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
+	padding: 40px;
+	margin-bottom: 36px;
+	background: #fff;
+	border: 1px solid var(--border);
+	border-radius: 24px;
+	box-shadow: var(--shadow);
 
-  > h3 {
-    margin-bottom: 10px;
-    color: var(--primary);
-    font-size: 1.35rem;
-  }
+	>h3 {
+		margin-bottom: 10px;
+		color: var(--primary);
+		font-size: 1.35rem;
+	}
 
-  p {
-    max-width: 700px;
-    margin-bottom: 30px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
+	p {
+		max-width: 700px;
+		margin-bottom: 30px;
+		color: var(--muted);
+		line-height: 1.7;
+	}
 }
 
 /*==================================================
@@ -121,30 +121,30 @@ LAYOUT
 .card-grid-2,
 .check-list,
 .related-list {
-  display: grid;
-  gap: 20px;
+	display: grid;
+	gap: 20px;
 }
 
 .card-grid-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .check-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 18px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	margin-top: 18px;
 
-  li {
-    position: relative;
-    padding-left: 18px;
-    color: var(--muted);
+	li {
+		position: relative;
+		padding-left: 18px;
+		color: var(--muted);
 
-    &::before {
-      position: absolute;
-      left: 0;
-      color: var(--primary);
-      content: "•";
-    }
-  }
+		&::before {
+			position: absolute;
+			left: 0;
+			color: var(--primary);
+			content: "•";
+		}
+	}
 }
 
 /*==================================================
@@ -154,50 +154,50 @@ PLANS
 .plans-grid,
 .details-grid,
 .faq-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px;
 }
 
 .plans-grid {
-  margin-top: 30px;
+	margin-top: 30px;
 }
 
 .details-grid {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 
 .plan-card,
 .detail-card {
-  padding: 22px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  transition: .35s ease;
+	padding: 22px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	box-shadow: var(--shadow);
+	transition: .35s ease;
+	position: relative;
 
-  &:hover {
-    border-color: rgba(228, 0, 43, .35);
-    transform: translateY(-8px);
-  }
+	&:hover {
+		border-color: rgba(228, 0, 43, .35);
+	}
 
-  h3 {
-    margin-bottom: 10px;
-	font-size: clamp(1.6rem, 2vw, 2.25rem);
-  }
+	h3 {
+		margin-bottom: 10px;
+		font-size: clamp(1.6rem, 2vw, 2.25rem);
+	}
 
-  p {
-    color: var(--muted);
-    line-height: 1.7;
-  }
+	p {
+		color: var(--muted);
+		line-height: 1.7;
+	}
 }
 
 .price {
-  display: block;
-  margin: 12px 0;
-  color: var(--primary);
-  font-size: 1.55rem;
-  font-weight: 800;
+	display: block;
+	margin: 12px 0;
+	color: var(--primary);
+	font-size: 1.55rem;
+	font-weight: 800;
 }
 
 /*==================================================
@@ -205,35 +205,35 @@ PLAN FEATURES
 ==================================================*/
 
 .feature-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 20px;
-  padding: 0;
-  color: var(--muted);
-  list-style: none;
+	display: grid;
+	gap: 12px;
+	margin-top: 20px;
+	padding: 0;
+	color: var(--muted);
+	list-style: none;
 
-  li {
-    position: relative;
-    padding-left: 34px;
-    line-height: 1.6;
+	li {
+		position: relative;
+		padding-left: 34px;
+		line-height: 1.6;
 
-    &::before {
-      position: absolute;
-      top: 2px;
-      left: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      color: var(--primary);
-      font-size: .85rem;
-      font-weight: 700;
-      content: "✓";
-      background: rgba(228, 0, 43, .12);
-      border-radius: 50%;
-    }
-  }
+		&::before {
+			position: absolute;
+			top: 2px;
+			left: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 22px;
+			height: 22px;
+			color: var(--primary);
+			font-size: .85rem;
+			font-weight: 700;
+			content: "✓";
+			background: rgba(228, 0, 43, .12);
+			border-radius: 50%;
+		}
+	}
 }
 
 /*==================================================
@@ -241,76 +241,86 @@ BOOKING
 ==================================================*/
 
 .booking-shell {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 24px;
-  align-items: start;
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: 24px;
+	align-items: start;
 }
 
 .booking-sidebar {
-  position: sticky;
-  top: 110px;
+	position: sticky;
+	top: 110px;
 }
 
 /* ...continue the remaining booking styles here... */
+
+.booking-page { padding: 120px 0 80px; }
+.booking-body { padding: 40px; }
+.thanks-box { background: #f7fff9; border: 1px solid #ccefd0; border-radius: 18px; padding: 24px; margin-top: 20px; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px; }
 
 /*==================================================
 RESPONSIVE
 ==================================================*/
 
 @media (max-width: 1270px) {
-  .section-hero {
-    background: linear-gradient(135deg, rgba(228, 0, 43, .08), rgba(255, 255, 255, .95)) !important;
-  }
+	.section-hero {
+		background: linear-gradient(135deg, rgba(228, 0, 43, .08), rgba(255, 255, 255, .95)) !important;
+	}
 }
 
 @media (max-width: 1100px) {
-  .plans-grid,
-  .details-grid,
-  .faq-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
 
-  .booking-shell {
-    grid-template-columns: 1fr;
-  }
+	.plans-grid,
+	.details-grid,
+	.faq-grid {
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	}
 
-  .booking-sidebar {
-    position: static;
-  }
+	.booking-shell {
+		grid-template-columns: 1fr;
+	}
+
+	.booking-sidebar {
+		position: static;
+	}
 }
 
 @media (max-width: 700px) {
-  .page-hero {
-    padding-top: 110px;
-  }
+	.page-hero {
+		padding-top: 110px;
+	}
 
-  .section-block {
-    padding: 60px 0;
+	.section-block {
+		padding: 60px 0;
 
-    > .section-intro {
-      margin-bottom: 40px;
-    }
-  }
+		>.section-intro {
+			margin-bottom: 40px;
+		}
+	}
 
-  .category-block {
-    padding: 25px;
-  }
+	.category-block {
+		padding: 25px;
+	}
 
-  .section-hero {
-    padding: 28px;
-    border-radius: 20px;
-  }
+	.section-hero {
+		padding: 28px;
+		border-radius: 20px;
+	}
 
-  .plans-grid,
-  .details-grid,
-  .faq-grid,
-  .choice-grid,
-  .upload-grid,
-  .field-grid,
-  .contact-methods {
-    grid-template-columns: 1fr;
-  }
+	.plans-grid,
+	.details-grid,
+	.faq-grid,
+	.choice-grid,
+	.upload-grid,
+	.field-grid,
+	.contact-methods {
+		grid-template-columns: 1fr;
+	}
+
+	.detail-grid { grid-template-columns: 1fr; }
+	.booking-body { padding: 24px; }
 }
 
 
@@ -318,80 +328,78 @@ RESPONSIVE
 /* Main benefits container */
 
 .card-grid-2 {
-  max-width: 1180px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 30px 28px;
-  background:
-    linear-gradient(
-      135deg,
-      rgba(228, 0, 43, 0.035),
-      rgba(255, 255, 255, 0.95)
-    );
-  border-radius: 20px;
-  border: 1px solid rgba(228, 0, 43, 0.04);
+	max-width: 1180px;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 10px;
+	padding: 30px 28px;
+	background:
+		linear-gradient(135deg,
+			rgba(228, 0, 43, 0.035),
+			rgba(255, 255, 255, 0.95));
+	border-radius: 20px;
+	border: 1px solid rgba(228, 0, 43, 0.04);
 }
 
 /* Individual benefit */
 
 .card-inline {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 10px 18px;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  transition: transform .3s ease;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 10px 18px;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	transition: transform .3s ease;
 }
 
 /* Hover */
 
 .card-inline:hover {
-  transform: translateY(-3px);
+	transform: translateY(-3px);
 }
 
 /* Icon */
 
 .benefit-icon {
-  width: 54px;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  border-radius: 50%;
-  background: rgba(228, 0, 43, 0.08);
-  color: var(--primary);
-  font-size: 21px;
-  font-weight: 700;
+	width: 54px;
+	height: 54px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 12px;
+	border-radius: 50%;
+	background: rgba(228, 0, 43, 0.08);
+	color: var(--primary);
+	font-size: 21px;
+	font-weight: 700;
 }
 
 /* Content */
 
 .benefit-content {
-  width: 100%;
+	width: 100%;
 }
 
 /* Heading */
 
 .card-inline h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
-  line-height: 1.35;
-  font-weight: 700;
-  color: var(--text);
+	margin: 0 0 8px;
+	font-size: 16px;
+	line-height: 1.35;
+	font-weight: 700;
+	color: var(--text);
 }
 
 /* Description */
 
 .card-inline p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--muted);
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.65;
+	color: var(--muted);
 }
 
 /* =========================================================
@@ -399,11 +407,11 @@ RESPONSIVE
 ========================================================= */
 
 @media (max-width: 900px) {
-  .card-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 25px 20px;
-  }
+	.card-grid-2 {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		padding: 25px 20px;
+	}
 }
 
 /* =========================================================
@@ -412,208 +420,208 @@ RESPONSIVE
 
 @media (max-width: 600px) {
 
-  .card-grid-2 {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 22px 18px;
-    border-radius: 16px;
-  }
+	.card-grid-2 {
+		grid-template-columns: 1fr;
+		gap: 20px;
+		padding: 22px 18px;
+		border-radius: 16px;
+	}
 
-  .card-inline {
-    padding: 8px 5px;
-  }
+	.card-inline {
+		padding: 8px 5px;
+	}
 
-  .benefit-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 10px;
-  }
+	.benefit-icon {
+		width: 48px;
+		height: 48px;
+		margin-bottom: 10px;
+	}
 
-  .card-inline h3 {
-    font-size: 16px;
-  }
+	.card-inline h3 {
+		font-size: 16px;
+	}
 
-  .card-inline p {
-    font-size: 13px;
-  }
+	.card-inline p {
+		font-size: 13px;
+	}
 }
 
 /* Learning Type / Course Selector */
 
 .instrument-cloud {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: fit-content;
-  max-width: 100%;
-  margin: 30px auto 0;
-  padding: 8px;
-  background: var(--primary);
-  border-radius: 50px;
-  box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: fit-content;
+	max-width: 100%;
+	margin: 30px auto 0;
+	padding: 8px;
+	background: var(--primary);
+	border-radius: 50px;
+	box-sizing: border-box;
 }
 
 /* Course links */
 
 .instrument-cloud a {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0 24px;
-  border-radius: 30px;
-  color: #ffffff;
-  background: transparent;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 46px;
+	padding: 0 24px;
+	border-radius: 30px;
+	color: #ffffff;
+	background: transparent;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	white-space: nowrap;
+	transition:
+		background-color 0.25s ease,
+		color 0.25s ease;
 }
 
 /* Hover */
 
 .instrument-cloud a:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
+	background: rgba(255, 255, 255, 0.14);
+	color: #ffffff;
 }
 
 /* Active / selected */
 
 .instrument-cloud a:first-child {
-  background: #ffffff;
-  color: var(--primary);
+	background: #ffffff;
+	color: var(--primary);
 }
 
 /* Tablet */
 
 @media (max-width: 900px) {
-  .instrument-cloud {
-    width: 100%;
-    max-width: 720px;
-    overflow-x: auto;
-    justify-content: flex-start;
-    scrollbar-width: none;
-  }
+	.instrument-cloud {
+		width: 100%;
+		max-width: 720px;
+		overflow-x: auto;
+		justify-content: flex-start;
+		scrollbar-width: none;
+	}
 
-  .instrument-cloud::-webkit-scrollbar {
-    display: none;
-  }
+	.instrument-cloud::-webkit-scrollbar {
+		display: none;
+	}
 
-  .instrument-cloud a {
-    flex: 0 0 auto;
-    padding: 0 20px;
-    font-size: 14px;
-  }
+	.instrument-cloud a {
+		flex: 0 0 auto;
+		padding: 0 20px;
+		font-size: 14px;
+	}
 }
 
 /* Mobile */
 
 @media (max-width: 600px) {
-  .instrument-cloud {
-    gap: 6px;
-    padding: 6px;
-    border-radius: 30px;
-  }
+	.instrument-cloud {
+		gap: 6px;
+		padding: 6px;
+		border-radius: 30px;
+	}
 
-  .instrument-cloud a {
-    min-height: 42px;
-    padding: 0 16px;
-    font-size: 13px;
-  }
+	.instrument-cloud a {
+		min-height: 42px;
+		padding: 0 16px;
+		font-size: 13px;
+	}
 
-  .instrument-cloud a:first-child::after {
-    bottom: -6px;
-    border-left-width: 6px;
-    border-right-width: 6px;
-    border-top-width: 6px;
-  }
+	.instrument-cloud a:first-child::after {
+		bottom: -6px;
+		border-left-width: 6px;
+		border-right-width: 6px;
+		border-top-width: 6px;
+	}
 }
 
 .instruments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-  padding: 18px;
-  background: #fff1f1;
-  border: 1px solid #f8d8d8;
-  border-radius: 16px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 20px;
+	padding: 18px;
+	background: #fff1f1;
+	border: 1px solid #f8d8d8;
+	border-radius: 16px;
 }
 
 /* Instrument item */
 
 .instruments span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 16px;
-  background: #ffffff;
-  border: 1px solid #f2d4d4;
-  border-radius: 30px;
-  color: #6b2c2c;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-  transition: all 0.25s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 9px 16px;
+	background: #ffffff;
+	border: 1px solid #f2d4d4;
+	border-radius: 30px;
+	color: #6b2c2c;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	white-space: nowrap;
+	transition: all 0.25s ease;
 }
 
 /* Hover */
 
 .instruments span:hover {
-  background: #fce1e1;
-  border-color: #e9bcbc;
-  color: #8f2525;
-  transform: translateY(-2px);
+	background: #fce1e1;
+	border-color: #e9bcbc;
+	color: #8f2525;
+	transform: translateY(-2px);
 }
 
 /* Tablet */
 
 @media (max-width: 768px) {
-  .instruments {
-    gap: 8px;
-    padding: 14px;
-  }
+	.instruments {
+		gap: 8px;
+		padding: 14px;
+	}
 
-  .instruments span {
-    padding: 8px 13px;
-    font-size: 13px;
-  }
+	.instruments span {
+		padding: 8px 13px;
+		font-size: 13px;
+	}
 }
 
 /* Mobile */
 
 @media (max-width: 480px) {
-  .instruments {
-    gap: 7px;
-    padding: 12px;
-    border-radius: 12px;
-  }
+	.instruments {
+		gap: 7px;
+		padding: 12px;
+		border-radius: 12px;
+	}
 
-  .instruments span {
-    padding: 8px 11px;
-    font-size: 12px;
-  }
+	.instruments span {
+		padding: 8px 11px;
+		font-size: 12px;
+	}
 }
 
 .card .read-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 18px;
-    color: #e50914;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: auto;
+	padding-top: 18px;
+	color: #e50914;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.3s ease;
 }
 
 .card .read-more span {
-    transition: transform 0.3s ease;
+	transition: transform 0.3s ease;
 }

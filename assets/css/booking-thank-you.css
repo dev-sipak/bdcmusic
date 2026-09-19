@@ -1,7 +1,0 @@
-.booking-page { padding: 120px 0 80px; }
-.booking-shell { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); overflow: hidden; }
-.booking-body { padding: 40px; }
-.thanks-box { background: #f7fff9; border: 1px solid #ccefd0; border-radius: 18px; padding: 24px; margin-top: 20px; }
-.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
-.detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px; }
-@media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } .booking-body { padding: 24px; } }

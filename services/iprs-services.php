@@ -49,7 +49,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['iprs_submit'] ) ) {
         require_once __DIR__ . '/../includes/helpers.php';
         require_once __DIR__ . '/../includes/file-upload.php';
 
-        $bookingId = 'IPRS-' . time();
+        $bookingId = generate_booking_id();
         $uploadDir = get_upload_dir( 'iprs', $bookingId );
         $storedFiles = [];
 

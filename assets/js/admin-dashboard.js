@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     var orders = adminDashboardConfig.orders;
+    var allFiles = adminDashboardConfig.files || [];
     var basePath = adminDashboardConfig.basePath;
 
     initTabNav('.adm-nav-btn[data-tab]', '.adm-tab', 'adm-tab-', '.adm-sidebar', '#admin-menu-toggle');
@@ -8,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ----- Overview Stats ----- */
     function updateOverviewStats() {
         var total      = orders.length;
-        var pending    = orders.filter(function (o) { return o.status === 'Pending'; }).length;
-        var processing = orders.filter(function (o) { return o.status === 'Processing'; }).length;
-        var delivered  = orders.filter(function (o) { return o.status === 'Delivered'; }).length;
+        var pending    = orders.filter(function (o) { return o.status === 'pending'; }).length;
+        var processing = orders.filter(function (o) { return o.status === 'processing'; }).length;
+        var delivered  = orders.filter(function (o) { return o.status === 'delivered'; }).length;
         var customers  = {};
         orders.forEach(function (o) { customers[o.email] = true; });
 
@@ -65,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.customer + '</td>' +
                 '<td>' + o.service + '</td>' +
-                '<td>' + o.item + '</td>' +
                 '<td>' + o.date + '</td>' +
                 '<td>' + o.amount + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
@@ -140,25 +140,25 @@ document.addEventListener('DOMContentLoaded', function () {
         var filesContainer = document.getElementById('modal-files-list');
         var filesSection   = document.getElementById('modal-files-section');
         if (filesContainer && filesSection) {
-            var files = order.files || [];
-            if (files.length === 0) {
+            var orderFiles = allFiles.filter(function (f) { return f.booking_id === order.id; });
+            if (orderFiles.length === 0) {
                 filesSection.classList.add('d-none');
             } else {
                 filesSection.classList.remove('d-none');
-                filesContainer.innerHTML = files.map(function (f) {
-                    var sizeKB = (f.size / 1024).toFixed(1);
-                    var sizeMB = (f.size / (1024 * 1024)).toFixed(1);
-                    var sizeStr = f.size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
+                filesContainer.innerHTML = orderFiles.map(function (f) {
+                    var sizeKB = (f.file_size / 1024).toFixed(1);
+                    var sizeMB = (f.file_size / (1024 * 1024)).toFixed(1);
+                    var sizeStr = f.file_size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
                     var icon = 'fa-file';
-                    if (f.type && f.type.indexOf('audio') !== -1) icon = 'fa-file-audio';
-                    else if (f.type && f.type.indexOf('video') !== -1) icon = 'fa-file-video';
-                    else if (f.type && f.type.indexOf('image') !== -1) icon = 'fa-file-image';
-                    else if (f.type && f.type.indexOf('pdf') !== -1) icon = 'fa-file-pdf';
+                    if (f.mime_type && f.mime_type.indexOf('audio') !== -1) icon = 'fa-file-audio';
+                    else if (f.mime_type && f.mime_type.indexOf('video') !== -1) icon = 'fa-file-video';
+                    else if (f.mime_type && f.mime_type.indexOf('image') !== -1) icon = 'fa-file-image';
+                    else if (f.mime_type && f.mime_type.indexOf('pdf') !== -1) icon = 'fa-file-pdf';
                     return '<div class="modal-file-item">' +
-                        '<i class="fa-solid ' + icon + '"></i>' +
-                        '<span class="modal-file-name">' + f.name + '</span>' +
+                        '<i class="fa-solid ' + icon + ' modal-file-icon"></i>' +
+                        '<span class="modal-file-name">' + f.original_name + '</span>' +
                         '<span class="modal-file-size">' + sizeStr + '</span>' +
-                        '<a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(f.path) + '" class="modal-file-download" target="_blank"><i class="fa-solid fa-download"></i></a>' +
+                        '<a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(f.file_path) + '" class="modal-file-download" target="_blank"><i class="fa-solid fa-download"></i></a>' +
                     '</div>';
                 }).join('');
             }

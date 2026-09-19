@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var courseSelect = form.querySelector("[data-selected-course]");
     var planSelect = form.querySelector("[data-selected-plan]");
+    var courseCol = form.querySelector("[data-course-col]");
+    var packageCol = form.querySelector("[data-package-col]");
     var modeInput = form.querySelector("[data-course-mode]");
     var modeRadios = form.querySelectorAll('input[name="class_mode_selection"]');
 
@@ -25,6 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
             planSelect.disabled = true;
 
             if (!course || !coursePlans[course]) {
+                if (courseCol) {
+                    courseCol.classList.remove("col-6");
+                    courseCol.classList.add("col-12");
+                }
+                if (packageCol) {
+                    packageCol.classList.add("d-none");
+                }
                 return;
             }
 
@@ -36,6 +45,14 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             planSelect.disabled = false;
+
+            if (courseCol) {
+                courseCol.classList.remove("col-12");
+                courseCol.classList.add("col-6");
+            }
+            if (packageCol) {
+                packageCol.classList.remove("d-none");
+            }
         });
     }
 

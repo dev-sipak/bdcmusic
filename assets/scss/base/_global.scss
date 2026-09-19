@@ -3,32 +3,46 @@ GLOBAL
 ==================================================*/
 
 .section-heading {
-  text-align: center;
-  margin-bottom: 70px;
+	text-align: center;
+	margin-bottom: 70px;
 }
 
 .heading-tag {
-  font-family: $font-body;
-  font-weight: $font-weight-medium;
-  text-transform: uppercase;
-  color: var(--primary);
-  font-size: 0.85rem;
-  letter-spacing: 1.4px;
+	font-family: $font-body;
+	font-weight: $font-weight-medium;
+	text-transform: uppercase;
+	color: var(--primary);
+	font-size: 0.85rem;
+	letter-spacing: 1.4px;
+}
+
+.most-popular {
+	font-family: $font-body;
+	font-weight: $font-weight-medium;
+	text-transform: uppercase;
+	color: var(--secondary);
+	font-size: 0.65rem;
+	letter-spacing: 1.4px;
+	position: absolute;
+	top: -15px;
+	background: var(--primary);
+	padding: 5px 15px;
+	border-radius: 30px;
 }
 
 .section-heading h2 {
-  margin-top: 18px;
-  font-size: clamp(2.2rem, 4vw, 4rem);
-  line-height: 1.1;
-  font-weight: 800;
-  max-width: 980px;
-  margin: 0 auto;
+	margin-top: 18px;
+	font-size: clamp(2.2rem, 4vw, 4rem);
+	line-height: 1.1;
+	font-weight: 800;
+	max-width: 980px;
+	margin: 0 auto;
 }
 
 .section-heading p {
-  padding-top: 10px;
+	padding-top: 10px;
 	margin: 0 auto;
-max-width: 640px;
+	max-width: 640px;
 }
 
 /*==================================================
@@ -36,20 +50,20 @@ SCROLLBAR
 ==================================================*/
 
 ::-webkit-scrollbar {
-  width: 12px;
+	width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F3F4F6;
+	background: #F3F4F6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 50px;
+	background: var(--primary);
+	border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fd0d39;
+	background: #fd0d39;
 }
 
 /*==================================================
@@ -57,8 +71,8 @@ TEXT SELECTION
 ==================================================*/
 
 ::selection {
-  background: var(--primary);
-  color: var(--text);
+	background: var(--primary);
+	color: var(--text);
 }
 
 /*=========================================================
@@ -68,25 +82,25 @@ PERFORMANCE HINTS
 .about-images img,
 .gallery-item img,
 .blog-grid img {
-  will-change: transform, clip-path;
+	will-change: transform, clip-path;
 }
 
 .card,
 .blog-grid article,
 .counter-grid>div {
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+	will-change: transform, opacity;
 }
 
 .split-line {
-  display: block;
-  overflow: hidden;
+	display: block;
+	overflow: hidden;
 }
 
 .split-word {
-  display: inline-block;
-  will-change: transform, opacity;
+	display: inline-block;
+	will-change: transform, opacity;
 }
 
 /*==================================================
@@ -94,19 +108,19 @@ PAGE LOAD ANIMATIONS
 ==================================================*/
 
 .hero-content {
-  animation: fadeLeft .9s ease forwards;
+	animation: fadeLeft .9s ease forwards;
 }
 
 .hero-image {
-  animation: fadeRight .9s ease forwards;
+	animation: fadeRight .9s ease forwards;
 }
 
 .about-images {
-  animation: fadeLeft .9s ease;
+	animation: fadeLeft .9s ease;
 }
 
 .about-content {
-  animation: fadeRight .9s ease;
+	animation: fadeRight .9s ease;
 }
 
 /*==================================================
@@ -120,29 +134,29 @@ SECTION REVEAL ANIMATIONS
 .counter-grid>div,
 .gallery-grid img,
 .feature {
-  animation: fadeUp .8s ease both;
+	animation: fadeUp .8s ease both;
 }
 
 .card:nth-child(2),
 .person-card:nth-child(2),
 .blog-grid article:nth-child(2) {
-  animation-delay: .15s;
+	animation-delay: .15s;
 }
 
 .card:nth-child(3),
 .person-card:nth-child(3),
 .blog-grid article:nth-child(3) {
-  animation-delay: .3s;
+	animation-delay: .3s;
 }
 
 .card:nth-child(4) {
-  animation-delay: .45s;
+	animation-delay: .45s;
 }
 
 .card:nth-child(5) {
-  animation-delay: .6s;
+	animation-delay: .6s;
 }
 
 .card:nth-child(6) {
-  animation-delay: .75s;
+	animation-delay: .75s;
 }

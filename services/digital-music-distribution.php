@@ -52,7 +52,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['music_distribution_
         require_once __DIR__ . '/../includes/helpers.php';
         require_once __DIR__ . '/../includes/file-upload.php';
 
-        $bookingId = 'DIST-' . time();
+        $bookingId = generate_booking_id();
         $uploadDir = get_upload_dir( 'digital-distribution', $bookingId );
         $storedFiles = [];
 

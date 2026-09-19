@@ -98,6 +98,12 @@ function verify_csrf_token( $token ) {
     return isset( $_SESSION['csrf_token'] ) && hash_equals( $_SESSION['csrf_token'], $token );
 }
 
+// ─── Booking ID Generator ─────────────────────
+
+function generate_booking_id() {
+    return 'BDCM-' . strtoupper( bin2hex( random_bytes( 3 ) ) );
+}
+
 // ─── URL Helpers ────────────────────────────────
 
 function url( $path = '' ) {

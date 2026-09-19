@@ -9,9 +9,9 @@ include_once '../header.php';
 $courses = [
     'Singing'         => [
         'Basic'      => 'Rs.2,999',
-        'Standard'   => 'Rs.5,999',
-        'Premium'    => 'Rs.9,999',
-        'Enterprise' => 'Rs.19,999',
+        'Standard'   => 'Rs.8,999',
+        'Premium'    => 'Rs.17,999',
+        'Enterprise' => 'Rs.32,999',
     ],
     'Music Production' => [
         'Basic'      => 'Rs.3,999',
@@ -436,7 +436,7 @@ $instruments = [
 
                                     <?php if ( $isRecommended ) : ?>
 
-                                        <span class="heading-tag">
+                                        <span class="most-popular">
                                             MOST POPULAR
                                         </span>
 
@@ -587,7 +587,7 @@ $instruments = [
                     </div>
 
                     <!-- COURSE -->
-                    <div class="col-6">
+                    <div class="col-12" data-course-col>
 
                         <div class="form-field">
 
@@ -623,7 +623,7 @@ $instruments = [
                     </div>
 
                     <!-- PACKAGE -->
-                    <div class="col-6">
+                    <div class="col-6 d-none" data-package-col>
 
                         <div class="form-field">
 

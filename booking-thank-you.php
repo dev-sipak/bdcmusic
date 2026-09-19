@@ -25,8 +25,6 @@ if ( ! $booking ) {
 }
 ?>
 
-<link rel="stylesheet" href="assets/css/booking-thank-you.css">
-
 <main class="booking-page">
     <div class="container">
         <div class="booking-shell">
