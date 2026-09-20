@@ -21,6 +21,8 @@ $userUploads = array();
 $userPhone   = '';
 $userSince   = '';
 $userPic     = '';
+$hasDistribution = false;
+$userReleases    = array();
 try {
     $pdo    = db_connect();
     $stmt   = $pdo->prepare( 'SELECT b.booking_id AS id, s.name AS service, s.name AS item, b.status, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date, b.price AS amount FROM bookings b JOIN services s ON b.service_id = s.id WHERE b.customer_id = :cid ORDER BY b.created_at DESC' );
@@ -38,6 +40,26 @@ try {
         $userPhone = $uRow['mobile'] ?? '';
         $userSince = $uRow['member_since'] ?? '';
         $userPic   = $uRow['profile_picture'] ?? '';
+    }
+
+    $dStmt = $pdo->prepare( 'SELECT COUNT(*) FROM bookings WHERE customer_id = :cid AND service_id = 4 AND status IN ("processing","delivered")' );
+    $dStmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
+    $hasDistribution = (int) $dStmt->fetchColumn() > 0;
+
+    if ( $hasDistribution ) {
+        $rStmt = $pdo->prepare( 'SELECT r.id, r.title, r.type, r.artwork_path, r.isrc, r.upc, DATE_FORMAT(r.go_live_date, "%Y-%m-%d") AS go_live_date, r.status, r.dolby, r.apple_itunes, DATE_FORMAT(r.created_at, "%Y-%m-%d") AS created_at FROM releases r WHERE r.customer_id = :cid ORDER BY r.created_at DESC' );
+        $rStmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
+        $userReleases = $rStmt->fetchAll();
+
+        foreach ( $userReleases as &$r ) {
+            $astmt = $pdo->prepare( 'SELECT role, name FROM release_artists WHERE release_id = :rid' );
+            $astmt->execute( [ ':rid' => $r['id'] ] );
+            $r['artists'] = $astmt->fetchAll();
+
+            $hstmt = $pdo->prepare( 'SELECT action, message, DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") AS created_at FROM release_history WHERE release_id = :rid ORDER BY created_at DESC' );
+            $hstmt->execute( [ ':rid' => $r['id'] ] );
+            $r['history'] = $hstmt->fetchAll();
+        }
     }
 } catch ( Exception $e ) {
     $userOrders  = array();
@@ -73,12 +95,15 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                     <button class="panel-nav-btn" data-tab="history">
                         <i class="fa-solid fa-clock-rotate-left"></i> Order History
                     </button>
-                    <button class="panel-nav-btn" data-tab="tracking">
-                        <i class="fa-solid fa-truck"></i> Order Tracking
-                    </button>
+
                     <button class="panel-nav-btn" data-tab="details">
                         <i class="fa-solid fa-file-invoice"></i> Order Details
                     </button>
+                    <?php if ( $hasDistribution ) : ?>
+                    <button class="panel-nav-btn" data-tab="releases">
+                        <i class="fa-solid fa-compact-disc"></i> My Releases
+                    </button>
+                    <?php endif; ?>
                     <button class="panel-nav-btn panel-nav-logout" id="logout-btn">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </button>
@@ -188,7 +213,7 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                             <option value="all">All Statuses</option>
                             <option value="Pending">Pending</option>
                             <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
+                            <option value="Hold">Hold</option>
                             <option value="Delivered">Delivered</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>
@@ -263,14 +288,7 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                     </div>
                 </div>
 
-                <!-- ORDER TRACKING TAB -->
-                <div class="panel-tab" id="tab-tracking">
-                    <div class="panel-tab-header">
-                        <h2>Order Tracking</h2>
-                        <p>Track the progress of your current orders in real time.</p>
-                    </div>
-                    <div class="tracking-list" id="tracking-list"></div>
-                </div>
+
 
                 <!-- ORDER DETAILS TAB -->
                 <div class="panel-tab" id="tab-details">
@@ -306,6 +324,105 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                     </div>
                 </div>
 
+                <!-- RELEASES TAB -->
+                <?php if ( $hasDistribution ) : ?>
+                <div class="panel-tab" id="tab-releases">
+                    <div id="releases-list-panel">
+                        <div class="panel-tab-header">
+                            <h2>My Releases</h2>
+                            <p>Manage your digital music releases.</p>
+                        </div>
+                        <div class="panel-filter-bar">
+                            <button type="button" class="release-tab-btn active" data-status="all">All</button>
+                            <button type="button" class="release-tab-btn" data-status="draft">Draft</button>
+                            <button type="button" class="release-tab-btn" data-status="pending">Pending</button>
+                            <button type="button" class="release-tab-btn" data-status="live">Live</button>
+                            <button type="button" class="release-tab-btn" data-status="rejected">Rejected</button>
+                        </div>
+                        <div class="panel-table-wrap">
+                            <table class="panel-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>ISRC</th>
+                                        <th>Go Live</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="releases-tbody"></tbody>
+                            </table>
+                        </div>
+                        <p class="panel-empty d-none" id="releases-empty">No releases found.</p>
+                    </div>
+
+                    <div class="panel-tab d-none" id="release-detail-panel">
+                        <div class="panel-tab-header">
+                            <h2>Release Details</h2>
+                            <p><button type="button" class="btn" id="back-to-releases" style="font-size:0.82rem;padding:4px 10px;"><i class="fa-solid fa-arrow-left"></i> Back</button></p>
+                        </div>
+                        <div class="panel-profile-card">
+                            <div class="detail-grid">
+                                <div class="detail-item"><span class="panel-label">Title</span><span class="panel-value" id="rel-detail-title"></span></div>
+                                <div class="detail-item"><span class="panel-label">Type</span><span class="panel-value" id="rel-detail-type"></span></div>
+                                <div class="detail-item"><span class="panel-label">ISRC</span><span class="panel-value" id="rel-detail-isrc"></span></div>
+                                <div class="detail-item"><span class="panel-label">UPC</span><span class="panel-value" id="rel-detail-upc"></span></div>
+                                <div class="detail-item"><span class="panel-label">Go Live Date</span><span class="panel-value" id="rel-detail-golive"></span></div>
+                                <div class="detail-item"><span class="panel-label">Status</span><span id="rel-detail-status"></span></div>
+                            </div>
+                            <div style="margin-top:16px;"><span class="panel-label">Artists</span><div id="rel-detail-artists" style="margin-top:6px;"></div></div>
+                            <div style="margin-top:16px;"><span class="panel-label">Lyrics</span><pre id="rel-detail-lyrics" style="white-space:pre-wrap;font-size:0.85rem;background:var(--secondary);padding:12px;border-radius:8px;margin-top:6px;max-height:200px;overflow-y:auto;"></pre></div>
+                            <div style="margin-top:16px;"><span class="panel-label">History</span><div id="rel-detail-history" style="margin-top:6px;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CREATE RELEASE FORM -->
+                <div class="panel-tab" id="tab-create-release" style="display:none;">
+                    <div class="panel-tab-header">
+                        <h2>Create New Release</h2>
+                        <p>Submit a new music release for distribution.</p>
+                    </div>
+                    <form id="create-release-form" class="panel-profile-details" novalidate>
+                        <div class="panel-detail-row">
+                            <label class="panel-label" for="rel-title">Title <span style="color:red;">*</span></label>
+                            <input type="text" id="rel-title" class="panel-input" required>
+                        </div>
+                        <div class="panel-detail-row">
+                            <label class="panel-label" for="rel-type">Type</label>
+                            <select id="rel-type" class="panel-input">
+                                <option value="single">Single</option>
+                                <option value="ep">EP</option>
+                                <option value="album">Album</option>
+                            </select>
+                        </div>
+                        <div class="panel-detail-row">
+                            <label class="panel-label" for="rel-isrc">ISRC</label>
+                            <input type="text" id="rel-isrc" class="panel-input" placeholder="Auto-assigned if blank">
+                        </div>
+                        <div class="panel-detail-row">
+                            <label class="panel-label" for="rel-golive">Go Live Date</label>
+                            <input type="date" id="rel-golive" class="panel-input">
+                        </div>
+                        <div class="panel-detail-row">
+                            <label class="panel-label" for="rel-lyrics">Lyrics</label>
+                            <textarea id="rel-lyrics" class="panel-input" rows="4"></textarea>
+                        </div>
+                        <div class="panel-detail-row" style="flex-direction:row;gap:20px;">
+                            <label class="policy-check"><input type="checkbox" id="rel-dolby"> Dolby Atmos</label>
+                            <label class="policy-check"><input type="checkbox" id="rel-apple"> Apple iTunes</label>
+                        </div>
+                        <div class="panel-detail-row">
+                            <label class="panel-label">Artist Credits</label>
+                            <div id="release-artists-container"></div>
+                            <button type="button" class="btn" id="add-artist-row" style="font-size:0.82rem;padding:6px 12px;margin-top:8px;"><i class="fa-solid fa-plus"></i> Add Artist</button>
+                        </div>
+                        <button type="submit" class="btn panel-edit-btn" style="margin-top:16px;">Save Release</button>
+                    </form>
+                </div>
+                <?php endif; ?>
+
             </main>
         </div>
     </div>
@@ -319,10 +436,20 @@ var customerDashboardConfig = {
     updateProfileUrl: '<?php echo $basePath; ?>includes/update-profile',
     changePasswordUrl: '<?php echo $basePath; ?>includes/change-password',
     uploadProfilePicUrl: '<?php echo $basePath; ?>includes/upload-profile-pic',
-    userPicUrl: '<?php echo htmlspecialchars( $userPicUrl ); ?>'
+    userPicUrl: '<?php echo htmlspecialchars( $userPicUrl ); ?>',
+    hasDistribution: <?php echo $hasDistribution ? 'true' : 'false'; ?>
+};
+</script>
+<script>
+var customerReleasesConfig = {
+    releases: <?php echo json_encode( $userReleases ); ?>,
+    basePath: '<?php echo $basePath; ?>'
 };
 </script>
 <script src="<?php echo $assetPath; ?>js/shared.js"></script>
 <script src="<?php echo $assetPath; ?>js/customer-dashboard.js"></script>
+<?php if ( $hasDistribution ) : ?>
+<script src="<?php echo $assetPath; ?>js/customer-releases.js"></script>
+<?php endif; ?>
 
 <?php include_once __DIR__ . '/../footer.php'; ?>

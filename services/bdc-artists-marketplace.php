@@ -336,26 +336,33 @@ include_once '../header.php';
                                     <label>Category <span class="required-star">*</span></label>
                                     <select name="category" required>
                                         <option value="">Select Category</option>
-                                        <option value="singer">Singer</option>
-                                        <option value="music-producer">Music Producer</option>
-                                        <option value="lyricist">Lyricist</option>
-                                        <option value="composer">Composer</option>
-                                        <option value="instrumentalist">Instrumentalist</option>
-                                        <option value="dj">DJ</option>
-                                        <option value="mixing-mastering-engineer">Mixing &amp; Mastering Engineer</option>
-                                        <option value="video-editor">Video Editor</option>
-                                        <option value="videographer">Videographer</option>
-                                        <option value="photographer">Photographer</option>
-                                        <option value="graphic-designer">Graphic Designer</option>
-                                        <option value="actor-model">Actor / Model</option>
-                                        <option value="dancer-choreographer">Dancer / Choreographer</option>
-                                        <option value="voice-over-artist">Voice Over Artist</option>
-                                        <option value="podcast-editor">Podcast Editor</option>
-                                        <option value="social-media-manager">Social Media Manager</option>
-                                        <option value="digital-marketing-expert">Digital Marketing Expert</option>
-                                        <option value="music-video-director">Music Video Director</option>
-                                        <option value="live-band-artist">Live Band Artist</option>
-                                        <option value="session-musician">Session Musician</option>
+                                        <?php
+                                        $marketCats = [
+                                            'singer' => 'Singer',
+                                            'music-producer' => 'Music Producer',
+                                            'lyricist' => 'Lyricist',
+                                            'composer' => 'Composer',
+                                            'instrumentalist' => 'Instrumentalist',
+                                            'dj' => 'DJ',
+                                            'mixing-mastering-engineer' => 'Mixing & Mastering Engineer',
+                                            'video-editor' => 'Video Editor',
+                                            'videographer' => 'Videographer',
+                                            'photographer' => 'Photographer',
+                                            'graphic-designer' => 'Graphic Designer',
+                                            'actor-model' => 'Actor / Model',
+                                            'dancer-choreographer' => 'Dancer / Choreographer',
+                                            'voice-over-artist' => 'Voice Over Artist',
+                                            'podcast-editor' => 'Podcast Editor',
+                                            'social-media-manager' => 'Social Media Manager',
+                                            'digital-marketing-expert' => 'Digital Marketing Expert',
+                                            'music-video-director' => 'Music Video Director',
+                                            'live-band-artist' => 'Live Band Artist',
+                                            'session-musician' => 'Session Musician',
+                                        ];
+                                        uasort( $marketCats, 'strcasecmp' );
+                                        foreach ( $marketCats as $val => $label ) : ?>
+                                            <option value="<?php echo htmlspecialchars( $val ); ?>"><?php echo htmlspecialchars( $label ); ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>

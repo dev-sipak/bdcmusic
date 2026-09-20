@@ -3,6 +3,7 @@ if ( session_status() === PHP_SESSION_NONE ) {
     session_start();
 }
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/database.php';
 
 $pageTitle       = isset( $pageTitle ) ? $pageTitle : 'BDC Music Studio';
 $metaDescription = isset( $metaDescription ) ? $metaDescription : 'Professional Recording Studio';
@@ -76,6 +77,30 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
                         <li><a href="<?php echo $basePath; ?>services/iprs-services/">IPRS Services</a></li>
                     </ul>
                 </li>
+                <li class="nav-item has-dropdown">
+                    <button class="nav-link dropdown-toggle <?php echo $isArtistsPage ? 'active' : ''; ?>"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="artists-dropdown">
+                        Artists
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <ul class="dropdown-menu" id="artists-dropdown">
+                        <li><a href="<?php echo $basePath; ?>artists/">All Artists</a></li>
+                        <?php
+                        $artistCats = [];
+                        try {
+                            $apdo   = db_connect();
+                            $acStmt = $apdo->query( 'SELECT name, slug FROM artist_categories WHERE is_active = 1 ORDER BY sort_order' );
+                            $artistCats = $acStmt->fetchAll();
+                        } catch ( Exception $e ) {
+                            $artistCats = [];
+                        }
+                        foreach ( $artistCats as $ac ) : ?>
+                            <li><a href="<?php echo $basePath; ?>artists/<?php echo htmlspecialchars( $ac['slug'] ); ?>/"><?php echo htmlspecialchars( $ac['name'] ); ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
                 <li>
                     <a href="<?php echo $basePath; ?>contact"
                        class="<?php echo ( $currentPage == 'contact' ) ? 'active' : ''; ?>">
@@ -88,7 +113,11 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
             <i class="fa-solid fa-bars"></i>
         </button>
         <?php if ( isset( $_SESSION['user_id'] ) ) : ?>
-            <a href="<?php echo $basePath; ?>includes/logout.php" class="btn">Logout</a>
+            <?php if ( isset( $_SESSION['user_role'] ) && $_SESSION['user_role'] === 'admin' ) : ?>
+                <a href="<?php echo $basePath; ?>bdc-admin/" class="btn">Admin Panel</a>
+            <?php else : ?>
+                <a href="<?php echo $basePath; ?>dashboard/customer-dashboard" class="btn">My Profile</a>
+            <?php endif; ?>
         <?php else : ?>
             <a href="<?php echo $basePath; ?>login" class="btn">Sign In</a>
         <?php endif; ?>

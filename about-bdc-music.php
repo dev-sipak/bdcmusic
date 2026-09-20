@@ -37,7 +37,7 @@ require_once __DIR__ . '/includes/config.php';
                         <i class="fa-solid fa-microphone"></i>
                         <div>
                             <h4>Recording</h4>
-                            <p>Professional Vocal Recording</p>
+                            <p>Professional Recording</p>
                         </div>
                     </div>
                     <div class="feature">

@@ -211,6 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         speed: 1200,
 
+        allowTouchMove: false,
+
         grabCursor: true,
 
         autoplay: {

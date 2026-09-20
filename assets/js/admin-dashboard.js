@@ -22,13 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('stat-customers').textContent   = Object.keys(customers).length;
 
         var recentTbody = document.getElementById('recent-orders-tbody');
-        var recent = orders.slice(0, 5);
+        var recent = orders.slice(0, 10);
         recentTbody.innerHTML = recent.map(function (o) {
             return '<tr>' +
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.customer + '</td>' +
+                '<td>' + (o.phone || 'N/A') + '</td>' +
                 '<td>' + o.service + '</td>' +
-                '<td>' + o.amount + '</td>' +
+                '<td>\u20B9' + o.amount + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
             '</tr>';
         }).join('');
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (statusVal !== 'all' && o.status !== statusVal) return false;
             if (serviceVal !== 'all' && o.service !== serviceVal) return false;
             if (searchVal) {
-                var haystack = (o.id + ' ' + o.customer + ' ' + o.email).toLowerCase();
+                var haystack = (o.id + ' ' + o.customer + ' ' + o.email + ' ' + o.phone).toLowerCase();
                 if (haystack.indexOf(searchVal) === -1) return false;
             }
             return true;
@@ -65,9 +66,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return '<tr>' +
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.customer + '</td>' +
+                '<td>' + (o.phone || 'N/A') + '</td>' +
                 '<td>' + o.service + '</td>' +
                 '<td>' + o.date + '</td>' +
-                '<td>' + o.amount + '</td>' +
+                '<td>\u20B9' + o.amount + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
                 '<td><button class="adm-view-btn" data-order-id="' + o.id + '"><i class="fa-solid fa-eye"></i></button></td>' +
             '</tr>';
@@ -92,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             customersData[o.email] = {
                 name:       o.customer,
                 email:      o.email,
+                phone:      o.phone || '',
                 totalOrders: 0,
                 totalSpent:  0,
                 lastOrder:   o.date
@@ -111,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return '<tr>' +
             '<td><strong>' + c.name + '</strong></td>' +
             '<td>' + c.email + '</td>' +
+            '<td>' + c.phone + '</td>' +
             '<td>' + c.totalOrders + '</td>' +
             '<td>₹' + c.totalSpent.toLocaleString() + '</td>' +
             '<td>' + c.lastOrder + '</td>' +
@@ -131,10 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('modal-order-id').textContent  = 'Order ' + order.id;
         document.getElementById('modal-customer').textContent  = order.customer;
         document.getElementById('modal-email').textContent     = order.email;
+        document.getElementById('modal-phone').textContent     = order.phone || 'N/A';
         document.getElementById('modal-service').textContent   = order.service;
         document.getElementById('modal-item').textContent      = order.item;
         document.getElementById('modal-date').textContent      = order.date;
-        document.getElementById('modal-amount').textContent    = order.amount;
+        document.getElementById('modal-amount').textContent    = '\u20B9' + order.amount;
         document.getElementById('modal-status-select').value   = order.status;
 
         var filesContainer = document.getElementById('modal-files-list');

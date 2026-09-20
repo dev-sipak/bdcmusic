@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var orders = customerDashboardConfig.orders;
     var uploads = customerDashboardConfig.uploads || [];
     var basePath = customerDashboardConfig.basePath;
-    var statusSteps = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+    var statusSteps = ['Pending', 'Processing', 'Hold', 'Delivered'];
 
     initTabNav('.panel-nav-btn[data-tab]', '.panel-tab', 'tab-', '.panel-sidebar', '#dash-menu-toggle');
 
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.service + '</td>' +
                 '<td>' + o.date + '</td>' +
-                '<td>' + o.amount + '</td>' +
+                '<td>\u20B9' + o.amount + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
             '</tr>';
         }).join('');
@@ -70,38 +70,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return historyRowHtml(o);
     }).join('');
 
-    /* ----- Order Tracking ----- */
-    var trackingList = document.getElementById('tracking-list');
-    var activeOrders = orders.filter(function (o) {
-        return o.status !== 'Delivered' && o.status !== 'Cancelled';
-    });
-
-    trackingList.innerHTML = activeOrders.map(function (o) {
-        var currentIdx = statusSteps.indexOf(o.status);
-        if (currentIdx === -1) currentIdx = 0;
-
-        var stepsHtml = statusSteps.map(function (step, i) {
-            var cls = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
-            return '<div class="tracking-step ' + cls + '">' +
-                '<div class="step-dot"><i class="fa-solid fa-check"></i></div>' +
-                '<span>' + step + '</span>' +
-            '</div>';
-        }).join('');
-
-        return '<div class="tracking-card">' +
-            '<div class="tracking-header">' +
-                '<strong>' + o.id + '</strong>' +
-                '<span>' + o.service + '</span>' +
-            '</div>' +
-            '<div class="tracking-progress">' + stepsHtml + '</div>' +
-            '<p class="tracking-item">' + o.amount + '</p>' +
-        '</div>';
-    }).join('');
-
-    if (activeOrders.length === 0) {
-        trackingList.innerHTML = '<p class="panel-empty">No active orders to track.</p>';
-    }
-
     /* ----- Order Details ----- */
     var detailSelect = document.getElementById('details-order-select');
     var detailView   = document.getElementById('order-detail-view');
@@ -130,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById('detail-service').textContent = order.service;
         document.getElementById('detail-date').textContent    = order.date;
-        document.getElementById('detail-amount').textContent  = order.amount;
+        document.getElementById('detail-amount').textContent  = '\u20B9' + order.amount;
 
         var timeline = document.getElementById('detail-timeline');
         var currentIdx = statusSteps.indexOf(order.status);
@@ -143,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<i class="fa-solid ' + icon + '"></i>' +
                 '<div>' +
                     '<strong>' + step + '</strong>' +
-                    '<span>' + (i <= currentIdx ? 'Completed' : 'Pending') + '</span>' +
                 '</div>' +
             '</div>';
         }).join('');

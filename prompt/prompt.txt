@@ -1,1 +1,6 @@
-on online offline classes by default hide choose package and choose course col-12 upon choose the course choose pacakage should dispaly then both will have col-6
+ Add reply/replied_at columns to artist_enquiries table in SQL
+[✓] Update enquiry-reply.php to store reply in DB
+[✓] Update enquiries-list.php to return reply data
+
+
+Fuck what are you doing only revert enquiries changes you made dont touch the rest you did in the session

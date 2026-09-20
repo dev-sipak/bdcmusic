@@ -1,6 +1,23 @@
 RewriteEngine On
+RewriteBase /bdcmusic/
+
+# Artist listing page: /bdcmusic/artists/ -> /bdcmusic/artists/index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^artists/?$ artists/index.php [L,QSA]
+
+# Artist category page: /bdcmusic/artists/singer/ -> /bdcmusic/artists/index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^artists/([a-z0-9-]+)/?$ artists/index.php [L,QSA]
+
+# Artist detail page: /bdcmusic/artists/singer/artist-name/ -> /bdcmusic/artists/detail.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^artists/([a-z0-9-]+)/([a-z0-9-]+)/?$ artists/detail.php [L,QSA]
 
 # Allow clean URLs (e.g. /login loads /login.php)
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.+?)/?$ $1.php [L]

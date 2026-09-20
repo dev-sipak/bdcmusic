@@ -235,8 +235,8 @@
                             <div class="person-card reveal">
                                 <img src="<?php echo $assetPath; ?>images/artist/rohit-tiwari.webp" alt="Rohit Tiwari" loading="lazy">
                                 <div class="person-content">
-                                    <span class="person-tag">Music Producer</span>
-                                    <h3>Rohit Tiwari</h3>
+                                    <a href="<?php echo $basePath; ?>artists/music-producer/" class="person-tag">Music Producer</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/music-producer/rohit-tiwari/">Rohit Tiwari</a></h3>
                                     <span class="location">Chhatarpur, Delhi</span>
                                 </div>
                             </div>
@@ -245,8 +245,8 @@
                             <div class="person-card reveal">
                                 <img src="<?php echo $assetPath; ?>images/artist/ayush-sachdeva.webp" alt="Ayush Sachdeva" loading="lazy">
                                 <div class="person-content">
-                                    <span class="person-tag">Reel Star</span>
-                                    <h3>Ayush Sachdeva</h3>
+                                    <a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/reels-stars/ayush-sachdeva/">Ayush Sachdeva</a></h3>
                                     <span class="location">Ghaziabad, India</span>
                                 </div>
                             </div>
@@ -255,8 +255,8 @@
                             <div class="person-card reveal">
                                 <img src="<?php echo $assetPath; ?>images/artist/alaap-gahlaut.webp" alt="Alaap Gahlaut" loading="lazy">
                                 <div class="person-content">
-                                    <span class="person-tag">Singer</span>
-                                    <h3>Alaap Gahlaut</h3>
+                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/singer/alaap-gahlaut/">Alaap Gahlaut</a></h3>
                                     <span class="location">New Delhi, India</span>
                                 </div>
                             </div>
@@ -265,8 +265,8 @@
                             <div class="person-card reveal">
                                 <img src="<?php echo $assetPath; ?>images/artist/nishaad.webp" alt="Nishaad" loading="lazy">
                                 <div class="person-content">
-                                    <span class="person-tag">Singer</span>
-                                    <h3>Nishaad</h3>
+                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/singer/nishaad/">Nishaad</a></h3>
                                     <span class="location">Haryana, India</span>
                                 </div>
                             </div>
@@ -275,8 +275,8 @@
                             <div class="person-card reveal">
                                 <img src="<?php echo $assetPath; ?>images/artist/sitara.webp" alt="Sitara" loading="lazy">
                                 <div class="person-content">
-                                    <span class="person-tag">Reel Star</span>
-                                    <h3>Sitara</h3>
+                                    <a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/reels-stars/sitara/">Sitara</a></h3>
                                     <span class="location">Noida, India</span>
                                 </div>
                             </div>
@@ -285,8 +285,8 @@
                             <div class="person-card">
                                 <img src="<?php echo $assetPath; ?>images/artist/gunjan-jha.webp" alt="Gunjan Jha">
                                 <div class="person-content">
-                                    <span class="person-tag">Singer</span>
-                                    <h3>Gunjan Jha</h3>
+                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/singer/gunjan-jha/">Gunjan Jha</a></h3>
                                     <span class="location">Delhi, India</span>
                                 </div>
                             </div>
@@ -295,8 +295,8 @@
                             <div class="person-card">
                                 <img src="<?php echo $assetPath; ?>images/artist/amit-sati.webp" alt="Amit Sati">
                                 <div class="person-content">
-                                    <span class="person-tag">Director</span>
-                                    <h3>Amit Sati</h3>
+                                    <a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/director/amit-sati/">Amit Sati</a></h3>
                                     <span class="location">Uttarakhand, India</span>
                                 </div>
                             </div>
@@ -305,8 +305,8 @@
                             <div class="person-card">
                                 <img src="<?php echo $assetPath; ?>images/artist/rajendra-rajawat.webp" alt="Rajendra Rajawat">
                                 <div class="person-content">
-                                    <span class="person-tag">Actor</span>
-                                    <h3>Rajendra Rajawat</h3>
+                                    <a href="<?php echo $basePath; ?>artists/actor/" class="person-tag">Actor</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/actor/rajendra-rajawat/">Rajendra Rajawat</a></h3>
                                     <span class="location">Delhi, India</span>
                                 </div>
                             </div>
@@ -315,8 +315,8 @@
                             <div class="person-card">
                                 <img src="<?php echo $assetPath; ?>images/artist/lalit-thakur.webp" alt="Lalit Thakur">
                                 <div class="person-content">
-                                    <span class="person-tag">Director</span>
-                                    <h3>Lalit Thakur</h3>
+                                    <a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/director/lalit-thakur/">Lalit Thakur</a></h3>
                                     <span class="location">Delhi, India</span>
                                 </div>
                             </div>
@@ -325,8 +325,8 @@
                             <div class="person-card">
                                 <img src="<?php echo $assetPath; ?>images/artist/vishal-kumar.webp" alt="Vishal Kumar">
                                 <div class="person-content">
-                                    <span class="person-tag">Guitarist</span>
-                                    <h3>Vishal Kumar</h3>
+                                    <a href="<?php echo $basePath; ?>artists/instrument-player/" class="person-tag">Guitarist</a>
+                                    <h3><a href="<?php echo $basePath; ?>artists/instrument-player/vishal-kumar/">Vishal Kumar</a></h3>
                                     <span class="location">Delhi, India</span>
                                 </div>
                             </div>

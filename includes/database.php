@@ -14,7 +14,9 @@ function db_connect() {
         $pass    = defined( 'DB_PASS' ) ? DB_PASS : '';
         $charset = defined( 'DB_CHARSET' ) ? DB_CHARSET : 'utf8mb4';
 
-        $dsn = 'mysql:host=' . $host . ';dbname=' . $name . ';charset=' . $charset;
+        $port    = defined( 'DB_PORT' ) ? DB_PORT : '3306';
+
+        $dsn = 'mysql:host=' . $host . ';port=' . $port . ';dbname=' . $name . ';charset=' . $charset;
         $pdo = new PDO( $dsn, $user, $pass, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

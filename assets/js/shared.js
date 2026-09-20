@@ -62,7 +62,7 @@ function orderRowHtml(o, showCustomer) {
     }
     html += '<td>' + o.service + '</td>' +
         '<td>' + o.date + '</td>' +
-        '<td>' + o.amount + '</td>' +
+        '<td>\u20B9' + o.amount + '</td>' +
         '<td>' + statusBadgeHtml(o.status) + '</td>' +
         '</tr>';
     return html;
@@ -78,7 +78,7 @@ function historyRowHtml(o) {
         '<td><strong>' + o.id + '</strong></td>' +
         '<td>' + o.service + '</td>' +
         '<td>' + o.date + '</td>' +
-        '<td>' + o.amount + '</td>' +
+        '<td>\u20B9' + o.amount + '</td>' +
         '<td>' + statusBadgeHtml(o.status) + '</td>' +
         '</tr>';
 }

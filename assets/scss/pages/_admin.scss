@@ -128,6 +128,13 @@ ADMIN MOBILE TOGGLE
     font-size: 0.9rem;
 }
 
+.adm-page .btn {
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    border-radius: 10px;
+    min-height: unset;
+}
+
 /*==================================================
 ADMIN MAIN
 ==================================================*/
@@ -189,14 +196,13 @@ STATS GRID
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     flex-shrink: 0;
+	background: transparent !important;
 }
 
 .stat-icon-total {
@@ -413,6 +419,9 @@ ADMIN MODAL
     position: relative;
     width: 90%;
     max-width: 560px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 20px;
@@ -431,6 +440,7 @@ ADMIN MODAL
     justify-content: space-between;
     padding: 24px 28px 16px;
     border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
 }
 
 .adm-modal-header h3 {
@@ -460,6 +470,25 @@ ADMIN MODAL
 
 .adm-modal-body {
     padding: 24px 28px 28px;
+    flex: 1;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 50px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #c20025;
+    }
 }
 
 .modal-detail-grid {

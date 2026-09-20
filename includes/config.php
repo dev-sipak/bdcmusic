@@ -58,4 +58,7 @@ $currentPage = trim( $currentPage, '/' );
 
 $isServicesPage = $currentPage === 'services'
     || strpos( $currentPage, 'services/' ) === 0;
+
+$isArtistsPage = $currentPage === 'artists'
+    || strpos( $currentPage, 'artists/' ) === 0;
 ?>

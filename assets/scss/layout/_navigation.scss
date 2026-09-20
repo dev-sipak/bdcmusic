@@ -112,6 +112,20 @@
   }
 }
 
+#artists-dropdown {
+  min-width: 420px;
+  columns: 2;
+  column-gap: 4px;
+
+  li {
+    break-inside: avoid;
+  }
+
+  a {
+    white-space: normal;
+  }
+}
+
 .has-dropdown {
   &:hover .dropdown-menu,
   &:focus-within .dropdown-menu,

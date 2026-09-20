@@ -70,7 +70,7 @@ define( 'SERVICES', [
 define( 'BOOKING_STATUSES', [
     'Pending',
     'Processing',
-    'Shipped',
+    'Hold',
     'Delivered',
     'Cancelled',
 ]);
@@ -128,4 +128,60 @@ function status_badge_html( $status ) {
     $class = 'panel-status-badge status-' . strtolower( htmlspecialchars( $status ) );
     return '<span class="' . $class . '">' . htmlspecialchars( $status ) . '</span>';
 }
-?>
+
+// --- Image Processing ---
+
+function imageResizeAndConvert( $sourcePath, $targetWidth = 250, $targetHeight = 360, $outputPath = '' ) {
+    $info = @getimagesize( $sourcePath );
+    if ( $info === false ) {
+        return false;
+    }
+
+    $mime = $info[ 'mime' ];
+    switch ( $mime ) {
+        case 'image/jpeg':
+            $src = imagecreatefromjpeg( $sourcePath );
+            break;
+        case 'image/png':
+            $src = imagecreatefrompng( $sourcePath );
+            break;
+        case 'image/webp':
+            $src = imagecreatefromwebp( $sourcePath );
+            break;
+        default:
+            return false;
+    }
+
+    if ( ! $src ) {
+        return false;
+    }
+
+    $srcW = imagesx( $src );
+    $srcH = imagesy( $src );
+
+    $srcRatio = $srcW / $srcH;
+    $tgtRatio = $targetWidth / $targetHeight;
+
+    if ( $srcRatio > $tgtRatio ) {
+        $cropH = $srcH;
+        $cropW = (int) ( $srcH * $tgtRatio );
+        $cropX = (int) ( ( $srcW - $cropW ) / 2 );
+        $cropY = 0;
+    } else {
+        $cropW = $srcW;
+        $cropH = (int) ( $srcW / $tgtRatio );
+        $cropX = 0;
+        $cropY = (int) ( ( $srcH - $cropH ) / 2 );
+    }
+
+    $dst = imagecreatetruecolor( $targetWidth, $targetHeight );
+    imagecopyresampled( $dst, $src, 0, 0, $cropX, $cropY, $targetWidth, $targetHeight, $cropW, $cropH );
+
+    imagedestroy( $src );
+
+    $targetPath = ! empty( $outputPath ) ? $outputPath : preg_replace( '/\.[^.]+$/', '.webp', $sourcePath );
+    $result = imagewebp( $dst, $targetPath, 90 );
+    imagedestroy( $dst );
+
+    return $result ? $targetPath : false;
+}
