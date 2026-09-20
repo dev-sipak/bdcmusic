@@ -2,26 +2,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var config = customerReleasesConfig;
     var basePath = config.basePath;
-    var releases = config.releases || [];
+    var releasesPagination = { currentPage: 1, totalPages: 1 };
     var activeTab = 'all';
+    var currentReleases = [];
+
+    function loadReleases(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+        if (activeTab !== 'all') params += '&status=' + encodeURIComponent(activeTab);
+
+        fetch(basePath + 'includes/customer/releases-list.php?' + params)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    releasesPagination = data.pagination;
+                    currentReleases = data.releases || [];
+                    renderReleases();
+                }
+            });
+    }
 
     function renderReleases() {
         var tbody = document.getElementById('releases-tbody');
         var emptyMsg = document.getElementById('releases-empty');
+        var pagWrap = document.getElementById('releases-pagination');
         if (!tbody) return;
 
-        var filtered = activeTab === 'all' ? releases : releases.filter(function (r) {
-            return r.status === activeTab;
-        });
-
-        if (filtered.length === 0) {
+        if (!currentReleases || currentReleases.length === 0) {
             tbody.innerHTML = '';
             if (emptyMsg) emptyMsg.classList.remove('d-none');
+            if (pagWrap) pagWrap.innerHTML = '';
             return;
         }
         if (emptyMsg) emptyMsg.classList.add('d-none');
 
-        tbody.innerHTML = filtered.map(function (r) {
+        tbody.innerHTML = currentReleases.map(function (r) {
             return '<tr>' +
                 '<td><strong>' + r.title + '</strong></td>' +
                 '<td>' + r.type + '</td>' +
@@ -37,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 showReleaseDetail(parseInt(this.getAttribute('data-id')));
             });
         });
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(releasesPagination, function (page) {
+                loadReleases(page);
+            });
+        }
     }
 
     document.querySelectorAll('.release-tab-btn').forEach(function (btn) {
@@ -44,14 +65,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.release-tab-btn').forEach(function (b) { b.classList.remove('active'); });
             this.classList.add('active');
             activeTab = this.getAttribute('data-status');
-            renderReleases();
+            loadReleases(1);
         });
     });
 
-    renderReleases();
-
     function showReleaseDetail(id) {
-        var r = releases.find(function (rel) { return rel.id === id; });
+        var r = currentReleases.find(function (rel) { return rel.id === id; });
         if (!r) return;
 
         document.getElementById('rel-detail-title').textContent = r.title;
@@ -136,8 +155,11 @@ document.addEventListener('DOMContentLoaded', function () {
         div.innerHTML =
             '<input type="text" class="panel-input ra-role" placeholder="Role (e.g. Singer)" style="flex:1;">' +
             '<input type="text" class="panel-input ra-name" placeholder="Name" style="flex:1;">' +
-            '<button type="button" class="adm-view-btn remove-artist-row" style="color:#ef4444;border-color:#fca5a5;"><i class="fa-solid fa-xmark"></i></button>';
+            '<button type="button" class="adm-view-btn remove-artist-row"><i class="fa-solid fa-xmark"></i></button>';
         container.appendChild(div);
         div.querySelector('.remove-artist-row').addEventListener('click', function () { div.remove(); });
     });
+
+    // Initial load
+    loadReleases(1);
 });

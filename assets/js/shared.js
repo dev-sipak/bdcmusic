@@ -84,6 +84,92 @@ function historyRowHtml(o) {
 }
 
 /**
+ * Render pagination HTML for JS-driven pages.
+ * @param {object} pagination - { currentPage, totalPages, totalRecords, perPage, hasPrev, hasNext }
+ * @param {function} onPageClick - callback(pageNumber) when a page link is clicked
+ * @returns {string} HTML string
+ */
+function renderPaginationHtml(pagination, onPageClick) {
+    if (!pagination || pagination.totalPages <= 1) return '';
+
+    var currentPage = pagination.currentPage;
+    var totalPages = pagination.totalPages;
+    var hasPrev = pagination.hasPrev;
+    var hasNext = pagination.hasNext;
+    var start = (currentPage - 1) * pagination.perPage + 1;
+    var end = Math.min(currentPage * pagination.perPage, pagination.totalRecords);
+
+    var maxVisible = 7;
+    var startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    var endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    var html = '<div class="pagination-wrapper">';
+    html += '<p class="pagination-info">Showing ' + start + '\u2013' + end + ' of ' + pagination.totalRecords + '</p>';
+    html += '<nav class="pagination" aria-label="Page navigation">';
+
+    // Previous
+    if (hasPrev) {
+        html += '<a class="pagination__link pagination__prev" href="#" data-page="' + (currentPage - 1) + '">&laquo; Previous</a>';
+    } else {
+        html += '<span class="pagination__link pagination__prev pagination__link--disabled" aria-disabled="true">&laquo; Previous</span>';
+    }
+
+    // First + ellipsis
+    if (startPage > 1) {
+        html += '<a class="pagination__link" href="#" data-page="1">1</a>';
+        if (startPage > 2) {
+            html += '<span class="pagination__ellipsis">&hellip;</span>';
+        }
+    }
+
+    // Page numbers
+    for (var i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            html += '<span class="pagination__link pagination__link--active" aria-current="page">' + i + '</span>';
+        } else {
+            html += '<a class="pagination__link" href="#" data-page="' + i + '">' + i + '</a>';
+        }
+    }
+
+    // Last + ellipsis
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            html += '<span class="pagination__ellipsis">&hellip;</span>';
+        }
+        html += '<a class="pagination__link" href="#" data-page="' + totalPages + '">' + totalPages + '</a>';
+    }
+
+    // Next
+    if (hasNext) {
+        html += '<a class="pagination__link pagination__next" href="#" data-page="' + (currentPage + 1) + '">Next &raquo;</a>';
+    } else {
+        html += '<span class="pagination__link pagination__next pagination__link--disabled" aria-disabled="true">Next &raquo;</span>';
+    }
+
+    html += '</nav></div>';
+
+    // Attach click handlers after rendering
+    setTimeout(function () {
+        var container = document.querySelector('.pagination');
+        if (!container) return;
+        container.querySelectorAll('a[data-page]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var page = parseInt(this.getAttribute('data-page'));
+                if (page && typeof onPageClick === 'function') {
+                    onPageClick(page);
+                }
+            });
+        });
+    }, 0);
+
+    return html;
+}
+
+/**
  * Generic accordion behavior for FAQ items.
  */
 function initFaqAccordion() {

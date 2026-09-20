@@ -15,7 +15,7 @@ if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_S
 
 $page    = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 $perPage = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
-$status  = isset( $_GET['status'] ) ? sanitize_input( $_GET['status'] ) : 'all';
+$search  = isset( $_GET['search'] ) ? sanitize_input( $_GET['search'] ) : '';
 
 try {
     $pdo = db_connect();
@@ -23,24 +23,33 @@ try {
     $where  = [];
     $params = [];
 
-    if ( $status !== 'all' ) {
-        $where[]  = 'ae.status = :status';
-        $params[':status'] = $status;
+    if ( $search !== '' ) {
+        $where[] = '(u.name LIKE :search OR u.email LIKE :search OR u.mobile LIKE :search)';
+        $params[':search'] = '%' . $search . '%';
     }
 
     $whereSql = ! empty( $where ) ? 'WHERE ' . implode( ' AND ', $where ) : '';
 
-    $baseSql = 'SELECT ae.id, ae.artist_id, ae.name, ae.email, ae.phone, ae.message, ae.status,
-                       DATE_FORMAT(ae.created_at, "%Y-%m-%d %H:%i") AS created_at
-                FROM artist_enquiries ae
+    $baseSql = 'SELECT u.id, u.name, u.email, u.mobile AS phone,
+                       COUNT(b.booking_id) AS total_orders,
+                       COALESCE(SUM(b.price), 0) AS total_spent,
+                       DATE_FORMAT(MAX(b.created_at), "%Y-%m-%d") AS last_order
+                FROM users u
+                LEFT JOIN bookings b ON b.customer_id = u.id
                 ' . $whereSql . '
-                ORDER BY ae.created_at DESC';
+                GROUP BY u.id, u.name, u.email, u.mobile
+                ORDER BY MAX(b.created_at) DESC';
 
     $pagination = paginate( $pdo, $baseSql, $params, $page, $perPage );
 
+    // Format total_spent
+    foreach ( $pagination['items'] as &$c ) {
+        $c['total_spent'] = number_format( (float) $c['total_spent'], 0, '.', ',' );
+    }
+
     echo json_encode( [
         'success'    => true,
-        'enquiries'  => $pagination['items'],
+        'customers'  => $pagination['items'],
         'pagination' => [
             'currentPage'  => $pagination['currentPage'],
             'totalPages'   => $pagination['totalPages'],

@@ -209,6 +209,7 @@ try {
                         </table>
                     </div>
                     <p class="adm-empty d-none" id="admin-orders-empty">No orders found.</p>
+                    <div id="admin-orders-pagination"></div>
                 </div>
 
                 <!-- CUSTOMERS TAB -->
@@ -232,6 +233,7 @@ try {
                             <tbody id="admin-customers-tbody"></tbody>
                         </table>
                     </div>
+                    <div id="admin-customers-pagination"></div>
                 </div>
 
                 <!-- ARTISTS TAB -->
@@ -261,6 +263,7 @@ try {
                         </table>
                     </div>
                     <p class="adm-empty d-none" id="adm-artists-empty">No artists found.</p>
+                    <div id="adm-artists-pagination"></div>
                 </div>
 
                 <!-- ENQUIRIES TAB -->
@@ -281,8 +284,6 @@ try {
                         <table class="adm-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Artist</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
@@ -296,6 +297,7 @@ try {
                         </table>
                     </div>
                     <p class="adm-empty d-none" id="adm-enquiries-empty">No enquiries found.</p>
+                    <div id="adm-enquiries-pagination"></div>
                 </div>
 
             </main>

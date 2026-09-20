@@ -1,0 +1,107 @@
+/*==================================================
+PAGINATION COMPONENT
+==================================================*/
+
+.pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+  margin-top: $space-lg;
+  padding: $space-md 0;
+}
+
+.pagination-info {
+  font-family: $font-body;
+  font-size: 0.875rem;
+  color: $muted;
+  margin: 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 $space-sm;
+    font-family: $font-body;
+    font-size: 0.875rem;
+    font-weight: $font-weight-normal;
+    color: $text;
+    background: $card;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    text-decoration: none;
+    transition: all $transition-fast;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover:not(.pagination__link--active):not(.pagination__link--disabled) {
+      background: $secondary;
+      border-color: $primary;
+      color: $primary;
+    }
+
+    &--active {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+      font-weight: $font-weight-medium;
+      cursor: default;
+    }
+
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  &__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: $muted;
+    font-size: 0.875rem;
+  }
+
+  &__prev,
+  &__next {
+    font-weight: $font-weight-normal;
+    white-space: nowrap;
+  }
+}
+
+// Responsive
+@media (max-width: map-get($breakpoints, sm)) {
+  .pagination {
+    gap: 4px;
+
+    &__link {
+      min-width: 36px;
+      height: 36px;
+      font-size: 0.8125rem;
+    }
+
+    &__ellipsis {
+      min-width: 30px;
+    }
+
+    &__prev,
+    &__next {
+      min-width: auto;
+      padding: 0 $space-sm;
+      font-size: 0.75rem;
+    }
+  }
+}

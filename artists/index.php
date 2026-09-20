@@ -2,11 +2,14 @@
 $pageTitle = 'Artists | BDC Music Studio';
 $metaDescription = 'Browse talented artists by category on the BDC Music Studio marketplace.';
 include_once '../header.php';
+require_once __DIR__ . '/../includes/pagination.php';
 
 $categorySlug = '';
 $categoryName = '';
 $artists = [];
 $categoryDescription = '';
+$pagination = null;
+$perPage = 8;
 
 $categorySubtitles = [
     'singer'            => 'Vocal Artists',
@@ -34,7 +37,10 @@ try {
     $path = trim( str_replace( '/bdcmusic', '', $path ), '/' );
     $parts = array_values( array_filter( explode( '/', $path ) ) );
     $lastSegment = end( $parts );
-    $categorySlug = ( $lastSegment === 'artists' ) ? '' : $lastSegment;
+    $categorySlug = ( $lastSegment === 'artists' || $lastSegment === '' ) ? '' : $lastSegment;
+
+    // Handle ?page= parameter for clean URL pagination
+    $currentPage = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 
     if ( ! empty( $categorySlug ) ) {
         $catStmt = $pdo->prepare( 'SELECT id, name, slug FROM artist_categories WHERE slug = :slug AND is_active = 1' );
@@ -45,31 +51,33 @@ try {
             $categoryName = $cat['name'];
             $pageTitle = $categoryName . ' Artists | BDC Music Studio';
 
-            $aStmt = $pdo->prepare(
-                'SELECT a.id, a.name, a.slug, a.image, a.location, a.bio,
-                        ac.name AS category_name, ac.slug AS category_slug
-                 FROM artists a
-                 JOIN artist_categories ac ON a.category_id = ac.id
-                 WHERE a.category_id = :cid AND a.is_active = 1
-                 ORDER BY a.name'
-            );
-            $aStmt->execute( [ ':cid' => $cat['id'] ] );
-            $artists = $aStmt->fetchAll();
+            $baseSql = 'SELECT a.id, a.name, a.slug, a.image, a.location, a.bio,
+                               ac.name AS category_name, ac.slug AS category_slug
+                        FROM artists a
+                        JOIN artist_categories ac ON a.category_id = ac.id
+                        WHERE a.category_id = :cid AND a.is_active = 1
+                        ORDER BY a.name';
+            $params = [ ':cid' => $cat['id'] ];
         }
-    } else {
-        $aStmt = $pdo->query(
-            'SELECT a.id, a.name, a.slug, a.image, a.location, a.bio,
-                    ac.name AS category_name, ac.slug AS category_slug
-             FROM artists a
-             JOIN artist_categories ac ON a.category_id = ac.id
-             WHERE a.is_active = 1
-             ORDER BY RAND()'
-        );
-        $artists = $aStmt->fetchAll();
     }
+
+    if ( ! isset( $baseSql ) ) {
+        $baseSql = 'SELECT a.id, a.name, a.slug, a.image, a.location, a.bio,
+                           ac.name AS category_name, ac.slug AS category_slug
+                    FROM artists a
+                    JOIN artist_categories ac ON a.category_id = ac.id
+                    WHERE a.is_active = 1
+                    ORDER BY a.name';
+        $params = [];
+    }
+
+    $pagination = paginate( $pdo, $baseSql, $params, $currentPage, $perPage );
+    $artists = $pagination['items'];
+
 } catch ( Exception $e ) {
     $artists = [];
     $allCats = [];
+    $pagination = null;
 }
 
 $subtitleKey = ! empty( $categorySlug ) ? $categorySlug : '';
@@ -147,6 +155,16 @@ $heroSubtitle = isset( $categorySubtitles[ $subtitleKey ] ) ? $categorySubtitles
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+
+            <?php if ( $pagination && $pagination['totalRecords'] > 0 ) : ?>
+                <?php
+                // Build the pagination base URL
+                $paginationBaseUrl = ! empty( $categorySlug )
+                    ? $basePath . 'artists/' . $categorySlug . '/'
+                    : $basePath . 'artists/';
+                echo render_pagination( $pagination, $paginationBaseUrl );
+                ?>
+            <?php endif; ?>
         </section>
 
         <section class="artist-cta">

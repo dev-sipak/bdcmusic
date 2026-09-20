@@ -1,33 +1,45 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var orders = customerDashboardConfig.orders;
     var uploads = customerDashboardConfig.uploads || [];
     var basePath = customerDashboardConfig.basePath;
     var statusSteps = ['Pending', 'Processing', 'Hold', 'Delivered'];
 
     initTabNav('.panel-nav-btn[data-tab]', '.panel-tab', 'tab-', '.panel-sidebar', '#dash-menu-toggle');
 
-    /* ----- Render Orders Table ----- */
-    function renderOrders() {
-        var statusVal  = document.getElementById('order-status-filter').value;
-        var serviceVal = document.getElementById('order-service-filter').value;
-        var tbody      = document.getElementById('orders-tbody');
-        var emptyMsg   = document.getElementById('orders-empty');
+    /* ----- Orders (Paginated) ----- */
+    var ordersPagination = { currentPage: 1, totalPages: 1 };
+    var ordersFilters = { status: 'all', service: 'all' };
 
-        var filtered = orders.filter(function (o) {
-            if (statusVal !== 'all' && o.status !== statusVal) return false;
-            if (serviceVal !== 'all' && o.service !== serviceVal) return false;
-            return true;
-        });
+    function loadOrders(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+        if (ordersFilters.status !== 'all') params += '&status=' + encodeURIComponent(ordersFilters.status);
+        if (ordersFilters.service !== 'all') params += '&service=' + encodeURIComponent(ordersFilters.service);
 
-        if (filtered.length === 0) {
+        fetch(basePath + 'includes/customer/orders-list.php?' + params)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    ordersPagination = data.pagination;
+                    renderOrders(data.orders);
+                }
+            });
+    }
+
+    function renderOrders(ordersList) {
+        var tbody    = document.getElementById('orders-tbody');
+        var emptyMsg = document.getElementById('orders-empty');
+        var pagWrap  = document.getElementById('orders-pagination');
+
+        if (!ordersList || ordersList.length === 0) {
             tbody.innerHTML = '';
             emptyMsg.classList.remove('d-none');
+            if (pagWrap) pagWrap.innerHTML = '';
             return;
         }
 
         emptyMsg.classList.add('d-none');
-        tbody.innerHTML = filtered.map(function (o) {
+        tbody.innerHTML = ordersList.map(function (o) {
             return '<tr>' +
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.service + '</td>' +
@@ -36,11 +48,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
             '</tr>';
         }).join('');
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(ordersPagination, function (page) {
+                loadOrders(page);
+            });
+        }
     }
 
-    document.getElementById('order-status-filter').addEventListener('change', renderOrders);
-    document.getElementById('order-service-filter').addEventListener('change', renderOrders);
-    renderOrders();
+    document.getElementById('order-status-filter').addEventListener('change', function () {
+        ordersFilters.status = this.value;
+        loadOrders(1);
+    });
+    document.getElementById('order-service-filter').addEventListener('change', function () {
+        ordersFilters.service = this.value;
+        loadOrders(1);
+    });
 
     /* ----- My Uploads ----- */
     var uploadsTbody = document.getElementById('uploads-tbody');
@@ -64,22 +87,62 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join('');
     }
 
-    /* ----- Order History ----- */
-    var historyTbody = document.getElementById('history-tbody');
-    historyTbody.innerHTML = orders.map(function (o) {
-        return historyRowHtml(o);
-    }).join('');
+    /* ----- Order History (Paginated) ----- */
+    var historyPagination = { currentPage: 1, totalPages: 1 };
+
+    function loadHistory(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+
+        fetch(basePath + 'includes/customer/orders-list.php?' + params)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    historyPagination = data.pagination;
+                    renderHistory(data.orders);
+                }
+            });
+    }
+
+    function renderHistory(ordersList) {
+        var historyTbody = document.getElementById('history-tbody');
+        var pagWrap      = document.getElementById('history-pagination');
+        if (!historyTbody) return;
+
+        if (!ordersList || ordersList.length === 0) {
+            historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No order history.</td></tr>';
+            if (pagWrap) pagWrap.innerHTML = '';
+            return;
+        }
+
+        historyTbody.innerHTML = ordersList.map(function (o) {
+            return historyRowHtml(o);
+        }).join('');
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(historyPagination, function (page) {
+                loadHistory(page);
+            });
+        }
+    }
 
     /* ----- Order Details ----- */
     var detailSelect = document.getElementById('details-order-select');
     var detailView   = document.getElementById('order-detail-view');
 
-    orders.forEach(function (o) {
-        var opt = document.createElement('option');
-        opt.value = o.id;
-        opt.textContent = o.id;
-        detailSelect.appendChild(opt);
-    });
+    // Populate order details select from first page of orders
+    fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.success && data.orders) {
+                data.orders.forEach(function (o) {
+                    var opt = document.createElement('option');
+                    opt.value = o.id;
+                    opt.textContent = o.id;
+                    detailSelect.appendChild(opt);
+                });
+            }
+        });
 
     detailSelect.addEventListener('change', function () {
         var orderId = this.value;
@@ -88,34 +151,40 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        var order = orders.find(function (o) { return o.id === orderId; });
-        if (!order) return;
+        // Find order from the loaded data or fetch it
+        fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.success) return;
+                var order = data.orders.find(function (o) { return o.id === orderId; });
+                if (!order) return;
 
-        document.getElementById('detail-order-id').textContent = order.id;
-        var statusBadge = document.getElementById('detail-order-status');
-        statusBadge.textContent = order.status;
-        statusBadge.className = 'panel-status-badge status-' + order.status.toLowerCase();
+                document.getElementById('detail-order-id').textContent = order.id;
+                var statusBadge = document.getElementById('detail-order-status');
+                statusBadge.textContent = order.status;
+                statusBadge.className = 'panel-status-badge status-' + order.status.toLowerCase();
 
-        document.getElementById('detail-service').textContent = order.service;
-        document.getElementById('detail-date').textContent    = order.date;
-        document.getElementById('detail-amount').textContent  = '\u20B9' + order.amount;
+                document.getElementById('detail-service').textContent = order.service;
+                document.getElementById('detail-date').textContent    = order.date;
+                document.getElementById('detail-amount').textContent  = '\u20B9' + order.amount;
 
-        var timeline = document.getElementById('detail-timeline');
-        var currentIdx = statusSteps.indexOf(order.status);
-        if (currentIdx === -1) currentIdx = 0;
+                var timeline = document.getElementById('detail-timeline');
+                var currentIdx = statusSteps.indexOf(order.status);
+                if (currentIdx === -1) currentIdx = 0;
 
-        timeline.innerHTML = statusSteps.map(function (step, i) {
-            var cls = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
-            var icon = i < currentIdx ? 'fa-check-circle' : (i === currentIdx ? 'fa-circle-dot' : 'fa-circle');
-            return '<div class="timeline-item ' + cls + '">' +
-                '<i class="fa-solid ' + icon + '"></i>' +
-                '<div>' +
-                    '<strong>' + step + '</strong>' +
-                '</div>' +
-            '</div>';
-        }).join('');
+                timeline.innerHTML = statusSteps.map(function (step, i) {
+                    var cls = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
+                    var icon = i < currentIdx ? 'fa-check-circle' : (i === currentIdx ? 'fa-circle-dot' : 'fa-circle');
+                    return '<div class="timeline-item ' + cls + '">' +
+                        '<i class="fa-solid ' + icon + '"></i>' +
+                        '<div>' +
+                            '<strong>' + step + '</strong>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
 
-        detailView.classList.remove('d-none');
+                detailView.classList.remove('d-none');
+            });
     });
 
     /* ----- Profile Picture Upload ----- */
@@ -308,5 +377,9 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = basePath + 'includes/logout';
         }
     });
+
+    // Initial loads
+    loadOrders(1);
+    loadHistory(1);
 
 });

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../includes/pagination.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
+if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'customer' ) {
     http_response_code( 403 );
     echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
     exit;
@@ -16,31 +16,39 @@ if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_S
 $page    = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 $perPage = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
 $status  = isset( $_GET['status'] ) ? sanitize_input( $_GET['status'] ) : 'all';
+$service = isset( $_GET['service'] ) ? sanitize_input( $_GET['service'] ) : 'all';
 
 try {
     $pdo = db_connect();
 
-    $where  = [];
-    $params = [];
+    $where  = [ 'b.customer_id = :cid' ];
+    $params = [ ':cid' => $_SESSION['user_id'] ];
 
     if ( $status !== 'all' ) {
-        $where[]  = 'ae.status = :status';
+        $where[]  = 'b.status = :status';
         $params[':status'] = $status;
     }
 
-    $whereSql = ! empty( $where ) ? 'WHERE ' . implode( ' AND ', $where ) : '';
+    if ( $service !== 'all' ) {
+        $where[]  = 's.name = :service';
+        $params[':service'] = $service;
+    }
 
-    $baseSql = 'SELECT ae.id, ae.artist_id, ae.name, ae.email, ae.phone, ae.message, ae.status,
-                       DATE_FORMAT(ae.created_at, "%Y-%m-%d %H:%i") AS created_at
-                FROM artist_enquiries ae
+    $whereSql = 'WHERE ' . implode( ' AND ', $where );
+
+    $baseSql = 'SELECT b.booking_id AS id, s.name AS service, s.name AS item, b.status,
+                       DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date,
+                       b.price AS amount
+                FROM bookings b
+                JOIN services s ON b.service_id = s.id
                 ' . $whereSql . '
-                ORDER BY ae.created_at DESC';
+                ORDER BY b.created_at DESC';
 
     $pagination = paginate( $pdo, $baseSql, $params, $page, $perPage );
 
     echo json_encode( [
         'success'    => true,
-        'enquiries'  => $pagination['items'],
+        'orders'     => $pagination['items'],
         'pagination' => [
             'currentPage'  => $pagination['currentPage'],
             'totalPages'   => $pagination['totalPages'],

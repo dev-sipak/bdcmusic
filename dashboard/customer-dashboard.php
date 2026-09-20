@@ -16,18 +16,13 @@ $metaDescription = 'Manage your orders, track services, update your profile, and
 $currentPage     = 'dashboard/customer-dashboard';
 include_once __DIR__ . '/../header.php';
 
-$userOrders  = array();
 $userUploads = array();
 $userPhone   = '';
 $userSince   = '';
 $userPic     = '';
 $hasDistribution = false;
-$userReleases    = array();
 try {
     $pdo    = db_connect();
-    $stmt   = $pdo->prepare( 'SELECT b.booking_id AS id, s.name AS service, s.name AS item, b.status, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date, b.price AS amount FROM bookings b JOIN services s ON b.service_id = s.id WHERE b.customer_id = :cid ORDER BY b.created_at DESC' );
-    $stmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
-    $userOrders = $stmt->fetchAll();
 
     $fStmt = $pdo->prepare( 'SELECT uf.booking_id, uf.original_name, uf.file_path, uf.mime_type, uf.file_size FROM uploaded_files uf JOIN bookings b ON uf.booking_id = b.booking_id WHERE b.customer_id = :cid ORDER BY uf.uploaded_at DESC' );
     $fStmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
@@ -45,24 +40,7 @@ try {
     $dStmt = $pdo->prepare( 'SELECT COUNT(*) FROM bookings WHERE customer_id = :cid AND service_id = 4 AND status IN ("processing","delivered")' );
     $dStmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
     $hasDistribution = (int) $dStmt->fetchColumn() > 0;
-
-    if ( $hasDistribution ) {
-        $rStmt = $pdo->prepare( 'SELECT r.id, r.title, r.type, r.artwork_path, r.isrc, r.upc, DATE_FORMAT(r.go_live_date, "%Y-%m-%d") AS go_live_date, r.status, r.dolby, r.apple_itunes, DATE_FORMAT(r.created_at, "%Y-%m-%d") AS created_at FROM releases r WHERE r.customer_id = :cid ORDER BY r.created_at DESC' );
-        $rStmt->execute( [ ':cid' => $_SESSION['user_id'] ] );
-        $userReleases = $rStmt->fetchAll();
-
-        foreach ( $userReleases as &$r ) {
-            $astmt = $pdo->prepare( 'SELECT role, name FROM release_artists WHERE release_id = :rid' );
-            $astmt->execute( [ ':rid' => $r['id'] ] );
-            $r['artists'] = $astmt->fetchAll();
-
-            $hstmt = $pdo->prepare( 'SELECT action, message, DATE_FORMAT(created_at, "%Y-%m-%d %H:%i") AS created_at FROM release_history WHERE release_id = :rid ORDER BY created_at DESC' );
-            $hstmt->execute( [ ':rid' => $r['id'] ] );
-            $r['history'] = $hstmt->fetchAll();
-        }
-    }
 } catch ( Exception $e ) {
-    $userOrders  = array();
     $userUploads = array();
 }
 $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
@@ -242,6 +220,7 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                         </table>
                     </div>
                     <p class="panel-empty d-none" id="orders-empty">No orders found matching your filters.</p>
+                    <div id="orders-pagination"></div>
                 </div>
 
                 <!-- UPLOADS TAB -->
@@ -283,9 +262,10 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="history-tbody"></tbody>
+                            <tbody id="history-tbody">                            </tbody>
                         </table>
                     </div>
+                    <div id="history-pagination"></div>
                 </div>
 
 
@@ -355,6 +335,7 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                             </table>
                         </div>
                         <p class="panel-empty d-none" id="releases-empty">No releases found.</p>
+                        <div id="releases-pagination"></div>
                     </div>
 
                     <div class="panel-tab d-none" id="release-detail-panel">
@@ -430,7 +411,6 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
 
 <script>
 var customerDashboardConfig = {
-    orders: <?php echo json_encode( $userOrders ); ?>,
     uploads: <?php echo json_encode( $userUploads ); ?>,
     basePath: '<?php echo $basePath; ?>',
     updateProfileUrl: '<?php echo $basePath; ?>includes/update-profile',
@@ -442,7 +422,6 @@ var customerDashboardConfig = {
 </script>
 <script>
 var customerReleasesConfig = {
-    releases: <?php echo json_encode( $userReleases ); ?>,
     basePath: '<?php echo $basePath; ?>'
 };
 </script>

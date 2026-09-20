@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var basePath = adminDashboardConfig.basePath;
     var categories = [];
-    var artists = [];
+    var artistsPagination = { currentPage: 1, totalPages: 1 };
+    var artistsSearch = '';
 
     initTabNav('.adm-nav-btn[data-tab]', '.adm-tab', 'adm-tab-', '.adm-sidebar', '#admin-menu-toggle');
 
@@ -15,29 +16,37 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function loadArtists() {
-        return fetch(basePath + 'includes/admin/artists-list.php?t=' + Date.now())
+    function loadArtists(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+        if (artistsSearch) params += '&search=' + encodeURIComponent(artistsSearch);
+
+        return fetch(basePath + 'includes/admin/artists-list.php?' + params + '&t=' + Date.now())
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                if (data.success) { artists = data.artists; }
-                renderArtistsTable();
-                return artists;
+                if (data.success) {
+                    artistsPagination = data.pagination;
+                    renderArtistsTable(data.artists);
+                }
+                return data.artists || [];
             });
     }
 
-    function renderArtistsTable() {
+    function renderArtistsTable(artistsList) {
         var tbody = document.getElementById('adm-artists-tbody');
         var emptyMsg = document.getElementById('adm-artists-empty');
+        var pagWrap = document.getElementById('adm-artists-pagination');
         if (!tbody) return;
 
-        if (artists.length === 0) {
+        if (!artistsList || artistsList.length === 0) {
             tbody.innerHTML = '';
             if (emptyMsg) emptyMsg.classList.remove('d-none');
+            if (pagWrap) pagWrap.innerHTML = '';
             return;
         }
         if (emptyMsg) emptyMsg.classList.add('d-none');
 
-        tbody.innerHTML = artists.map(function (a) {
+        tbody.innerHTML = artistsList.map(function (a) {
             var imgSrc = a.image;
             if (imgSrc && imgSrc.indexOf('http') !== 0) {
                 imgSrc = basePath + imgSrc;
@@ -63,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tbody.querySelectorAll('.adm-edit-artist').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var id = parseInt(this.getAttribute('data-id'));
-                openArtistModal(id);
+                openArtistModal(id, artistsList);
             });
         });
         tbody.querySelectorAll('.adm-delete-artist').forEach(function (btn) {
@@ -73,6 +82,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(artistsPagination, function (page) {
+                loadArtists(page);
+            });
+        }
     }
 
     var artistModal = document.getElementById('adm-artist-modal');
@@ -80,10 +95,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var artistCloseBtn = document.getElementById('artist-modal-close');
 
     document.getElementById('adm-add-artist-btn').addEventListener('click', function () {
-        openArtistModal(0);
+        openArtistModal(0, []);
     });
 
-    function openArtistModal(id) {
+    function openArtistModal(id, artistsList) {
         var form = document.getElementById('artist-form');
         form.reset();
         document.getElementById('artist-modal-id').value = 0;
@@ -100,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
         addPricingRow('', '');
 
         if (id > 0) {
-            var artist = artists.find(function (a) { return a.id === id; });
+            var artist = artistsList.find(function (a) { return a.id === id; });
             if (artist) {
                 document.getElementById('artist-modal-id').value = artist.id;
                 document.getElementById('artist-name').value = artist.name;
@@ -211,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(function (data) {
             if (data.success) {
                 closeArtistModal();
-                loadArtists();
+                loadArtists(artistsPagination.currentPage);
             } else {
                 alert(data.message);
             }
@@ -227,11 +242,11 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {
-            if (data.success) { loadArtists(); }
+            if (data.success) { loadArtists(artistsPagination.currentPage); }
             else { alert(data.message); }
         })
         .catch(function () { alert('Delete failed.'); });
     }
 
-    loadCategories().then(function () { loadArtists(); });
+    loadCategories().then(function () { loadArtists(1); });
 });

@@ -37,32 +37,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateOverviewStats();
 
-    /* ----- Orders Management ----- */
-    function renderAdminOrders() {
-        var statusVal  = document.getElementById('admin-order-status').value;
-        var serviceVal = document.getElementById('admin-order-service').value;
-        var searchVal  = document.getElementById('admin-order-search').value.toLowerCase();
-        var tbody      = document.getElementById('admin-orders-tbody');
-        var emptyMsg   = document.getElementById('admin-orders-empty');
+    /* ----- Orders Management (Paginated) ----- */
+    var ordersPagination = { currentPage: 1, totalPages: 1 };
+    var ordersFilters = { status: 'all', service: 'all', search: '' };
 
-        var filtered = orders.filter(function (o) {
-            if (statusVal !== 'all' && o.status !== statusVal) return false;
-            if (serviceVal !== 'all' && o.service !== serviceVal) return false;
-            if (searchVal) {
-                var haystack = (o.id + ' ' + o.customer + ' ' + o.email + ' ' + o.phone).toLowerCase();
-                if (haystack.indexOf(searchVal) === -1) return false;
-            }
-            return true;
-        });
+    function loadOrders(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+        if (ordersFilters.status !== 'all') params += '&status=' + encodeURIComponent(ordersFilters.status);
+        if (ordersFilters.service !== 'all') params += '&service=' + encodeURIComponent(ordersFilters.service);
+        if (ordersFilters.search) params += '&search=' + encodeURIComponent(ordersFilters.search);
 
-        if (filtered.length === 0) {
+        fetch(basePath + 'includes/admin/orders-list.php?' + params)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    ordersPagination = data.pagination;
+                    renderAdminOrders(data.orders);
+                }
+            });
+    }
+
+    function renderAdminOrders(ordersList) {
+        var tbody    = document.getElementById('admin-orders-tbody');
+        var emptyMsg = document.getElementById('admin-orders-empty');
+        var pagWrap  = document.getElementById('admin-orders-pagination');
+
+        if (!ordersList || ordersList.length === 0) {
             tbody.innerHTML = '';
             emptyMsg.classList.remove('d-none');
+            if (pagWrap) pagWrap.innerHTML = '';
             return;
         }
 
         emptyMsg.classList.add('d-none');
-        tbody.innerHTML = filtered.map(function (o) {
+        tbody.innerHTML = ordersList.map(function (o) {
             return '<tr>' +
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.customer + '</td>' +
@@ -80,46 +89,80 @@ document.addEventListener('DOMContentLoaded', function () {
                 openOrderModal(this.getAttribute('data-order-id'));
             });
         });
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(ordersPagination, function (page) {
+                loadOrders(page);
+            });
+        }
     }
 
-    document.getElementById('admin-order-status').addEventListener('change', renderAdminOrders);
-    document.getElementById('admin-order-service').addEventListener('change', renderAdminOrders);
-    document.getElementById('admin-order-search').addEventListener('input', renderAdminOrders);
-    renderAdminOrders();
-
-    /* ----- Customers ----- */
-    var customersData = {};
-    orders.forEach(function (o) {
-        if (!customersData[o.email]) {
-            customersData[o.email] = {
-                name:       o.customer,
-                email:      o.email,
-                phone:      o.phone || '',
-                totalOrders: 0,
-                totalSpent:  0,
-                lastOrder:   o.date
-            };
-        }
-        customersData[o.email].totalOrders++;
-        var amt = parseFloat(o.amount.replace(/[₹$,]/g, ''));
-        customersData[o.email].totalSpent += amt;
-        if (o.date > customersData[o.email].lastOrder) {
-            customersData[o.email].lastOrder = o.date;
-        }
+    document.getElementById('admin-order-status').addEventListener('change', function () {
+        ordersFilters.status = this.value;
+        loadOrders(1);
+    });
+    document.getElementById('admin-order-service').addEventListener('change', function () {
+        ordersFilters.service = this.value;
+        loadOrders(1);
     });
 
-    var custTbody = document.getElementById('admin-customers-tbody');
-    var custArr   = Object.values(customersData);
-    custTbody.innerHTML = custArr.map(function (c) {
-        return '<tr>' +
-            '<td><strong>' + c.name + '</strong></td>' +
-            '<td>' + c.email + '</td>' +
-            '<td>' + c.phone + '</td>' +
-            '<td>' + c.totalOrders + '</td>' +
-            '<td>₹' + c.totalSpent.toLocaleString() + '</td>' +
-            '<td>' + c.lastOrder + '</td>' +
-        '</tr>';
-    }).join('');
+    var orderSearchTimer;
+    document.getElementById('admin-order-search').addEventListener('input', function () {
+        var val = this.value;
+        clearTimeout(orderSearchTimer);
+        orderSearchTimer = setTimeout(function () {
+            ordersFilters.search = val;
+            loadOrders(1);
+        }, 400);
+    });
+
+    /* ----- Customers (Paginated) ----- */
+    var customersPagination = { currentPage: 1, totalPages: 1 };
+    var customersSearch = '';
+
+    function loadCustomers(page) {
+        page = page || 1;
+        var params = 'page=' + page + '&per_page=10';
+        if (customersSearch) params += '&search=' + encodeURIComponent(customersSearch);
+
+        fetch(basePath + 'includes/admin/customers-list.php?' + params)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    customersPagination = data.pagination;
+                    renderCustomers(data.customers);
+                }
+            });
+    }
+
+    function renderCustomers(customersList) {
+        var tbody    = document.getElementById('admin-customers-tbody');
+        var pagWrap  = document.getElementById('admin-customers-pagination');
+        if (!tbody) return;
+
+        if (!customersList || customersList.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);">No customers found.</td></tr>';
+            if (pagWrap) pagWrap.innerHTML = '';
+            return;
+        }
+
+        tbody.innerHTML = customersList.map(function (c) {
+            return '<tr>' +
+                '<td><strong>' + c.name + '</strong></td>' +
+                '<td>' + c.email + '</td>' +
+                '<td>' + (c.phone || 'N/A') + '</td>' +
+                '<td>' + c.total_orders + '</td>' +
+                '<td>\u20B9' + c.total_spent + '</td>' +
+                '<td>' + (c.last_order || 'N/A') + '</td>' +
+            '</tr>';
+        }).join('');
+
+        if (pagWrap) {
+            pagWrap.innerHTML = renderPaginationHtml(customersPagination, function (page) {
+                loadCustomers(page);
+            });
+        }
+    }
 
     /* ----- Modal ----- */
     var modal     = document.getElementById('admin-order-modal');
@@ -128,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var currentOrderId = null;
 
     function openOrderModal(orderId) {
+        // Fetch the single order from the full orders list (overview data)
         var order = orders.find(function (o) { return o.id === orderId; });
         if (!order) return;
 
@@ -188,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var order = orders.find(function (o) { return o.id === currentOrderId; });
         if (order) {
             order.status = newStatus;
-            renderAdminOrders();
+            loadOrders(ordersPagination.currentPage);
             updateOverviewStats();
         }
         closeModal();
@@ -200,5 +244,9 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = basePath + 'includes/logout.php';
         }
     });
+
+    // Initial loads
+    loadOrders(1);
+    loadCustomers(1);
 
 });
