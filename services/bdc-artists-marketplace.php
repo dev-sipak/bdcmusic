@@ -313,98 +313,125 @@ include_once '../header.php';
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Full Name <span class="required-star">*</span></label>
-                                    <input type="text" name="name" required>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input type="text" name="name" placeholder="Enter your full name" required>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Email <span class="required-star">*</span></label>
-                                    <input type="email" name="email" required>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        <input type="email" name="email" placeholder="example@domain.com" required>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Phone <span class="required-star">*</span></label>
-                                    <input type="tel" name="phone" required>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Category <span class="required-star">*</span></label>
-                                    <select name="category" required>
-                                        <option value="">Select Category</option>
-                                        <?php
-                                        $marketCats = [
-                                            'singer' => 'Singer',
-                                            'music-producer' => 'Music Producer',
-                                            'lyricist' => 'Lyricist',
-                                            'composer' => 'Composer',
-                                            'instrumentalist' => 'Instrumentalist',
-                                            'dj' => 'DJ',
-                                            'mixing-mastering-engineer' => 'Mixing & Mastering Engineer',
-                                            'video-editor' => 'Video Editor',
-                                            'videographer' => 'Videographer',
-                                            'photographer' => 'Photographer',
-                                            'graphic-designer' => 'Graphic Designer',
-                                            'actor-model' => 'Actor / Model',
-                                            'dancer-choreographer' => 'Dancer / Choreographer',
-                                            'voice-over-artist' => 'Voice Over Artist',
-                                            'podcast-editor' => 'Podcast Editor',
-                                            'social-media-manager' => 'Social Media Manager',
-                                            'digital-marketing-expert' => 'Digital Marketing Expert',
-                                            'music-video-director' => 'Music Video Director',
-                                            'live-band-artist' => 'Live Band Artist',
-                                            'session-musician' => 'Session Musician',
-                                        ];
-                                        uasort( $marketCats, 'strcasecmp' );
-                                        foreach ( $marketCats as $val => $label ) : ?>
-                                            <option value="<?php echo htmlspecialchars( $val ); ?>"><?php echo htmlspecialchars( $label ); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-table-cells-large"></i>
+                                        <select name="category" required>
+                                            <option value="">Select Category</option>
+                                            <?php
+                                            $marketCats = [
+                                                'singer' => 'Singer',
+                                                'music-producer' => 'Music Producer',
+                                                'lyricist' => 'Lyricist',
+                                                'composer' => 'Composer',
+                                                'instrumentalist' => 'Instrumentalist',
+                                                'dj' => 'DJ',
+                                                'mixing-mastering-engineer' => 'Mixing & Mastering Engineer',
+                                                'video-editor' => 'Video Editor',
+                                                'videographer' => 'Videographer',
+                                                'photographer' => 'Photographer',
+                                                'graphic-designer' => 'Graphic Designer',
+                                                'actor-model' => 'Actor / Model',
+                                                'dancer-choreographer' => 'Dancer / Choreographer',
+                                                'voice-over-artist' => 'Voice Over Artist',
+                                                'podcast-editor' => 'Podcast Editor',
+                                                'social-media-manager' => 'Social Media Manager',
+                                                'digital-marketing-expert' => 'Digital Marketing Expert',
+                                                'music-video-director' => 'Music Video Director',
+                                                'live-band-artist' => 'Live Band Artist',
+                                                'session-musician' => 'Session Musician',
+                                            ];
+                                            uasort( $marketCats, 'strcasecmp' );
+                                            foreach ( $marketCats as $val => $label ) : ?>
+                                                <option value="<?php echo htmlspecialchars( $val ); ?>"><?php echo htmlspecialchars( $label ); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Membership <span class="required-star">*</span></label>
-                                    <select name="membership" required>
-                                        <option value="">Select Plan</option>
-                                        <option>Basic</option>
-                                        <option>Professional</option>
-                                        <option>Premium</option>
-                                        <option>Enterprise</option>
-                                    </select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-user"></i>
+                                        <select name="membership" required>
+                                            <option value="">Select Plan</option>
+                                            <option>Basic</option>
+                                            <option>Professional</option>
+                                            <option>Premium</option>
+                                            <option>Enterprise</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-field">
                                     <label>Experience</label>
-                                    <input type="text" name="experience">
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-building"></i>
+                                        <input type="text" name="experience" placeholder="e.g. 3 Years, Senior Level">
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="form-field">
                                     <label>Portfolio Link</label>
-                                    <input type="url" name="portfolio">
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-link"></i>
+                                        <input type="url" name="portfolio" placeholder="https://yourportfolio.com">
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="form-field">
                                     <label>Upload Portfolio</label>
-                                    <input type="file" name="portfolio_file">
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input type="file" name="portfolio_file">
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-12">
                                 <div class="form-field">
                                     <label>About Yourself</label>
-                                    <textarea name="about"></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <i class="fa-solid fa-bars"></i>
+                                        <textarea name="about" placeholder="Tell us a little about your background and achievements..."></textarea>
+                                    </div>
                                 </div>
                             </div>
 							<div class="col-12">

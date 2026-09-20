@@ -291,12 +291,15 @@ include_once '../header.php';
 
                                     <label>Full Name <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Enter your full name"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Enter your full name"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -308,12 +311,15 @@ include_once '../header.php';
 
                                     <label>Email <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Enter your email address"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            placeholder="Enter your email address"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -325,12 +331,15 @@ include_once '../header.php';
 
                                     <label>Mobile Number <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        placeholder="Enter your mobile number"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            placeholder="Enter your mobile number"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -342,34 +351,37 @@ include_once '../header.php';
 
                                     <label>Applicant Type <span class="required-star">*</span></label>
 
-                                    <select
-                                        name="applicant_type"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select Applicant Type
-                                        </option>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-tag"></i>
+                                        <select
+                                            name="applicant_type"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select Applicant Type
+                                            </option>
 
-                                        <option value="author">
-                                            Author / Lyricist
-                                        </option>
+                                            <option value="author">
+                                                Author / Lyricist
+                                            </option>
 
-                                        <option value="composer">
-                                            Composer
-                                        </option>
+                                            <option value="composer">
+                                                Composer
+                                            </option>
 
-                                        <option value="author-composer">
-                                            Author &amp; Composer
-                                        </option>
+                                            <option value="author-composer">
+                                                Author &amp; Composer
+                                            </option>
 
-                                        <option value="publisher">
-                                            Music Publisher
-                                        </option>
+                                            <option value="publisher">
+                                                Music Publisher
+                                            </option>
 
-                                        <option value="artist">
-                                            Independent Artist
-                                        </option>
-                                    </select>
+                                            <option value="artist">
+                                                Independent Artist
+                                            </option>
+                                        </select>
+                                    </div>
 
                                 </div>
 
@@ -385,23 +397,26 @@ include_once '../header.php';
                                         Have you released at least one song? <span class="required-star">*</span>
                                     </label>
 
-                                    <select
-                                        name="song_released"
-                                        id="song-released"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select an option
-                                        </option>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-music"></i>
+                                        <select
+                                            name="song_released"
+                                            id="song-released"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select an option
+                                            </option>
 
-                                        <option value="yes">
-                                            Yes, I have released a song
-                                        </option>
+                                            <option value="yes">
+                                                Yes, I have released a song
+                                            </option>
 
-                                        <option value="no">
-                                            No, I have not released a song
-                                        </option>
-                                    </select>
+                                            <option value="no">
+                                                No, I have not released a song
+                                            </option>
+                                        </select>
+                                    </div>
 
                                 </div>
 
@@ -417,11 +432,14 @@ include_once '../header.php';
                                         Released Song / Music Links <span class="required-star">*</span>
                                     </label>
 
-                                    <textarea
-                                        name="song_links"
-                                        placeholder="Paste YouTube, Spotify, Apple Music, JioSaavn or other released music links"
-                                        required
-                                    ></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <i class="fa-solid fa-link"></i>
+                                        <textarea
+                                            name="song_links"
+                                            placeholder="Paste YouTube, Spotify, Apple Music, JioSaavn or other released music links"
+                                            required
+                                        ></textarea>
+                                    </div>
 
                                 </div>
 
@@ -433,11 +451,14 @@ include_once '../header.php';
 
                                     <label>Song / Work Title</label>
 
-                                    <input
-                                        type="text"
-                                        name="song_title"
-                                        placeholder="Enter your released song title"
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-pen-fancy"></i>
+                                        <input
+                                            type="text"
+                                            name="song_title"
+                                            placeholder="Enter your released song title"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -449,11 +470,14 @@ include_once '../header.php';
 
                                     <label>Artist Name</label>
 
-                                    <input
-                                        type="text"
-                                        name="artist_name"
-                                        placeholder="Enter your artist name"
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input
+                                            type="text"
+                                            name="artist_name"
+                                            placeholder="Enter your artist name"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -467,12 +491,15 @@ include_once '../header.php';
 
                                     <label>PAN Card <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="file"
-                                        name="pan_card"
-                                        accept=".jpg,.jpeg,.png,.pdf"
-                                        required
-                                    >
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="pan_card"
+                                            accept=".jpg,.jpeg,.png,.pdf"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -484,12 +511,15 @@ include_once '../header.php';
 
                                     <label>Aadhaar / Address Proof <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="file"
-                                        name="address_proof"
-                                        accept=".jpg,.jpeg,.png,.pdf"
-                                        required
-                                    >
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="address_proof"
+                                            accept=".jpg,.jpeg,.png,.pdf"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -501,12 +531,15 @@ include_once '../header.php';
 
                                     <label>Passport Size Photo <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="file"
-                                        name="photo"
-                                        accept=".jpg,.jpeg,.png"
-                                        required
-                                    >
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="photo"
+                                            accept=".jpg,.jpeg,.png"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -518,11 +551,14 @@ include_once '../header.php';
 
                                     <label>Released Song Proof</label>
 
-                                    <input
-                                        type="file"
-                                        name="song_proof"
-                                        accept=".jpg,.jpeg,.png,.pdf"
-                                    >
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="song_proof"
+                                            accept=".jpg,.jpeg,.png,.pdf"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -536,12 +572,15 @@ include_once '../header.php';
 
                                     <label>Account Holder Name <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="text"
-                                        name="account_holder"
-                                        placeholder="Enter account holder name"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input
+                                            type="text"
+                                            name="account_holder"
+                                            placeholder="Enter account holder name"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -553,12 +592,15 @@ include_once '../header.php';
 
                                     <label>Bank Account Number <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="text"
-                                        name="account_number"
-                                        placeholder="Enter bank account number"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-building-columns"></i>
+                                        <input
+                                            type="text"
+                                            name="account_number"
+                                            placeholder="Enter bank account number"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -570,12 +612,15 @@ include_once '../header.php';
 
                                     <label>IFSC Code <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="text"
-                                        name="ifsc"
-                                        placeholder="Enter IFSC code"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-code"></i>
+                                        <input
+                                            type="text"
+                                            name="ifsc"
+                                            placeholder="Enter IFSC code"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -587,12 +632,15 @@ include_once '../header.php';
 
                                     <label>Bank Name <span class="required-star">*</span></label>
 
-                                    <input
-                                        type="text"
-                                        name="bank_name"
-                                        placeholder="Enter bank name"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-building"></i>
+                                        <input
+                                            type="text"
+                                            name="bank_name"
+                                            placeholder="Enter bank name"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -608,22 +656,25 @@ include_once '../header.php';
                                         Membership Type <span class="required-star">*</span>
                                     </label>
 
-                                    <select
-                                        name="membership_type"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select Membership Type
-                                        </option>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-crown"></i>
+                                        <select
+                                            name="membership_type"
+                                            required
+                                        >
+                                            <option value="">
+                                                Select Membership Type
+                                            </option>
 
-                                        <option value="author-composer">
-                                            Author / Composer — ₹2,499
-                                        </option>
+                                            <option value="author-composer">
+                                                Author / Composer — ₹2,499
+                                            </option>
 
-                                        <option value="publisher">
-                                            Publisher — ₹4,999
-                                        </option>
-                                    </select>
+                                            <option value="publisher">
+                                                Publisher — ₹4,999
+                                            </option>
+                                        </select>
+                                    </div>
 
                                 </div>
 
@@ -639,10 +690,13 @@ include_once '../header.php';
                                         Additional Information
                                     </label>
 
-                                    <textarea
-                                        name="message"
-                                        placeholder="Tell us about your music, works or any questions regarding IPRS registration"
-                                    ></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <i class="fa-solid fa-comment"></i>
+                                        <textarea
+                                            name="message"
+                                            placeholder="Tell us about your music, works or any questions regarding IPRS registration"
+                                        ></textarea>
+                                    </div>
 
                                 </div>
 

@@ -73,7 +73,7 @@ AUTH PAGE
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 14px 16px;
-    background: #fff;
+    background: #fff5f7;
     color: var(--text);
     font: inherit;
     font-size: 0.95rem;
@@ -83,6 +83,51 @@ AUTH PAGE
 .auth-form input:focus {
     border-color: var(--primary) !important;
     outline: none;
+}
+
+/* Auth form input icons */
+.auth-form .input-icon {
+    position: relative;
+
+    > i,
+    > .fa-solid,
+    > .fas {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 0.9rem;
+        pointer-events: none;
+        z-index: 1;
+        line-height: 1;
+        transition: color 0.25s ease;
+    }
+
+    > input {
+        padding-left: 42px;
+        background: #fff5f7;
+    }
+
+    &:focus-within > i,
+    &:focus-within > .fa-solid,
+    &:focus-within > .fas {
+        color: var(--primary);
+    }
+}
+
+.auth-form .input-icon.has-chevron::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .password-wrap {

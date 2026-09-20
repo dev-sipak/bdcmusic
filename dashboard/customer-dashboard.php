@@ -130,7 +130,10 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                         <form id="profile-form" class="panel-profile-details" novalidate>
                             <div class="panel-detail-row">
                                 <label class="panel-label" for="profile-name">Full Name</label>
-                                <input type="text" id="profile-name" class="panel-input" value="<?php echo htmlspecialchars( $userName ); ?>" required>
+                                <div style="position:relative;flex:1;">
+                                    <i class="fa-solid fa-user" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                    <input type="text" id="profile-name" class="panel-input" style="padding-left:34px;" value="<?php echo htmlspecialchars( $userName ); ?>" required>
+                                </div>
                             </div>
                             <div class="panel-detail-row">
                                 <label class="panel-label">Email</label>
@@ -138,7 +141,10 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                             </div>
                             <div class="panel-detail-row">
                                 <label class="panel-label" for="profile-phone">Phone</label>
-                                <input type="tel" id="profile-phone" class="panel-input" value="<?php echo htmlspecialchars( $userPhone ); ?>" placeholder="Enter phone number" pattern="[0-9]{10,15}">
+                                <div style="position:relative;flex:1;">
+                                    <i class="fa-solid fa-phone" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                    <input type="tel" id="profile-phone" class="panel-input" style="padding-left:34px;" value="<?php echo htmlspecialchars( $userPhone ); ?>" placeholder="Enter phone number" pattern="[0-9]{10,15}">
+                                </div>
                             </div>
                             <div class="panel-detail-row">
                                 <span class="panel-label">Member Since</span>
@@ -163,15 +169,24 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                         <form id="password-form" class="panel-profile-details" novalidate>
                             <div class="panel-detail-row">
                                 <label class="panel-label" for="current-password">Current Password</label>
-                                <input type="password" id="current-password" class="panel-input" placeholder="Enter current password" required>
+                                <div style="position:relative;flex:1;">
+                                    <i class="fa-solid fa-lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                    <input type="password" id="current-password" class="panel-input" style="padding-left:34px;" placeholder="Enter current password" required>
+                                </div>
                             </div>
                             <div class="panel-detail-row">
                                 <label class="panel-label" for="new-password">New Password</label>
-                                <input type="password" id="new-password" class="panel-input" placeholder="Min 6 characters" required minlength="6">
+                                <div style="position:relative;flex:1;">
+                                    <i class="fa-solid fa-lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                    <input type="password" id="new-password" class="panel-input" style="padding-left:34px;" placeholder="Min 6 characters" required minlength="6">
+                                </div>
                             </div>
                             <div class="panel-detail-row">
                                 <label class="panel-label" for="confirm-password">Confirm New Password</label>
-                                <input type="password" id="confirm-password" class="panel-input" placeholder="Re-enter new password" required>
+                                <div style="position:relative;flex:1;">
+                                    <i class="fa-solid fa-lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                    <input type="password" id="confirm-password" class="panel-input" style="padding-left:34px;" placeholder="Re-enter new password" required>
+                                </div>
                             </div>
                             <button type="submit" class="btn panel-edit-btn" id="pass-save-btn">
                                 Update Password
@@ -368,27 +383,42 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                     <form id="create-release-form" class="panel-profile-details" novalidate>
                         <div class="panel-detail-row">
                             <label class="panel-label" for="rel-title">Title <span style="color:red;">*</span></label>
-                            <input type="text" id="rel-title" class="panel-input" required>
+                            <div style="position:relative;flex:1;">
+                                <i class="fa-solid fa-music" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                <input type="text" id="rel-title" class="panel-input" style="padding-left:34px;" required>
+                            </div>
                         </div>
                         <div class="panel-detail-row">
                             <label class="panel-label" for="rel-type">Type</label>
-                            <select id="rel-type" class="panel-input">
-                                <option value="single">Single</option>
-                                <option value="ep">EP</option>
-                                <option value="album">Album</option>
-                            </select>
+                            <div style="position:relative;flex:1;">
+                                <i class="fa-solid fa-tag" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                <select id="rel-type" class="panel-input" style="padding-left:34px;">
+                                    <option value="single">Single</option>
+                                    <option value="ep">EP</option>
+                                    <option value="album">Album</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="panel-detail-row">
                             <label class="panel-label" for="rel-isrc">ISRC</label>
-                            <input type="text" id="rel-isrc" class="panel-input" placeholder="Auto-assigned if blank">
+                            <div style="position:relative;flex:1;">
+                                <i class="fa-solid fa-link" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                <input type="text" id="rel-isrc" class="panel-input" style="padding-left:34px;" placeholder="Auto-assigned if blank">
+                            </div>
                         </div>
                         <div class="panel-detail-row">
                             <label class="panel-label" for="rel-golive">Go Live Date</label>
-                            <input type="date" id="rel-golive" class="panel-input">
+                            <div style="position:relative;flex:1;">
+                                <i class="fa-solid fa-calendar" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                <input type="date" id="rel-golive" class="panel-input" style="padding-left:34px;">
+                            </div>
                         </div>
                         <div class="panel-detail-row">
                             <label class="panel-label" for="rel-lyrics">Lyrics</label>
-                            <textarea id="rel-lyrics" class="panel-input" rows="4"></textarea>
+                            <div style="position:relative;flex:1;">
+                                <i class="fa-solid fa-pen-fancy" style="position:absolute;left:10px;top:12px;color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
+                                <textarea id="rel-lyrics" class="panel-input" rows="4" style="padding-left:34px;"></textarea>
+                            </div>
                         </div>
                         <div class="panel-detail-row" style="flex-direction:row;gap:20px;">
                             <label class="policy-check"><input type="checkbox" id="rel-dolby"> Dolby Atmos</label>

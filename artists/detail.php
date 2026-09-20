@@ -142,21 +142,33 @@ try {
         <p style="margin:0 0 20px;color:var(--muted,#888);font-size:0.875rem;">Fill in your details and we'll get back to you.</p>
         <form id="enquiry-form" novalidate>
             <input type="hidden" id="enquiry-artist-id" value="<?php echo intval( $artist['id'] ?? 0 ); ?>">
-            <div style="margin-bottom:14px;">
+            <div style="margin-bottom:14px;position:relative;">
                 <label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:500;">Name <span style="color:red;">*</span></label>
-                <input type="text" id="enquiry-name" required style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                <div style="position:relative;">
+                    <i class="fa-solid fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                    <input type="text" id="enquiry-name" required placeholder="Your Name" style="width:100%;padding:10px 14px 10px 42px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                </div>
             </div>
             <div style="margin-bottom:14px;">
                 <label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:500;">Email <span style="color:red;">*</span></label>
-                <input type="email" id="enquiry-email" required style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                <div style="position:relative;">
+                    <i class="fa-solid fa-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                    <input type="email" id="enquiry-email" required placeholder="Email Address" style="width:100%;padding:10px 14px 10px 42px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                </div>
             </div>
             <div style="margin-bottom:14px;">
                 <label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:500;">Phone</label>
-                <input type="tel" id="enquiry-phone" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                <div style="position:relative;">
+                    <i class="fa-solid fa-phone" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                    <input type="tel" id="enquiry-phone" placeholder="Contact Number" style="width:100%;padding:10px 14px 10px 42px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;">
+                </div>
             </div>
             <div style="margin-bottom:18px;">
                 <label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:500;">Message</label>
-                <textarea id="enquiry-message" rows="3" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;resize:vertical;"></textarea>
+                <div style="position:relative;">
+                    <i class="fa-solid fa-comment" style="position:absolute;left:14px;top:18px;color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                    <textarea id="enquiry-message" rows="3" placeholder="Your Message" style="width:100%;padding:10px 14px 10px 42px;border-radius:8px;border:1px solid var(--border,#333);background:var(--secondary,#12122a);color:var(--text,#e2e8f0);font-size:0.9rem;box-sizing:border-box;resize:vertical;"></textarea>
+                </div>
             </div>
             <div id="enquiry-error" style="display:none;color:#ef4444;font-size:0.85rem;margin-bottom:12px;"></div>
             <div id="enquiry-success" style="display:none;color:#10b981;font-size:0.85rem;margin-bottom:12px;"></div>

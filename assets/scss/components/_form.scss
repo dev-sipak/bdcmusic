@@ -86,7 +86,7 @@
 	border: 1px solid var(--border);
 	border-radius: 12px;
 	padding: 12px 14px;
-	background: #fff;
+	background: #fff5f7;
 	color: var(--text);
 	font: inherit;
 	transition: var(--transition);
@@ -129,6 +129,90 @@
 .field textarea::placeholder,
 .field-block textarea::placeholder {
 	color: #aaa;
+}
+
+/* =========================================================
+   INPUT ICON SYSTEM
+   ========================================================= */
+
+.input-icon {
+	position: relative;
+
+	> i,
+	> .fa-solid,
+	> .fas {
+		position: absolute;
+		left: 14px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #9ca3af;
+		font-size: 0.9rem;
+		pointer-events: none;
+		z-index: 1;
+		line-height: 1;
+		transition: color 0.25s ease;
+	}
+
+	> input,
+	> select,
+	> textarea {
+		padding-left: 42px;
+		background: #fff5f7;
+	}
+
+	> select {
+		padding-right: 36px;
+		appearance: none;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		background-image: none;
+		background: #fff5f7;
+	}
+
+	> textarea {
+		padding-top: 14px;
+	}
+
+	&:focus-within > i,
+	&:focus-within > .fa-solid,
+	&:focus-within > .fas {
+		color: var(--primary);
+	}
+}
+
+/* Chevron for select dropdowns */
+.input-icon.has-chevron::after {
+	content: "\f078";
+	font-family: "Font Awesome 6 Free";
+	font-weight: 900;
+	position: absolute;
+	right: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #9ca3af;
+	font-size: 0.75rem;
+	pointer-events: none;
+	z-index: 1;
+}
+
+/* Textarea variant - icon top-left */
+.input-icon.textarea-icon > i,
+.input-icon.textarea-icon > .fa-solid,
+.input-icon.textarea-icon > .fas {
+	top: 18px;
+	transform: none;
+}
+
+/* File input variant */
+.input-icon.file-icon > i,
+.input-icon.file-icon > .fa-solid,
+.input-icon.file-icon > .fas {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.input-icon.file-icon > input[type="file"] {
+	padding-left: 42px;
 }
 
 .form-field input[type="file"],

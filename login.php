@@ -39,22 +39,32 @@ include_once __DIR__ . '/header.php';
             <form id="auth-form" class="auth-form" novalidate>
                 <div class="form-field d-none" id="name-field">
                     <label for="auth-name">Full Name</label>
-                    <input type="text" id="auth-name" placeholder="Enter your full name">
+                    <div class="input-icon">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="auth-name" placeholder="Enter your full name">
+                    </div>
                 </div>
 
                 <div class="form-field d-none" id="phone-field">
                     <label for="auth-phone">Contact Number</label>
-                    <input type="tel" id="auth-phone" placeholder="Enter your phone number" pattern="[0-9]{10,15}">
+                    <div class="input-icon">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="auth-phone" placeholder="Enter your phone number" pattern="[0-9]{10,15}">
+                    </div>
                 </div>
 
                 <div class="form-field">
                     <label for="auth-email">Email Address</label>
-                    <input type="email" id="auth-email" placeholder="you@example.com" required>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="auth-email" placeholder="you@example.com" required>
+                    </div>
                 </div>
 
                 <div class="form-field">
                     <label for="auth-password">Password</label>
-                    <div class="password-wrap">
+                    <div class="password-wrap input-icon">
+                        <i class="fa-solid fa-lock"></i>
                         <input type="password" id="auth-password" placeholder="Enter your password" required>
                         <button type="button" class="toggle-pass" aria-label="Toggle password visibility">
                             <i class="fa-solid fa-eye"></i>
@@ -64,7 +74,10 @@ include_once __DIR__ . '/header.php';
 
                 <div class="form-field d-none" id="confirm-field">
                     <label for="auth-confirm">Confirm Password</label>
-                    <input type="password" id="auth-confirm" placeholder="Confirm your password">
+                    <div class="input-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="auth-confirm" placeholder="Confirm your password">
+                    </div>
                 </div>
 
                 <div class="auth-options" id="auth-options">

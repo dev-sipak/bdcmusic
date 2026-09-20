@@ -439,27 +439,33 @@ $videoPricing = [
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="service_type">Required Service <span class="required-star">*</span></label>
-                                <select id="service_type" name="service_type" required>
-                                    <option value="">Select Service</option>
-                                    <option data-category="Audio">Recording</option>
-                                    <option data-category="Audio">Music Production</option>
-                                    <option data-category="Audio">Mixing</option>
-                                    <option data-category="Audio">Mastering</option>
-                                    <option data-category="Video">Video Production</option>
-                                    <option data-category="Video">Video Editing</option>
-                                    <option data-category="Video">Music Video</option>
-                                    <option data-category="Video">Social Media Videos</option>
-                                    <option data-category="Video">Motion Graphics</option>
-                                    <option data-category="Video">YouTube Services</option>
-                                    <option data-category="Video">Event Videos</option>
-                                    <option data-category="Video">Corporate Videos</option>
-                                </select>
+                                <div class="input-icon has-chevron">
+                                    <i class="fa-solid fa-headphones"></i>
+                                    <select id="service_type" name="service_type" required>
+                                        <option value="">Select Service</option>
+                                        <option data-category="Audio">Recording</option>
+                                        <option data-category="Audio">Music Production</option>
+                                        <option data-category="Audio">Mixing</option>
+                                        <option data-category="Audio">Mastering</option>
+                                        <option data-category="Video">Video Production</option>
+                                        <option data-category="Video">Video Editing</option>
+                                        <option data-category="Video">Music Video</option>
+                                        <option data-category="Video">Social Media Videos</option>
+                                        <option data-category="Video">Motion Graphics</option>
+                                        <option data-category="Video">YouTube Services</option>
+                                        <option data-category="Video">Event Videos</option>
+                                        <option data-category="Video">Corporate Videos</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="project_upload">Upload Audio/Video</label>
-                                <input id="project_upload" name="project_upload[]" type="file" accept=".wav,.mp3,.flac,.mp4,.mov" multiple>
+                                <div class="input-icon file-icon">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <input id="project_upload" name="project_upload[]" type="file" accept=".wav,.mp3,.flac,.mp4,.mov" multiple>
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
@@ -479,37 +485,55 @@ $videoPricing = [
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="deadline">Deadline <span class="required-star">*</span></label>
-                                <input id="deadline" name="deadline" type="text" placeholder="Example: 7 working days" required>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <input id="deadline" name="deadline" type="text" placeholder="Example: 7 working days" required>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="budget">Budget <span class="required-star">*</span></label>
-                                <input id="budget" name="budget" type="text" placeholder="Example: Rs.15,000" required>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                                    <input id="budget" name="budget" type="text" placeholder="Example: Rs.15,000" required>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="client_name">Full Name <span class="required-star">*</span></label>
-                                <input id="client_name" name="client_name" type="text" required>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                    <input id="client_name" name="client_name" type="text" required>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="client_email">Email <span class="required-star">*</span></label>
-                                <input id="client_email" name="client_email" type="email" required>
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    <input id="client_email" name="client_email" type="email" required>
+                                </div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-field">
                                 <label for="client_phone">Contact Number</label>
-                                <input id="client_phone" name="client_phone" type="tel">
+                                <div class="input-icon">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input id="client_phone" name="client_phone" type="tel">
+                                </div>
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-field">
                                 <label for="notes">Additional Notes</label>
-                                <textarea id="notes" name="notes"></textarea>
+                                <div class="input-icon textarea-icon">
+                                    <i class="fa-solid fa-comment"></i>
+                                    <textarea id="notes" name="notes"></textarea>
+                                </div>
                             </div>
                         </div>
 						<div class="col-12">

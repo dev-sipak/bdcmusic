@@ -458,11 +458,14 @@ include_once '../header.php';
                                     <label>
                                         Artist Name <span class="required-star">*</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="artist_name"
-                                        placeholder="Artist Name"
-                                        required>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input
+                                            type="text"
+                                            name="artist_name"
+                                            placeholder="Artist Name"
+                                            required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -471,11 +474,14 @@ include_once '../header.php';
                                     <label>
                                         Release Title <span class="required-star">*</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        name="release_title"
-                                        placeholder="Song / Album Name"
-                                        required>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-music"></i>
+                                        <input
+                                            type="text"
+                                            name="release_title"
+                                            placeholder="Song / Album Name"
+                                            required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -484,22 +490,25 @@ include_once '../header.php';
                                     <label>
                                         Genre
                                     </label>
-                                    <select name="genre" required>
-									<option value="" disabled selected>Select Genre</option>
-									<option value="Pop">Pop</option>
-									<option value="Rock">Rock</option>
-									<option value="Hip Hop">Hip Hop</option>
-									<option value="Rap">Rap</option>
-									<option value="R&B">R&B</option>
-									<option value="Classical">Classical</option>
-									<option value="Folk">Folk</option>
-									<option value="Devotional">Devotional</option>
-									<option value="Electronic">Electronic</option>
-									<option value="Jazz">Jazz</option>
-									<option value="Instrumental">Instrumental</option>
-									<option value="Bollywood">Bollywood</option>
-									<option value="Other">Other</option>
-								</select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-palette"></i>
+                                        <select name="genre" required>
+										<option value="" disabled selected>Select Genre</option>
+										<option value="Pop">Pop</option>
+										<option value="Rock">Rock</option>
+										<option value="Hip Hop">Hip Hop</option>
+										<option value="Rap">Rap</option>
+										<option value="R&B">R&B</option>
+										<option value="Classical">Classical</option>
+										<option value="Folk">Folk</option>
+										<option value="Devotional">Devotional</option>
+										<option value="Electronic">Electronic</option>
+										<option value="Jazz">Jazz</option>
+										<option value="Instrumental">Instrumental</option>
+										<option value="Bollywood">Bollywood</option>
+										<option value="Other">Other</option>
+									</select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -508,23 +517,26 @@ include_once '../header.php';
                                     <label>
                                         Language
                                     </label>
-                                    <select name="language" required>
-									<option value="" disabled selected>Select Language</option>
-									<option value="Hindi">Hindi</option>
-									<option value="English">English</option>
-									<option value="Odia">Odia</option>
-									<option value="Bengali">Bengali</option>
-									<option value="Telugu">Telugu</option>
-									<option value="Tamil">Tamil</option>
-									<option value="Kannada">Kannada</option>
-									<option value="Malayalam">Malayalam</option>
-									<option value="Marathi">Marathi</option>
-									<option value="Punjabi">Punjabi</option>
-									<option value="Gujarati">Gujarati</option>
-									<option value="Urdu">Urdu</option>
-									<option value="Assamese">Assamese</option>
-									<option value="Other">Other</option>
-								</select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-globe"></i>
+                                        <select name="language" required>
+										<option value="" disabled selected>Select Language</option>
+										<option value="Hindi">Hindi</option>
+										<option value="English">English</option>
+										<option value="Odia">Odia</option>
+										<option value="Bengali">Bengali</option>
+										<option value="Telugu">Telugu</option>
+										<option value="Tamil">Tamil</option>
+										<option value="Kannada">Kannada</option>
+										<option value="Malayalam">Malayalam</option>
+										<option value="Marathi">Marathi</option>
+										<option value="Punjabi">Punjabi</option>
+										<option value="Gujarati">Gujarati</option>
+										<option value="Urdu">Urdu</option>
+										<option value="Assamese">Assamese</option>
+										<option value="Other">Other</option>
+									</select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -533,14 +545,17 @@ include_once '../header.php';
                                     <label>
                                         Need ISRC?
                                     </label>
-                                    <select name="isrc">
-                                        <option value="Yes">
-                                            Yes
-                                        </option>
-                                        <option value="No">
-                                            No
-                                        </option>
-                                    </select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-link"></i>
+                                        <select name="isrc">
+                                            <option value="Yes">
+                                                Yes
+                                            </option>
+                                            <option value="No">
+                                                No
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -549,14 +564,17 @@ include_once '../header.php';
                                     <label>
                                         Need UPC?
                                     </label>
-                                    <select name="upc">
-                                        <option value="Yes">
-                                            Yes
-                                        </option>
-                                        <option value="No">
-                                            No
-                                        </option>
-                                    </select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-barcode"></i>
+                                        <select name="upc">
+                                            <option value="Yes">
+                                                Yes
+                                            </option>
+                                            <option value="No">
+                                                No
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -565,14 +583,17 @@ include_once '../header.php';
                                     <label>
                                         Copyright Help?
                                     </label>
-                                    <select name="copyright_help">
-                                        <option value="Yes">
-                                            Yes
-                                        </option>
-                                        <option value="No">
-                                            No
-                                        </option>
-                                    </select>
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                        <select name="copyright_help">
+                                            <option value="Yes">
+                                                Yes
+                                            </option>
+                                            <option value="No">
+                                                No
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -581,11 +602,14 @@ include_once '../header.php';
                                     <label>
                                         Upload Audio <span class="required-star">*</span>
                                     </label>
-                                    <input
-                                        type="file"
-                                        name="audio_file"
-                                        accept=".wav,.mp3"
-                                        required>
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="audio_file"
+                                            accept=".wav,.mp3"
+                                            required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -594,11 +618,14 @@ include_once '../header.php';
                                     <label>
                                         Cover Artwork <span class="required-star">*</span>
                                     </label>
-                                    <input
-                                        type="file"
-                                        name="cover_artwork"
-                                        accept=".jpg,.jpeg,.png"
-                                        required>
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="cover_artwork"
+                                            accept=".jpg,.jpeg,.png"
+                                            required>
+                                    </div>
                                 </div>
                             </div>
 
@@ -607,9 +634,12 @@ include_once '../header.php';
                                     <label>
                                         Metadata File
                                     </label>
-                                    <input
-                                        type="file"
-                                        name="metadata_file">
+                                    <div class="input-icon file-icon">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <input
+                                            type="file"
+                                            name="metadata_file">
+                                    </div>
                                 </div>
                             </div>
 
@@ -618,9 +648,12 @@ include_once '../header.php';
                                     <label>
                                         Release Date
                                     </label>
-                                    <input
-                                        type="date"
-                                        name="release_date">
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-calendar"></i>
+                                        <input
+                                            type="date"
+                                            name="release_date">
+                                    </div>
                                 </div>
                             </div>
 
@@ -629,9 +662,12 @@ include_once '../header.php';
                                     <label>
                                         Additional Notes
                                     </label>
-                                    <textarea
-                                        name="notes"
-                                        placeholder="Tell us about your release"></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <i class="fa-solid fa-comment"></i>
+                                        <textarea
+                                            name="notes"
+                                            placeholder="Tell us about your release"></textarea>
+                                    </div>
                                 </div>
                             </div>
 							<div class="col-12">

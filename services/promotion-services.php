@@ -207,32 +207,35 @@ include_once '../header.php';
                                         Content Type <span class="required-star">*</span>
                                     </label>
 
-                                    <select
-                                        name="content_type"
-                                        required
-                                    >
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-film"></i>
+                                        <select
+                                            name="content_type"
+                                            required
+                                        >
 
-                                        <option value="">
-                                            Select Content
-                                        </option>
+                                            <option value="">
+                                                Select Content
+                                            </option>
 
-                                        <option>
-                                            Music Video
-                                        </option>
+                                            <option>
+                                                Music Video
+                                            </option>
 
-                                        <option>
-                                            Instagram Reels
-                                        </option>
+                                            <option>
+                                                Instagram Reels
+                                            </option>
 
-                                        <option>
-                                            Short Film
-                                        </option>
+                                            <option>
+                                                Short Film
+                                            </option>
 
-                                        <option>
-                                            Brand Video
-                                        </option>
+                                            <option>
+                                                Brand Video
+                                            </option>
 
-                                    </select>
+                                        </select>
+                                    </div>
 
                                 </div>
 
@@ -248,32 +251,35 @@ include_once '../header.php';
                                         Promotion Goal <span class="required-star">*</span>
                                     </label>
 
-                                    <select
-                                        name="promotion_goal"
-                                        required
-                                    >
+                                    <div class="input-icon has-chevron">
+                                        <i class="fa-solid fa-bullseye"></i>
+                                        <select
+                                            name="promotion_goal"
+                                            required
+                                        >
 
-                                        <option value="">
-                                            Select Goal
-                                        </option>
+                                            <option value="">
+                                                Select Goal
+                                            </option>
 
-                                        <option>
-                                            More Views
-                                        </option>
+                                            <option>
+                                                More Views
+                                            </option>
 
-                                        <option>
-                                            Audience Growth
-                                        </option>
+                                            <option>
+                                                Audience Growth
+                                            </option>
 
-                                        <option>
-                                            Brand Awareness
-                                        </option>
+                                            <option>
+                                                Brand Awareness
+                                            </option>
 
-                                        <option>
-                                            Release Promotion
-                                        </option>
+                                            <option>
+                                                Release Promotion
+                                            </option>
 
-                                    </select>
+                                        </select>
+                                    </div>
 
                                 </div>
 
@@ -289,12 +295,15 @@ include_once '../header.php';
                                         Name <span class="required-star">*</span>
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="client_name"
-                                        placeholder="Your Name"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                        <input
+                                            type="text"
+                                            name="client_name"
+                                            placeholder="Your Name"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -310,12 +319,15 @@ include_once '../header.php';
                                         Email <span class="required-star">*</span>
                                     </label>
 
-                                    <input
-                                        type="email"
-                                        name="client_email"
-                                        placeholder="Email Address"
-                                        required
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-envelope"></i>
+                                        <input
+                                            type="email"
+                                            name="client_email"
+                                            placeholder="Email Address"
+                                            required
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -331,11 +343,14 @@ include_once '../header.php';
                                         Phone
                                     </label>
 
-                                    <input
-                                        type="tel"
-                                        name="client_phone"
-                                        placeholder="Contact Number"
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <input
+                                            type="tel"
+                                            name="client_phone"
+                                            placeholder="Contact Number"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -351,11 +366,14 @@ include_once '../header.php';
                                         Budget
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="budget"
-                                        placeholder="Example: ₹10,000"
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                                        <input
+                                            type="text"
+                                            name="budget"
+                                            placeholder="Example: ₹10,000"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -371,11 +389,14 @@ include_once '../header.php';
                                         Project Link
                                     </label>
 
-                                    <input
-                                        type="url"
-                                        name="project_link"
-                                        placeholder="YouTube / Instagram Link"
-                                    >
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-link"></i>
+                                        <input
+                                            type="url"
+                                            name="project_link"
+                                            placeholder="YouTube / Instagram Link"
+                                        >
+                                    </div>
 
                                 </div>
 
@@ -391,10 +412,13 @@ include_once '../header.php';
                                         Additional Details
                                     </label>
 
-                                    <textarea
-                                        name="notes"
-                                        placeholder="Tell us about your project"
-                                    ></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <i class="fa-solid fa-comment"></i>
+                                        <textarea
+                                            name="notes"
+                                            placeholder="Tell us about your project"
+                                        ></textarea>
+                                    </div>
 
                                 </div>
 

@@ -595,28 +595,31 @@ $instruments = [
                                 Choose Course <span class="required-star">*</span>
                             </label>
 
-                            <select
-                                id="selected_course"
-                                name="selected_course"
-                                required
-                                data-selected-course
-                            >
+                            <div class="input-icon has-chevron">
+                                <i class="fa-solid fa-music"></i>
+                                <select
+                                    id="selected_course"
+                                    name="selected_course"
+                                    required
+                                    data-selected-course
+                                >
 
-                                <option value="" selected disabled>
-                                    Select a course
-                                </option>
-
-                                <?php foreach ( $courses as $courseName => $coursePlans ) : ?>
-
-                                    <option
-                                        value="<?php echo htmlspecialchars( $courseName ); ?>"
-                                    >
-                                        <?php echo htmlspecialchars( $courseName ); ?>
+                                    <option value="" selected disabled>
+                                        Select a course
                                     </option>
 
-                                <?php endforeach; ?>
+                                    <?php foreach ( $courses as $courseName => $coursePlans ) : ?>
 
-                            </select>
+                                        <option
+                                            value="<?php echo htmlspecialchars( $courseName ); ?>"
+                                        >
+                                            <?php echo htmlspecialchars( $courseName ); ?>
+                                        </option>
+
+                                    <?php endforeach; ?>
+
+                                </select>
+                            </div>
 
                         </div>
 
@@ -631,19 +634,22 @@ $instruments = [
                                 Choose Package <span class="required-star">*</span>
                             </label>
 
-                            <select
-                                id="selected_plan"
-                                name="selected_plan"
-                                required
-                                data-selected-plan
-                                disabled
-                            >
+                            <div class="input-icon has-chevron">
+                                <i class="fa-solid fa-box"></i>
+                                <select
+                                    id="selected_plan"
+                                    name="selected_plan"
+                                    required
+                                    data-selected-plan
+                                    disabled
+                                >
 
-                                <option value="" selected disabled>
-                                    Select a package
-                                </option>
+                                    <option value="" selected disabled>
+                                        Select a package
+                                    </option>
 
-                            </select>
+                                </select>
+                            </div>
 
                         </div>
 
@@ -658,13 +664,16 @@ $instruments = [
                                 Full Name <span class="required-star">*</span>
                             </label>
 
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                autocomplete="name"
-                                required
-                            >
+                            <div class="input-icon">
+                                <i class="fa-solid fa-user"></i>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    autocomplete="name"
+                                    required
+                                >
+                            </div>
 
                         </div>
 
@@ -679,13 +688,16 @@ $instruments = [
                                 Email <span class="required-star">*</span>
                             </label>
 
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autocomplete="email"
-                                required
-                            >
+                            <div class="input-icon">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autocomplete="email"
+                                    required
+                                >
+                            </div>
 
                         </div>
 
@@ -700,13 +712,16 @@ $instruments = [
                                 Contact Number <span class="required-star">*</span>
                             </label>
 
-                            <input
-                                id="mobile"
-                                name="mobile"
-                                type="tel"
-                                autocomplete="tel"
-                                required
-                            >
+                            <div class="input-icon">
+                                <i class="fa-solid fa-phone"></i>
+                                <input
+                                    id="mobile"
+                                    name="mobile"
+                                    type="tel"
+                                    autocomplete="tel"
+                                    required
+                                >
+                            </div>
 
                         </div>
 
@@ -721,13 +736,16 @@ $instruments = [
                                 Age <span class="required-star">*</span>
                             </label>
 
-                            <input
-                                id="age"
-                                name="age"
-                                type="number"
-                                min="4"
-                                required
-                            >
+                            <div class="input-icon">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input
+                                    id="age"
+                                    name="age"
+                                    type="number"
+                                    min="4"
+                                    required
+                                >
+                            </div>
 
                         </div>
 

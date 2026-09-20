@@ -382,25 +382,40 @@ try {
                     <div class="modal-detail-grid">
                         <div class="modal-detail-item" style="grid-column:1/-1;">
                             <label class="panel-label">Artist Name <span style="color:red;">*</span></label>
-                            <input type="text" id="artist-name" class="panel-input" required>
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                                <input type="text" id="artist-name" class="panel-input" style="padding-left:42px;" required>
+                            </div>
                         </div>
                         <div class="modal-detail-item">
                             <label class="panel-label">Category <span style="color:red;">*</span></label>
-                            <select id="artist-category" class="adm-filter-select" required>
-                                <option value="">Select Category</option>
-                            </select>
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-palette" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                                <select id="artist-category" class="adm-filter-select" style="padding-left:42px;" required>
+                                    <option value="">Select Category</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="modal-detail-item">
                             <label class="panel-label">Location</label>
-                            <input type="text" id="artist-location" class="panel-input">
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-location-dot" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                                <input type="text" id="artist-location" class="panel-input" style="padding-left:42px;">
+                            </div>
                         </div>
                         <div class="modal-detail-item" style="grid-column:1/-1;">
                             <label class="panel-label">Bio</label>
-                            <textarea id="artist-bio" class="panel-input" rows="3"></textarea>
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-pen-fancy" style="position:absolute;left:14px;top:14px;color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                                <textarea id="artist-bio" class="panel-input" rows="3" style="padding-left:42px;"></textarea>
+                            </div>
                         </div>
                         <div class="modal-detail-item" style="grid-column:1/-1;">
                             <label class="panel-label">Image (WebP, 250x360)</label>
-                            <input type="file" id="artist-image-input" accept="image/jpeg,image/png,image/webp" class="panel-input">
+                            <div style="position:relative;">
+                                <i class="fa-solid fa-cloud-arrow-up" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.9rem;pointer-events:none;z-index:1;"></i>
+                                <input type="file" id="artist-image-input" accept="image/jpeg,image/png,image/webp" class="panel-input" style="padding-left:42px;">
+                            </div>
                             <input type="hidden" id="artist-image-url">
                             <img id="artist-image-preview" src="" alt="" style="display:none;margin-top:8px;width:80px;height:115px;object-fit:cover;border-radius:8px;">
                         </div>
