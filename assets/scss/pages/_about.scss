@@ -18,7 +18,7 @@ ABOUT
 	position: relative;
     padding: 22px 18px 18px 18px;
     border-radius: 30px;
-    background: linear-gradient(323deg, rgba(228, 0, 43, 0.06), rgba(255, 255, 255, 0.85));
+    background: linear-gradient(135deg, rgba(228, 0, 43, 0.06), rgba(255, 255, 255, 0.85));
 }
 
 .about-images img {
@@ -71,7 +71,6 @@ ABOUT
 }
 
 .feature:hover {
-	transform: translateY(-4px);
 	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
 }
 

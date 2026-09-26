@@ -95,10 +95,6 @@ GALLERY
   transform: scale(1);
 }
 
-.gallery-item:hover img {
-  transform: scale(1.05);
-}
-
 .gallery-overlay h3 {
   padding-left: 20px;
 }
@@ -130,6 +126,3 @@ IMAGE EFFECTS
   transition: transform .6s ease;
 }
 
-.blog-grid article:hover img {
-  transform: scale(1.08);
-}

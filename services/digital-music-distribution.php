@@ -22,6 +22,9 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['music_distribution_
     $isrc        = sanitizeDistributionValue( $_POST['isrc'] ?? '' );
     $upc         = sanitizeDistributionValue( $_POST['upc'] ?? '' );
     $copyrightHelp = sanitizeDistributionValue( $_POST['copyright_help'] ?? '' );
+    $existingIsrc = sanitizeDistributionValue( $_POST['existing_isrc'] ?? '' );
+    $existingUpc  = sanitizeDistributionValue( $_POST['existing_upc'] ?? '' );
+    $youtubeLink  = sanitizeDistributionValue( $_POST['youtube_link'] ?? '' );
     $releaseDate = sanitizeDistributionValue( $_POST['release_date'] ?? '' );
     $notes       = sanitizeDistributionValue( $_POST['notes'] ?? '' );
     $termsAccepted = isset( $_POST['terms'] );
@@ -46,6 +49,12 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['music_distribution_
     }
     if ( ! $termsAccepted ) {
         $errors[] = 'Please accept the privacy policy and terms.';
+    }
+    if ( $copyrightHelp === 'Yes' && $youtubeLink === '' ) {
+        $errors[] = 'Please provide the YouTube link for copyright help.';
+    }
+    if ( $copyrightHelp === 'Yes' && $youtubeLink !== '' && ! filter_var( $youtubeLink, FILTER_VALIDATE_URL ) ) {
+        $errors[] = 'Please enter a valid YouTube link.';
     }
 
     if ( empty( $errors ) ) {
@@ -88,8 +97,11 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['music_distribution_
             'genre'          => $genre,
             'language'       => $language,
             'isrc'           => $isrc,
+            'existing_isrc'  => $isrc === 'Yes' ? $existingIsrc : '',
             'upc'            => $upc,
+            'existing_upc'   => $upc === 'Yes' ? $existingUpc : '',
             'copyright_help' => $copyrightHelp,
+            'youtube_link'   => $copyrightHelp === 'Yes' ? $youtubeLink : '',
             'release_date'   => $releaseDate,
             'notes'          => $notes,
             'files'          => $storedFiles,
@@ -545,16 +557,38 @@ include_once '../header.php';
                                     <label>
                                         Need ISRC?
                                     </label>
-                                    <div class="input-icon has-chevron">
+                                    <div class="radio-group" data-toggle-group="isrc">
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="isrc"
+                                                value="Yes">
+                                            Yes
+                                        </label>
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="isrc"
+                                                value="No"
+                                                checked>
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 isrc-detail" data-toggle-detail="isrc" hidden>
+                                <div class="form-field">
+                                    <label>
+                                        Existing ISRC Code
+                                    </label>
+                                    <div class="input-icon">
                                         <i class="fa-solid fa-link"></i>
-                                        <select name="isrc">
-                                            <option value="Yes">
-                                                Yes
-                                            </option>
-                                            <option value="No">
-                                                No
-                                            </option>
-                                        </select>
+                                        <input
+                                            type="text"
+                                            name="existing_isrc"
+                                            placeholder="e.g. IN-ABC-12-34567"
+                                            disabled>
                                     </div>
                                 </div>
                             </div>
@@ -564,16 +598,38 @@ include_once '../header.php';
                                     <label>
                                         Need UPC?
                                     </label>
-                                    <div class="input-icon has-chevron">
+                                    <div class="radio-group" data-toggle-group="upc">
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="upc"
+                                                value="Yes">
+                                            Yes
+                                        </label>
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="upc"
+                                                value="No"
+                                                checked>
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 upc-detail" data-toggle-detail="upc" hidden>
+                                <div class="form-field">
+                                    <label>
+                                        Existing UPC Code
+                                    </label>
+                                    <div class="input-icon">
                                         <i class="fa-solid fa-barcode"></i>
-                                        <select name="upc">
-                                            <option value="Yes">
-                                                Yes
-                                            </option>
-                                            <option value="No">
-                                                No
-                                            </option>
-                                        </select>
+                                        <input
+                                            type="text"
+                                            name="existing_upc"
+                                            placeholder="e.g. 123456789012"
+                                            disabled>
                                     </div>
                                 </div>
                             </div>
@@ -583,16 +639,39 @@ include_once '../header.php';
                                     <label>
                                         Copyright Help?
                                     </label>
-                                    <div class="input-icon has-chevron">
-                                        <i class="fa-solid fa-shield-halved"></i>
-                                        <select name="copyright_help">
-                                            <option value="Yes">
-                                                Yes
-                                            </option>
-                                            <option value="No">
-                                                No
-                                            </option>
-                                        </select>
+                                    <div class="radio-group" data-toggle-group="copyright_help">
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="copyright_help"
+                                                value="Yes">
+                                            Yes
+                                        </label>
+                                        <label class="radio-card">
+                                            <input
+                                                type="radio"
+                                                name="copyright_help"
+                                                value="No"
+                                                checked>
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 copyright-detail" data-toggle-detail="copyright_help" hidden>
+                                <div class="form-field">
+                                    <label>
+                                        YouTube Link <span class="required-star">*</span>
+                                    </label>
+                                    <div class="input-icon">
+                                        <i class="fa-solid fa-youtube"></i>
+                                        <input
+                                            type="url"
+                                            name="youtube_link"
+                                            placeholder="https://youtube.com/..."
+                                            data-required-when-shown
+                                            disabled>
                                     </div>
                                 </div>
                             </div>
@@ -737,6 +816,7 @@ include_once '../header.php';
         </section>
     </div>
 </section>
+<script src="<?php echo $assetPath; ?>js/distribution-form.js"></script>
 <?php
 include_once '../footer.php';
 ?>

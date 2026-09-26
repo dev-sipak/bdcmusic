@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var basePath = customerDashboardConfig.basePath;
     var statusSteps = ['Pending', 'Processing', 'Hold', 'Delivered'];
 
-    initTabNav('.panel-nav-btn[data-tab]', '.panel-tab', 'tab-', '.panel-sidebar', '#dash-menu-toggle');
+    initSidebarToggle('.panel-sidebar', '#dash-menu-toggle');
 
     /* ----- Orders (Paginated) ----- */
     var ordersPagination = { currentPage: 1, totalPages: 1 };
@@ -56,35 +56,44 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    document.getElementById('order-status-filter').addEventListener('change', function () {
-        ordersFilters.status = this.value;
-        loadOrders(1);
-    });
-    document.getElementById('order-service-filter').addEventListener('change', function () {
-        ordersFilters.service = this.value;
-        loadOrders(1);
-    });
+    var orderStatusFilter = document.getElementById('order-status-filter');
+    var orderServiceFilter = document.getElementById('order-service-filter');
+
+    if (orderStatusFilter) {
+        orderStatusFilter.addEventListener('change', function () {
+            ordersFilters.status = this.value;
+            loadOrders(1);
+        });
+    }
+    if (orderServiceFilter) {
+        orderServiceFilter.addEventListener('change', function () {
+            ordersFilters.service = this.value;
+            loadOrders(1);
+        });
+    }
 
     /* ----- My Uploads ----- */
     var uploadsTbody = document.getElementById('uploads-tbody');
     var uploadsEmpty = document.getElementById('uploads-empty');
 
-    if (uploads.length === 0) {
-        uploadsTbody.innerHTML = '';
-        uploadsEmpty.classList.remove('d-none');
-    } else {
-        uploadsEmpty.classList.add('d-none');
-        uploadsTbody.innerHTML = uploads.map(function (u) {
-            var sizeKB = (u.file_size / 1024).toFixed(1);
-            var sizeMB = (u.file_size / (1024 * 1024)).toFixed(1);
-            var sizeStr = u.file_size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
-            return '<tr>' +
-                '<td><strong>' + u.booking_id + '</strong></td>' +
-                '<td>' + u.original_name + '</td>' +
-                '<td>' + sizeStr + '</td>' +
-                '<td><a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(u.file_path) + '" class="panel-download-btn" target="_blank"><i class="fa-solid fa-download"></i> Download</a></td>' +
-            '</tr>';
-        }).join('');
+    if (uploadsTbody && uploadsEmpty) {
+        if (uploads.length === 0) {
+            uploadsTbody.innerHTML = '';
+            uploadsEmpty.classList.remove('d-none');
+        } else {
+            uploadsEmpty.classList.add('d-none');
+            uploadsTbody.innerHTML = uploads.map(function (u) {
+                var sizeKB = (u.file_size / 1024).toFixed(1);
+                var sizeMB = (u.file_size / (1024 * 1024)).toFixed(1);
+                var sizeStr = u.file_size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
+                return '<tr>' +
+                    '<td><strong>' + u.booking_id + '</strong></td>' +
+                    '<td>' + u.original_name + '</td>' +
+                    '<td>' + sizeStr + '</td>' +
+                    '<td><a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(u.file_path) + '" class="panel-download-btn" target="_blank"><i class="fa-solid fa-download"></i> Download</a></td>' +
+                '</tr>';
+            }).join('');
+        }
     }
 
     /* ----- Order History (Paginated) ----- */
@@ -130,22 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var detailSelect = document.getElementById('details-order-select');
     var detailView   = document.getElementById('order-detail-view');
 
-    // Populate order details select from first page of orders
-    fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.success && data.orders) {
-                data.orders.forEach(function (o) {
-                    var opt = document.createElement('option');
-                    opt.value = o.id;
-                    opt.textContent = o.id;
-                    detailSelect.appendChild(opt);
-                });
-            }
-        });
-
-    detailSelect.addEventListener('change', function () {
-        var orderId = this.value;
+    function showOrderDetails(orderId) {
         if (!orderId) {
             detailView.classList.add('d-none');
             return;
@@ -185,7 +179,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 detailView.classList.remove('d-none');
             });
-    });
+    }
+
+    if (detailSelect && detailView) {
+        // Populate order details select from first page of orders
+        fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.success || !data.orders) return;
+
+                var initialOrderId = (typeof customerReleasesConfig !== 'undefined' && customerReleasesConfig)
+                    ? customerReleasesConfig.initialOrderId
+                    : '';
+
+                data.orders.forEach(function (o) {
+                    var opt = document.createElement('option');
+                    opt.value = o.id;
+                    opt.textContent = o.id;
+                    detailSelect.appendChild(opt);
+                });
+
+                // Deep link: /dashboard/order-details?id=BDCM-XXXXXX
+                if (initialOrderId) {
+                    detailSelect.value = initialOrderId;
+                    showOrderDetails(initialOrderId);
+                }
+            });
+
+        detailSelect.addEventListener('change', function () {
+            showOrderDetails(this.value);
+        });
+    }
 
     /* ----- Profile Picture Upload ----- */
     var avatarInput   = document.getElementById('avatar-file-input');
@@ -372,14 +396,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* ----- Logout ----- */
-    document.getElementById('logout-btn').addEventListener('click', function () {
-        if (confirm('Are you sure you want to logout?')) {
-            window.location.href = basePath + 'includes/logout';
-        }
-    });
+    var logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = basePath + 'includes/logout';
+            }
+        });
+    }
 
-    // Initial loads
-    loadOrders(1);
-    loadHistory(1);
+    // Initial loads (only for the sections present on this page)
+    if (document.getElementById('orders-tbody')) {
+        loadOrders(1);
+    }
+    if (document.getElementById('history-tbody')) {
+        loadHistory(1);
+    }
 
 });

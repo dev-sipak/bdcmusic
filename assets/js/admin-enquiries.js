@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var enquiriesPagination = { currentPage: 1, totalPages: 1 };
     var enquiriesStatus = 'all';
 
+    initSidebarToggle('.adm-sidebar', '#admin-menu-toggle');
+
     function loadEnquiries(page) {
         page = page || 1;
         var params = 'page=' + page + '&per_page=10';
@@ -197,5 +199,19 @@ document.addEventListener('DOMContentLoaded', function () {
         replySendBtn.addEventListener('click', sendReply);
     }
 
-    loadEnquiries(1);
+    /* ----- Logout ----- */
+    var logoutBtn = document.getElementById('adm-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout from admin?')) {
+                window.location.href = basePath + 'includes/logout.php';
+            }
+        });
+    }
+
+    // Initial load
+    if (document.getElementById('adm-enquiries-tbody')) {
+        loadEnquiries(1);
+    }
 });

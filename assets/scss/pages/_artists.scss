@@ -16,10 +16,6 @@
 	transition: transform 0.45s ease;
 }
 
-.person-card:hover img {
-	transform: scale(1.04);
-}
-
 .person-content {
 	position: absolute;
 	left: 0;
@@ -211,7 +207,6 @@ ARTIST CATEGORY PAGE
 
 .artist-grid-card:hover {
 	box-shadow: var(--shadow-md);
-	transform: translateY(-4px);
 }
 
 .artist-grid-card__img {
@@ -228,10 +223,6 @@ ARTIST CATEGORY PAGE
 	object-fit: cover;
 	object-position: top;
 	transition: transform $transition-slow;
-}
-
-.artist-grid-card:hover .artist-grid-card__img img {
-	transform: scale(1.05);
 }
 
 .artist-grid-card__img-placeholder {
@@ -333,10 +324,6 @@ ARTIST CATEGORY PAGE
 .artist-grid-card__cta i {
 	font-size: 0.75rem;
 	transition: transform $transition-fast;
-}
-
-.artist-grid-card:hover .artist-grid-card__cta i {
-	transform: translateX(3px);
 }
 
 /* ─── CTA Section ─────────────────────────────── */
@@ -441,7 +428,6 @@ ARTIST CATEGORY PAGE
 
 .profile-card:hover {
 	box-shadow: var(--shadow-md);
-	transform: translateY(-2px);
 }
 
 .profile-card__img-wrap {
@@ -457,10 +443,6 @@ ARTIST CATEGORY PAGE
 	height: 100%;
 	object-fit: cover;
 	transition: transform $transition-slow;
-}
-
-.profile-card:hover .profile-card__img-wrap img {
-	transform: scale(1.05);
 }
 
 .profile-card__img-placeholder {
@@ -544,10 +526,6 @@ ARTIST CATEGORY PAGE
 	transition: transform $transition-fast;
 }
 
-.profile-card:hover .profile-card__cta i {
-	transform: translateX(3px);
-}
-
 /* ─── Detail Page ──────────────────────────────── */
 
 .artist-detail {
@@ -562,6 +540,7 @@ ARTIST CATEGORY PAGE
 	overflow: hidden;
 	background: var(--secondary);
 	border: 1px solid var(--border);
+	max-height: 450px;
 }
 
 .artist-detail__img-wrap img {

@@ -260,6 +260,16 @@ CTA
 
 .cta {
 	background: #E4002B;
+	overflow: hidden;
+}
+
+.cta:after {
+    content: "BDC";
+    position: absolute;
+    right: -30px;
+    bottom: -130px;
+	font: 900 380px Georgia;
+    color: rgba(255, 255, 255, .08);
 }
 
 .cta .container {
@@ -279,7 +289,6 @@ CTA
 .cta .btn {
 	background: #fff;
 	color: #111;
-	min-width: 210px;
 }
 
 .cta .btn:hover {
@@ -668,7 +677,11 @@ RESPONSIVE
 		font-size: 2rem;
 	}
 
-	.person-card,
+	.person-card img{
+		aspect-ratio: 4.4 / 5;
+		object-position: top center;
+	}
+	
 	.blog-grid article,
 	.counter-grid>div {
 		padding: 28px;

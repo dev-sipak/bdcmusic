@@ -1,5 +1,4 @@
 RewriteEngine On
-RewriteBase /bdcmusic/
 
 # Artist listing page: /bdcmusic/artists/ -> /bdcmusic/artists/index.php
 RewriteCond %{REQUEST_FILENAME} !-d

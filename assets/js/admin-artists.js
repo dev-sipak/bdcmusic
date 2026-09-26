@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var artistsPagination = { currentPage: 1, totalPages: 1 };
     var artistsSearch = '';
 
-    initTabNav('.adm-nav-btn[data-tab]', '.adm-tab', 'adm-tab-', '.adm-sidebar', '#admin-menu-toggle');
+    initSidebarToggle('.adm-sidebar', '#admin-menu-toggle');
 
     function loadCategories() {
         return fetch(basePath + 'includes/admin/categories-list.php?t=' + Date.now())
@@ -93,10 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var artistModal = document.getElementById('adm-artist-modal');
     var artistBackdrop = document.getElementById('artist-modal-backdrop');
     var artistCloseBtn = document.getElementById('artist-modal-close');
+    var addArtistBtn = document.getElementById('adm-add-artist-btn');
 
-    document.getElementById('adm-add-artist-btn').addEventListener('click', function () {
-        openArtistModal(0, []);
-    });
+    if (addArtistBtn) {
+        addArtistBtn.addEventListener('click', function () {
+            openArtistModal(0, []);
+        });
+    }
 
     function openArtistModal(id, artistsList) {
         var form = document.getElementById('artist-form');
@@ -149,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function closeArtistModal() {
+        if (!artistModal) return;
         artistModal.classList.remove('open');
         document.body.style.overflow = '';
     }
@@ -170,11 +174,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    document.getElementById('add-pricing-row').addEventListener('click', function () {
-        addPricingRow('', '');
-    });
+    var addPricingBtn = document.getElementById('add-pricing-row');
+    if (addPricingBtn) {
+        addPricingBtn.addEventListener('click', function () {
+            addPricingRow('', '');
+        });
+    }
 
-    document.getElementById('artist-image-input').addEventListener('change', function () {
+    var artistImageInput = document.getElementById('artist-image-input');
+    if (artistImageInput) artistImageInput.addEventListener('change', function () {
         var file = this.files[0];
         if (!file) return;
         if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2 MB.'); this.value = ''; return; }
@@ -196,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(function () { alert('Upload failed.'); });
     });
 
-    document.getElementById('artist-form').addEventListener('submit', function (e) {
+    var artistForm = document.getElementById('artist-form');
+    if (artistForm) artistForm.addEventListener('submit', function (e) {
         e.preventDefault();
         var pricingRows = document.querySelectorAll('#artist-pricing-body tr');
         var pricing = [];
@@ -248,5 +257,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(function () { alert('Delete failed.'); });
     }
 
-    loadCategories().then(function () { loadArtists(1); });
+    // Initial load
+    if (document.getElementById('adm-artists-tbody')) {
+        loadCategories().then(function () { loadArtists(1); });
+    }
 });

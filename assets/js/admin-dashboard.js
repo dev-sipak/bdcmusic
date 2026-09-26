@@ -4,9 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var allFiles = adminDashboardConfig.files || [];
     var basePath = adminDashboardConfig.basePath;
 
-    initTabNav('.adm-nav-btn[data-tab]', '.adm-tab', 'adm-tab-', '.adm-sidebar', '#admin-menu-toggle');
+    initSidebarToggle('.adm-sidebar', '#admin-menu-toggle');
 
     /* ----- Overview Stats ----- */
+    var recentOrdersTbody = document.getElementById('recent-orders-tbody');
+
     function updateOverviewStats() {
         var total      = orders.length;
         var pending    = orders.filter(function (o) { return o.status === 'pending'; }).length;
@@ -21,21 +23,25 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('stat-delivered').textContent   = delivered;
         document.getElementById('stat-customers').textContent   = Object.keys(customers).length;
 
-        var recentTbody = document.getElementById('recent-orders-tbody');
+        if (!recentOrdersTbody) return;
+
         var recent = orders.slice(0, 10);
-        recentTbody.innerHTML = recent.map(function (o) {
+        recentOrdersTbody.innerHTML = recent.map(function (o) {
             return '<tr>' +
                 '<td><strong>' + o.id + '</strong></td>' +
                 '<td>' + o.customer + '</td>' +
                 '<td>' + (o.phone || 'N/A') + '</td>' +
                 '<td>' + o.service + '</td>' +
-                '<td>\u20B9' + o.amount + '</td>' +
+                '<td>₹' + o.amount + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
             '</tr>';
         }).join('');
     }
 
-    updateOverviewStats();
+    if (recentOrdersTbody) {
+        updateOverviewStats();
+    }
+
 
     /* ----- Orders Management (Paginated) ----- */
     var ordersPagination = { currentPage: 1, totalPages: 1 };
@@ -97,24 +103,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    document.getElementById('admin-order-status').addEventListener('change', function () {
-        ordersFilters.status = this.value;
-        loadOrders(1);
-    });
-    document.getElementById('admin-order-service').addEventListener('change', function () {
-        ordersFilters.service = this.value;
-        loadOrders(1);
-    });
+    var orderStatusFilter = document.getElementById('admin-order-status');
+    var orderServiceFilter = document.getElementById('admin-order-service');
+    var orderSearchInput = document.getElementById('admin-order-search');
 
-    var orderSearchTimer;
-    document.getElementById('admin-order-search').addEventListener('input', function () {
-        var val = this.value;
-        clearTimeout(orderSearchTimer);
-        orderSearchTimer = setTimeout(function () {
-            ordersFilters.search = val;
+    if (orderStatusFilter) {
+        orderStatusFilter.addEventListener('change', function () {
+            ordersFilters.status = this.value;
             loadOrders(1);
-        }, 400);
-    });
+        });
+    }
+    if (orderServiceFilter) {
+        orderServiceFilter.addEventListener('change', function () {
+            ordersFilters.service = this.value;
+            loadOrders(1);
+        });
+    }
+
+    if (orderSearchInput) {
+        var orderSearchTimer;
+        orderSearchInput.addEventListener('input', function () {
+            var val = this.value;
+            clearTimeout(orderSearchTimer);
+            orderSearchTimer = setTimeout(function () {
+                ordersFilters.search = val;
+                loadOrders(1);
+            }, 400);
+        });
+    }
 
     /* ----- Customers (Paginated) ----- */
     var customersPagination = { currentPage: 1, totalPages: 1 };
@@ -168,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var modal     = document.getElementById('admin-order-modal');
     var backdrop  = document.getElementById('modal-backdrop');
     var closeBtn  = document.getElementById('modal-close');
+    var updateBtn = document.getElementById('modal-update-btn');
     var currentOrderId = null;
 
     function openOrderModal(orderId) {
@@ -218,35 +235,46 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function closeModal() {
+        if (!modal) return;
         modal.classList.remove('open');
         document.body.style.overflow = '';
         currentOrderId = null;
     }
 
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
 
-    document.getElementById('modal-update-btn').addEventListener('click', function () {
-        if (!currentOrderId) return;
-        var newStatus = document.getElementById('modal-status-select').value;
-        var order = orders.find(function (o) { return o.id === currentOrderId; });
-        if (order) {
-            order.status = newStatus;
-            loadOrders(ordersPagination.currentPage);
-            updateOverviewStats();
-        }
-        closeModal();
-    });
+    if (updateBtn) {
+        updateBtn.addEventListener('click', function () {
+            if (!currentOrderId) return;
+            var newStatus = document.getElementById('modal-status-select').value;
+            var order = orders.find(function (o) { return o.id === currentOrderId; });
+            if (order) {
+                order.status = newStatus;
+                loadOrders(ordersPagination.currentPage);
+                if (recentOrdersTbody) updateOverviewStats();
+            }
+            closeModal();
+        });
+    }
 
     /* ----- Logout ----- */
-    document.getElementById('adm-logout-btn').addEventListener('click', function () {
-        if (confirm('Are you sure you want to logout from admin?')) {
-            window.location.href = basePath + 'includes/logout.php';
-        }
-    });
+    var logoutBtn = document.getElementById('adm-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout from admin?')) {
+                window.location.href = basePath + 'includes/logout.php';
+            }
+        });
+    }
 
-    // Initial loads
-    loadOrders(1);
-    loadCustomers(1);
+    // Initial loads (only for the sections present on this page)
+    if (document.getElementById('admin-orders-tbody')) {
+        loadOrders(1);
+    }
+    if (document.getElementById('admin-customers-tbody')) {
+        loadCustomers(1);
+    }
 
 });

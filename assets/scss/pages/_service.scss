@@ -191,7 +191,13 @@ PLANS
 		line-height: 1.7;
 	}
 }
-
+.plan-card p{
+	padding: 12px 15px;
+    background: #ffc3c3;
+    margin-top: 20px;
+    color: #702525;
+	border-radius: 12px;
+}
 .price {
 	display: block;
 	margin: 12px 0;
@@ -353,12 +359,6 @@ RESPONSIVE
 	border: 0;
 	box-shadow: none;
 	transition: transform .3s ease;
-}
-
-/* Hover */
-
-.card-inline:hover {
-	transform: translateY(-3px);
 }
 
 /* Icon */
@@ -578,7 +578,6 @@ RESPONSIVE
 	background: #fce1e1;
 	border-color: #e9bcbc;
 	color: #8f2525;
-	transform: translateY(-2px);
 }
 
 /* Tablet */

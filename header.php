@@ -86,7 +86,6 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
                         <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                     </button>
                     <ul class="dropdown-menu" id="artists-dropdown">
-                        <li><a href="<?php echo $basePath; ?>artists/">All Artists</a></li>
                         <?php
                         $artistCats = [];
                         try {

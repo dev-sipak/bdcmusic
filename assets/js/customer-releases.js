@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var config = customerReleasesConfig;
     var basePath = config.basePath;
     var releasesPagination = { currentPage: 1, totalPages: 1 };
-    var activeTab = 'all';
+    // The status filter is resolved server-side from ?status= and rendered
+    // as links, so it is only read here to build the API query.
+    var activeTab = config.activeTab || 'all';
     var currentReleases = [];
 
     function loadReleases(page) {
@@ -60,15 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    document.querySelectorAll('.release-tab-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.release-tab-btn').forEach(function (b) { b.classList.remove('active'); });
-            this.classList.add('active');
-            activeTab = this.getAttribute('data-status');
-            loadReleases(1);
-        });
-    });
-
     function showReleaseDetail(id) {
         var r = currentReleases.find(function (rel) { return rel.id === id; });
         if (!r) return;
@@ -102,10 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('releases-list-panel').classList.add('d-none');
     }
 
-    document.getElementById('back-to-releases').addEventListener('click', function () {
-        document.getElementById('release-detail-panel').classList.add('d-none');
-        document.getElementById('releases-list-panel').classList.remove('d-none');
-    });
+    var backBtn = document.getElementById('back-to-releases');
+    if (backBtn) {
+        backBtn.addEventListener('click', function () {
+            document.getElementById('release-detail-panel').classList.add('d-none');
+            document.getElementById('releases-list-panel').classList.remove('d-none');
+        });
+    }
 
     var createForm = document.getElementById('create-release-form');
     if (createForm) {
@@ -147,19 +143,24 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    document.getElementById('add-artist-row').addEventListener('click', function () {
-        var container = document.getElementById('release-artists-container');
-        var div = document.createElement('div');
-        div.className = 'release-artist-row';
-        div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
-        div.innerHTML =
-            '<input type="text" class="panel-input ra-role" placeholder="Role (e.g. Singer)" style="flex:1;">' +
-            '<input type="text" class="panel-input ra-name" placeholder="Name" style="flex:1;">' +
-            '<button type="button" class="adm-view-btn remove-artist-row"><i class="fa-solid fa-xmark"></i></button>';
-        container.appendChild(div);
-        div.querySelector('.remove-artist-row').addEventListener('click', function () { div.remove(); });
-    });
+    var addArtistBtn = document.getElementById('add-artist-row');
+    if (addArtistBtn) {
+        addArtistBtn.addEventListener('click', function () {
+            var container = document.getElementById('release-artists-container');
+            var div = document.createElement('div');
+            div.className = 'release-artist-row';
+            div.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+            div.innerHTML =
+                '<input type="text" class="panel-input ra-role" placeholder="Role (e.g. Singer)" style="flex:1;">' +
+                '<input type="text" class="panel-input ra-name" placeholder="Name" style="flex:1;">' +
+                '<button type="button" class="adm-view-btn remove-artist-row"><i class="fa-solid fa-xmark"></i></button>';
+            container.appendChild(div);
+            div.querySelector('.remove-artist-row').addEventListener('click', function () { div.remove(); });
+        });
+    }
 
     // Initial load
-    loadReleases(1);
+    if (document.getElementById('releases-tbody')) {
+        loadReleases(1);
+    }
 });

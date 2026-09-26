@@ -287,14 +287,14 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
 
 new Swiper(".testimonial-slider", {
-    slidesPerView: 3,
+    slidesPerView: 1,
     spaceBetween: 30,
     loop: true,
     grabCursor: true,
     autoHeight: true,
 
     autoplay: {
-        delay: 4000,
+        delay: 6000,
         disableOnInteraction: false,
     },
 
@@ -309,11 +309,11 @@ new Swiper(".testimonial-slider", {
             spaceBetween: 20,
         },
         768: {
-            slidesPerView: 2,
+            slidesPerView: 1,
             spaceBetween: 24,
         },
         1024: {
-            slidesPerView: 3,
+            slidesPerView: 1,
             spaceBetween: 30,
         }
     }

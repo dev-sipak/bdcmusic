@@ -1,6 +1,67 @@
- Add reply/replied_at columns to artist_enquiries table in SQL
-[✓] Update enquiry-reply.php to store reply in DB
-[✓] Update enquiries-list.php to return reply data
+Yes. Add the Admin Panel requirement explicitly so OpenCode understands that the customer dashboard depends on admin-managed service data.
 
+```
+Update the Customer Dashboard to be service-based.
 
-Fuck what are you doing only revert enquiries changes you made dont touch the rest you did in the session
+Available services:
+
+- BDC Artists Marketplace
+- Audio & Video Services
+- Online/Offline Classes
+- Digital Music Distribution
+- Promotion Services
+- IPRS Services
+
+Requirements:
+
+1. Remove the existing Order Details and Order History sections.
+
+2. After login, identify which services the customer has purchased.
+
+3. Only show dashboard sections relevant to the customer’s purchased services tab with respective info.
+
+4. Only unlock/show the relevant service section when that service reaches the required/completed status.
+
+5. Each service should have its own appropriate customer-facing section.
+
+6. For Digital Music Distribution:
+   - Show releases based on the customer’s completed distribution services.
+   - Support both albums and individual/single releases.
+   - Albums can contain multiple tracks.
+   - Show all available platform live links for each release.
+   - Platform live links will be manually added/managed by Admin.
+
+7. IMPORTANT — ADMIN PANEL:
+   Analyze the existing project/database/admin structure first and identify which information for each service needs to be manually managed by Admin.
+
+   Add the required fields/forms/actions to the existing Admin Panel so Admin can update the service information that needs to appear in the Customer Dashboard.
+
+   For example, for Digital Music Distribution, Admin should be able to manage:
+   - Release/album/single information
+   - Release status
+   - Tracks
+   - Platform names
+   - Platform live links
+   - Any other existing release information already supported by the project
+
+   Do NOT assume or invent a new database structure if the project already has suitable tables/models/fields. Reuse the existing structure wherever possible.
+
+8. The Customer Dashboard should display the information based on the data/status managed from the Admin Panel.
+
+9. Keep Admin and Customer data properly separated.
+
+10. Reuse the existing database, authentication, APIs, components, sidebar, header, CSS, and existing functionality wherever possible.
+
+11. Do not redesign the UI or change the existing visual style.
+
+12. Do not create unnecessary sections for services the customer has not purchased.
+
+13. Inspect the existing project structure, database/models, Admin Panel, Customer Dashboard, routes, APIs, and service/order logic FIRST.
+
+14. Based on the existing code, determine exactly where the service-specific Admin fields and Customer Dashboard sections should be added. Do not create duplicate functionality if something already exists.
+
+15. Implement the complete change yourself. Do not ask me to manually create files or database fields.
+
+16. After implementation, check the entire project for broken routes, imports, database references, API references, and existing functionality, and fix any issues.
+
+17. Keep the existing design and behavior unchanged everywhere that is not directly related to this requirement.

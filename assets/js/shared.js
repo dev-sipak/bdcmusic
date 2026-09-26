@@ -1,42 +1,26 @@
 /*=========================================================
- SHARED UI UTILITIES
- Reusable tab navigation, sidebar toggle, status badge,
- and accordion behavior.
-=========================================================*/
+  SHARED UI UTILITIES
+  Reusable sidebar toggle, status badge, table row
+  and accordion behavior.
+  =========================================================*/
+
 
 /**
- * Initialize tab navigation for a panel.
- * @param {string} navSelector - nav button selector (e.g. '.panel-nav-btn[data-tab]')
- * @param {string} tabSelector - tab panel selector (e.g. '.panel-tab')
- * @param {string} tabPrefix   - tab ID prefix (e.g. 'tab-' or 'adm-tab-')
- * @param {string} sidebarSelector - sidebar selector (e.g. '.panel-sidebar')
+ * Initialize the mobile sidebar toggle for a dashboard panel.
+ * Section switching is handled by real page navigation, so this only
+ * opens/closes the off-canvas sidebar.
+ * @param {string} sidebarSelector - sidebar selector (e.g. '.adm-sidebar')
  * @param {string} menuBtnSelector - mobile menu button selector
  */
-function initTabNav(navSelector, tabSelector, tabPrefix, sidebarSelector, menuBtnSelector) {
-    var navBtns = document.querySelectorAll(navSelector);
-    var tabPanels = document.querySelectorAll(tabSelector);
+function initSidebarToggle(sidebarSelector, menuBtnSelector) {
     var sidebar = document.querySelector(sidebarSelector);
     var menuBtn = document.querySelector(menuBtnSelector);
 
-    if (!navBtns.length) return;
+    if (!sidebar || !menuBtn) return;
 
-    navBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var tab = this.getAttribute('data-tab');
-            navBtns.forEach(function (b) { b.classList.remove('active'); });
-            tabPanels.forEach(function (p) { p.classList.remove('active'); });
-            this.classList.add('active');
-            var target = document.getElementById(tabPrefix + tab);
-            if (target) target.classList.add('active');
-            if (sidebar) sidebar.classList.remove('open');
-        });
+    menuBtn.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
     });
-
-    if (menuBtn && sidebar) {
-        menuBtn.addEventListener('click', function () {
-            sidebar.classList.toggle('open');
-        });
-    }
 }
 
 /**

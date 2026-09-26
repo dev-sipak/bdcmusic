@@ -104,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="<?php echo $basePath; ?>all-services" class="btn">See All Services</a>
+                    <a href="<?php echo $basePath; ?>all-services" class="btn">Explore BDC Services</a>
                 </div>
             </div>
         </section>
@@ -112,7 +112,7 @@
         <section class="ecosystem section-dark py-9" id="services">
 			<div class="container">
 				<div class="section-heading reveal">
-					<span class="heading-tag">Services ecosystem</span>
+					<span class="heading-tag">What We Cover</span>
 					<h2>Everything you need to create, release and grow your music</h2>
 					<p>From artist discovery and production to education, distribution and rights management, BDC Music provides the services artists need to build sustainable careers.</p>
 				</div>
@@ -341,7 +341,7 @@
 			<div class="container">
 				<div class="section-heading reveal">
 					<span class="heading-tag">Education hub</span>
-					<h2>Learn the craft through premium online classes</h2>
+					<h2>Learn the craft. Build the career.</h2>
 				</div>
 
 				<div class="academy-grid">
@@ -383,69 +383,94 @@
 		</section>
 
         <section class="testimonials" id="testimonials">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <span class="heading-tag">Creator reviews</span>
-                    <h2>What artists say after working with BDC Music</h2>
-                </div>
-                <div class="swiper testimonial-slider">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="testimonial-card reveal">
-                                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                                <p>BDC Music transformed my first release with seamless distribution and promotion support.</p>
-                                <div class="testimonial-user">
-                                    <img src="<?php echo $assetPath; ?>images/testimonial.webp" alt="Rohit Sharma" loading="lazy">
-                                    <div>
-                                        <h4>Rohit Sharma</h4>
-                                        <span>Independent Singer</span>
-                                    </div>
-                                </div>
-                                <div class="testimonial-meta">
-                                    <span class="rating">★★★★★</span>
-                                    <span class="release-tag">Released on 4 platforms</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-card reveal">
-                                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                                <p>The BDC Music's Online Classes helped me improve quickly. The lessons were practical, focused and easy to follow.</p>
-                                <div class="testimonial-user">
-                                    <img src="<?php echo $assetPath; ?>images/testimonial.webp" alt="Priya Verma" loading="lazy">
-                                    <div>
-                                        <h4>Priya Verma</h4>
-                                        <span>Vocal Student</span>
-                                    </div>
-                                </div>
-                                <div class="testimonial-meta">
-                                    <span class="rating">★★★★★</span>
-                                    <span class="release-tag">Improved vocal range in 6 weeks</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="testimonial-card reveal">
-                                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                                <p>From artist management to creative strategy, every step felt intentional and supportive. The growth was visible fast.</p>
-                                <div class="testimonial-user">
-                                    <img src="<?php echo $assetPath; ?>images/testimonial.webp" alt="Aman Singh" loading="lazy">
-                                    <div>
-                                        <h4>Aman Singh</h4>
-                                        <span>Music Producer</span>
-                                    </div>
-                                </div>
-                                <div class="testimonial-meta">
-                                    <span class="rating">★★★★★</span>
-                                    <span class="release-tag">Expanded client roster</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-        </section>
+
+			<span class="testimonial-label">
+				Artist Voices
+			</span>
+
+			<div class="testimonial-slider swiper">
+
+				<div class="swiper-wrapper">
+
+					<div class="swiper-slide">
+						<div class="testimonial-content reveal">
+
+							<p class="testimonial-quote">
+								“BDC Music helped me turn my music into something bigger than a release.”
+							</p>
+
+							<div class="testimonial-user">
+								<img
+									src="<?php echo $assetPath; ?>images/testimonial.webp"
+									alt="Rohit Sharma"
+									loading="lazy"
+								>
+
+								<div class="testimonial-user-info">
+									<h4>Rohit Sharma</h4>
+									<span>Independent Creator</span>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="swiper-slide">
+						<div class="testimonial-content reveal">
+
+							<p class="testimonial-quote">
+								“BDC Music made learning music simple, practical, and inspiring. I could see my progress with every lesson.”
+							</p>
+
+							<div class="testimonial-user">
+								<img
+									src="<?php echo $assetPath; ?>images/testimonial.webp"
+									alt="Priya Verma"
+									loading="lazy"
+								>
+
+								<div class="testimonial-user-info">
+									<h4>Priya Verma</h4>
+									<span>Independent Artist</span>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="swiper-slide">
+						<div class="testimonial-content reveal">
+
+							<p class="testimonial-quote">
+								“From strategy to release, every step felt intentional and genuinely supportive.”
+							</p>
+
+							<div class="testimonial-user">
+								<img
+									src="<?php echo $assetPath; ?>images/testimonial.webp"
+									alt="Aman Singh"
+									loading="lazy"
+								>
+
+								<div class="testimonial-user-info">
+									<h4>Aman Singh</h4>
+									<span>Music Producer</span>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+
+				<div class="swiper-pagination"></div>
+
+			</div>
+
+		</section>
+
 
         <section class="home-page faq pt-0" id="faq" style="background: #f7f7f7;">
             <div class="container">
@@ -491,7 +516,7 @@
                 </div>
                 <div class="cta-actions reveal">
                     <a href="<?php echo $basePath; ?>services/bdc-artists-marketplace" class="btn">Join BDC Music</a>
-                    <a href="mailto:info@bdcmusic.in" class="btn btn-outline-light">Enquiry Now</a>
+                    <a href="mailto:info@bdcmusic.in" class="btn btn-outline-light">Talk to BDC</a>
                 </div>
             </div>
         </section>
