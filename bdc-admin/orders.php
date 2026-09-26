@@ -10,9 +10,8 @@ $pageTitle       = 'Orders Management - BDC Music Studio';
 $metaDescription = 'View, filter, and manage all customer orders across services from the BDC Music Studio admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
-// The order detail modal reads from these in-memory lists.
+// The admin overview stats read from this in-memory list.
 $adminOrders = array();
-$adminFiles  = array();
 $services    = array();
 try {
     $pdo  = db_connect();
@@ -28,14 +27,10 @@ try {
     );
     $adminOrders = $stmt->fetchAll();
 
-    $fStmt = $pdo->query( 'SELECT booking_id, original_name, file_path, mime_type, file_size FROM uploaded_files ORDER BY uploaded_at DESC' );
-    $adminFiles = $fStmt->fetchAll();
-
     $svcStmt = $pdo->query( 'SELECT name AS service FROM services ORDER BY name' );
     $services = $svcStmt->fetchAll( PDO::FETCH_COLUMN );
 } catch ( Exception $e ) {
     $adminOrders = array();
-    $adminFiles  = array();
     $services    = array();
 }
 

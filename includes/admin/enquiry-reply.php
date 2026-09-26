@@ -50,7 +50,7 @@ try {
 
     $emailBody = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">'
         . '<h2 style="color:#333;">Reply to Your Enquiry</h2>'
-        . '<p>Hi ' . htmlspecialchars( $enquiryName ) ',</p>'
+        . '<p>Hi ' . htmlspecialchars( $enquiryName ) . ',</p>'
         . '<p>Thank you for reaching out to us. Here is our reply to your enquiry:</p>'
         . '<div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0;">'
         . '<p style="margin:0 0 8px;font-weight:bold;color:#555;">Your original message:</p>'
@@ -60,7 +60,7 @@ try {
         . '<p style="margin:0 0 8px;font-weight:bold;color:#333;">Our reply:</p>'
         . '<p style="margin:0;color:#333;">' . nl2br( htmlspecialchars( $reply_message ) ) . '</p>'
         . '</div>'
-        . '<p style="color:#999;font-size:12px;margin-top:24px;">This is a reply from ' . htmlspecialchars( $siteName ) '. Please do not reply to this email directly.</p>'
+        . '<p style="color:#999;font-size:12px;margin-top:24px;">This is a reply from ' . htmlspecialchars( $siteName ) . '. Please do not reply to this email directly.</p>'
         . '</div>';
 
     $headers  = 'MIME-Version: 1.0' . "\r\n";

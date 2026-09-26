@@ -29,25 +29,24 @@ include_once __DIR__ . '/../header.php';
                 <div class="panel-tab active" id="tab-orders">
                     <div class="panel-tab-header">
                         <h2>My Orders</h2>
-                        <p>View and manage your active orders.</p>
+                        <p>View and manage your active orders. Use the view icon on a row for the full order details and arrangements.</p>
                     </div>
                     <div class="panel-filter-bar">
                         <select class="panel-filter-select" id="order-status-filter">
                             <option value="all">All Statuses</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Hold">Hold</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="hold">Hold</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                         <select class="panel-filter-select" id="order-service-filter">
                             <option value="all">All Services</option>
-                            <option value="BDC Artists Marketplace">BDC Artists Marketplace</option>
-                            <option value="Audio &amp; Video Services">Audio &amp; Video Services</option>
-                            <option value="Digital Music Distribution">Digital Music Distribution</option>
-                            <option value="Promotion Services">Promotion Services</option>
-                            <option value="Online/Offline Classes">Online/Offline Classes</option>
-                            <option value="IPRS Services">IPRS Services</option>
+                            <?php foreach ( $purchasedServices as $purchasedService ) : ?>
+                                <option value="<?php echo htmlspecialchars( $purchasedService['name'] ); ?>">
+                                    <?php echo htmlspecialchars( $purchasedService['name'] ); ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="panel-table-wrap">
@@ -59,6 +58,7 @@ include_once __DIR__ . '/../header.php';
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="orders-tbody"></tbody>
@@ -71,6 +71,8 @@ include_once __DIR__ . '/../header.php';
             </main>
         </div>
     </div>
+
+    <?php include __DIR__ . '/includes/order-detail-modal.php'; ?>
 </section>
 
 <?php include __DIR__ . '/includes/panel-config.php'; ?>

@@ -11,7 +11,6 @@ $metaDescription = 'Manage orders, services, and customers from the BDC Music St
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminOrders = array();
-$adminFiles  = array();
 $services    = array();
 try {
     $pdo  = db_connect();
@@ -26,12 +25,8 @@ try {
          ORDER BY b.created_at DESC'
     );
     $adminOrders = $stmt->fetchAll();
-
-    $fStmt = $pdo->query( 'SELECT booking_id, original_name, file_path, mime_type, file_size FROM uploaded_files ORDER BY uploaded_at DESC' );
-    $adminFiles = $fStmt->fetchAll();
 } catch ( Exception $e ) {
     $adminOrders = array();
-    $adminFiles  = array();
 }
 
 $adminScripts = array( 'admin-dashboard.js' );

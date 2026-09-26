@@ -4,7 +4,9 @@ require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/panel-guard.php';
 
-$panelPage = 'releases';
+// The releases page is the Digital Music Distribution section, so it marks
+// itself active with that service's nav key.
+$panelPage = 'service:digital-distribution';
 
 // The Releases section is only reachable for customers with an active
 // Digital Music Distribution booking (the same gate the nav link uses).
@@ -19,9 +21,22 @@ $currentPage     = 'dashboard/releases';
 include_once __DIR__ . '/../header.php';
 
 // Status filter is a route segment (?status=...) rather than a JS tab switch.
-$releaseStatusOptions = array( 'all', 'draft', 'pending', 'live', 'rejected' );
-$activeReleaseStatus  = isset( $_GET['status'] ) ? trim( strip_tags( (string) $_GET['status'] ) ) : 'all';
-if ( ! in_array( $activeReleaseStatus, $releaseStatusOptions, true ) ) {
+// Every value of the releases.status enum is offered, otherwise a release
+// sitting at an intermediate stage (verification, on hold, approved) would not
+// be reachable from any tab.
+$releaseStatusLabels = array(
+    'all'          => 'All',
+    'draft'        => 'Draft',
+    'pending'      => 'Pending',
+    'verification' => 'Verification',
+    'onhold'       => 'On Hold',
+    'approved'     => 'Approved',
+    'live'         => 'Live',
+    'rejected'     => 'Rejected',
+    'takedown'     => 'Taken Down',
+);
+$activeReleaseStatus = isset( $_GET['status'] ) ? trim( strip_tags( (string) $_GET['status'] ) ) : 'all';
+if ( ! array_key_exists( $activeReleaseStatus, $releaseStatusLabels ) ) {
     $activeReleaseStatus = 'all';
 }
 
@@ -52,13 +67,6 @@ function release_status_url( $base, $status ) {
                         </div>
                         <div class="panel-filter-bar">
                             <?php
-                            $releaseStatusLabels = array(
-                                'all'      => 'All',
-                                'draft'    => 'Draft',
-                                'pending'  => 'Pending',
-                                'live'     => 'Live',
-                                'rejected' => 'Rejected',
-                            );
                             foreach ( $releaseStatusLabels as $releaseStatusKey => $releaseStatusLabel ) :
                                 ?>
                                 <a class="release-tab-btn<?php echo $activeReleaseStatus === $releaseStatusKey ? ' active' : ''; ?>"
@@ -71,14 +79,15 @@ function release_status_url( $base, $status ) {
                         <div class="panel-table-wrap">
                             <table class="panel-table">
                                 <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Type</th>
-                                        <th>ISRC</th>
-                                        <th>Go Live</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Tracks</th>
+                                    <th>ISRC</th>
+                                    <th>Go Live</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
                                 </thead>
                                 <tbody id="releases-tbody"></tbody>
                             </table>
@@ -93,17 +102,51 @@ function release_status_url( $base, $status ) {
                             <p><button type="button" class="btn" id="back-to-releases" style="font-size:0.82rem;padding:4px 10px;"><i class="fa-solid fa-arrow-left"></i> Back</button></p>
                         </div>
                         <div class="panel-profile-card">
+                            <div class="detail-header">
+                                <h3 id="rel-detail-title"></h3>
+                                <span id="rel-detail-status"></span>
+                            </div>
                             <div class="detail-grid">
-                                <div class="detail-item"><span class="panel-label">Title</span><span class="panel-value" id="rel-detail-title"></span></div>
                                 <div class="detail-item"><span class="panel-label">Type</span><span class="panel-value" id="rel-detail-type"></span></div>
                                 <div class="detail-item"><span class="panel-label">ISRC</span><span class="panel-value" id="rel-detail-isrc"></span></div>
                                 <div class="detail-item"><span class="panel-label">UPC</span><span class="panel-value" id="rel-detail-upc"></span></div>
                                 <div class="detail-item"><span class="panel-label">Go Live Date</span><span class="panel-value" id="rel-detail-golive"></span></div>
-                                <div class="detail-item"><span class="panel-label">Status</span><span id="rel-detail-status"></span></div>
                             </div>
                             <div style="margin-top:16px;"><span class="panel-label">Artists</span><div id="rel-detail-artists" style="margin-top:6px;"></div></div>
-                            <div style="margin-top:16px;"><span class="panel-label">Lyrics</span><pre id="rel-detail-lyrics" style="white-space:pre-wrap;font-size:0.85rem;background:var(--secondary);padding:12px;border-radius:8px;margin-top:6px;max-height:200px;overflow-y:auto;"></pre></div>
-                            <div style="margin-top:16px;"><span class="panel-label">History</span><div id="rel-detail-history" style="margin-top:6px;"></div></div>
+                        </div>
+
+                        <div class="panel-profile-card" style="margin-top:1.5rem;">
+                            <h3><i class="fa-solid fa-list-music"></i> Tracks</h3>
+                            <p class="panel-note" id="rel-tracks-note"></p>
+                            <div class="panel-table-wrap">
+                                <table class="panel-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Track Title</th>
+                                            <th>ISRC</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rel-tracks-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="panel-profile-card" style="margin-top:1.5rem;">
+                            <h3><i class="fa-solid fa-link"></i> Live Links</h3>
+                            <p class="panel-note">Platform links are added by the BDC Music team once your release is live.</p>
+                            <div class="panel-link-list" id="rel-links-list"></div>
+                        </div>
+
+                        <div class="panel-profile-card" style="margin-top:1.5rem;">
+                            <h3><i class="fa-solid fa-clock-rotate-left"></i> History</h3>
+                            <div id="rel-detail-history" style="margin-top:10px;"></div>
+                        </div>
+
+                        <div class="panel-profile-card" style="margin-top:1.5rem;">
+                            <h3><i class="fa-solid fa-pen-fancy"></i> Lyrics</h3>
+                            <pre id="rel-detail-lyrics" style="white-space:pre-wrap;font-size:0.85rem;background:var(--secondary);padding:12px;border-radius:8px;margin-top:10px;max-height:200px;overflow-y:auto;"></pre>
                         </div>
                     </div>
                 </div>

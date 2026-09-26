@@ -1,12 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var uploads = customerDashboardConfig.uploads || [];
-    var basePath = customerDashboardConfig.basePath;
-    var statusSteps = ['Pending', 'Processing', 'Hold', 'Delivered'];
+    var config = (typeof customerDashboardConfig !== 'undefined') ? customerDashboardConfig : null;
+    if (!config) return;
+
+    var basePath = config.basePath;
 
     initSidebarToggle('.panel-sidebar', '#dash-menu-toggle');
 
-    /* ----- Orders (Paginated) ----- */
+    function esc(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    /* ----- My Orders (Paginated) ----- */
     var ordersPagination = { currentPage: 1, totalPages: 1 };
     var ordersFilters = { status: 'all', service: 'all' };
 
@@ -30,24 +41,32 @@ document.addEventListener('DOMContentLoaded', function () {
         var tbody    = document.getElementById('orders-tbody');
         var emptyMsg = document.getElementById('orders-empty');
         var pagWrap  = document.getElementById('orders-pagination');
+        if (!tbody) return;
 
         if (!ordersList || ordersList.length === 0) {
             tbody.innerHTML = '';
-            emptyMsg.classList.remove('d-none');
+            if (emptyMsg) emptyMsg.classList.remove('d-none');
             if (pagWrap) pagWrap.innerHTML = '';
             return;
         }
 
-        emptyMsg.classList.add('d-none');
+        if (emptyMsg) emptyMsg.classList.add('d-none');
         tbody.innerHTML = ordersList.map(function (o) {
             return '<tr>' +
-                '<td><strong>' + o.id + '</strong></td>' +
-                '<td>' + o.service + '</td>' +
-                '<td>' + o.date + '</td>' +
-                '<td>\u20B9' + o.amount + '</td>' +
+                '<td><strong>' + esc(o.id) + '</strong></td>' +
+                '<td>' + esc(o.service) + '</td>' +
+                '<td>' + esc(o.date) + '</td>' +
+                '<td>\u20B9' + esc(o.amount) + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
+                '<td><button class="adm-view-btn view-order" data-order-id="' + esc(o.id) + '" title="View full order details"><i class="fa-solid fa-eye"></i></button></td>' +
             '</tr>';
         }).join('');
+
+        tbody.querySelectorAll('.view-order').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                showOrderDetail(btn.getAttribute('data-order-id'));
+            });
+        });
 
         if (pagWrap) {
             pagWrap.innerHTML = renderPaginationHtml(ordersPagination, function (page) {
@@ -72,144 +91,154 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ----- My Uploads ----- */
-    var uploadsTbody = document.getElementById('uploads-tbody');
-    var uploadsEmpty = document.getElementById('uploads-empty');
+    /* ----- Order Detail Modal ("View More" on My Orders) -----
+       Replaces the old standalone Order Details page. Shows every field the
+       customer submitted when placing the order, plus the arrangements the
+       admin has recorded in service_records.                                */
+    var orderModal    = document.getElementById('panel-order-modal');
+    var orderBackdrop = document.getElementById('panel-modal-backdrop');
+    var orderCloseBtn = document.getElementById('pm-close');
 
-    if (uploadsTbody && uploadsEmpty) {
-        if (uploads.length === 0) {
-            uploadsTbody.innerHTML = '';
-            uploadsEmpty.classList.remove('d-none');
-        } else {
-            uploadsEmpty.classList.add('d-none');
-            uploadsTbody.innerHTML = uploads.map(function (u) {
-                var sizeKB = (u.file_size / 1024).toFixed(1);
-                var sizeMB = (u.file_size / (1024 * 1024)).toFixed(1);
-                var sizeStr = u.file_size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
-                return '<tr>' +
-                    '<td><strong>' + u.booking_id + '</strong></td>' +
-                    '<td>' + u.original_name + '</td>' +
-                    '<td>' + sizeStr + '</td>' +
-                    '<td><a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(u.file_path) + '" class="panel-download-btn" target="_blank"><i class="fa-solid fa-download"></i> Download</a></td>' +
-                '</tr>';
-            }).join('');
-        }
-    }
+    function showOrderDetail(orderId) {
+        if (!orderModal || !orderId) return;
 
-    /* ----- Order History (Paginated) ----- */
-    var historyPagination = { currentPage: 1, totalPages: 1 };
+        var statusEl = document.getElementById('pm-status');
+        if (statusEl) statusEl.innerHTML = '<span class="panel-muted">Loading...</span>';
 
-    function loadHistory(page) {
-        page = page || 1;
-        var params = 'page=' + page + '&per_page=10';
+        orderModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
 
-        fetch(basePath + 'includes/customer/orders-list.php?' + params)
+        fetch(config.orderDetailUrl + '?id=' + encodeURIComponent(orderId))
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                if (data.success) {
-                    historyPagination = data.pagination;
-                    renderHistory(data.orders);
+                if (!data || !data.success) {
+                    if (statusEl) statusEl.innerHTML = '<span class="panel-muted">' + esc(data && data.message ? data.message : 'Could not load this order.') + '</span>';
+                    return;
                 }
-            });
-    }
 
-    function renderHistory(ordersList) {
-        var historyTbody = document.getElementById('history-tbody');
-        var pagWrap      = document.getElementById('history-pagination');
-        if (!historyTbody) return;
+                var order = data.order;
 
-        if (!ordersList || ordersList.length === 0) {
-            historyTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No order history.</td></tr>';
-            if (pagWrap) pagWrap.innerHTML = '';
-            return;
-        }
+                document.getElementById('pm-order-id').textContent = 'Order ' + order.id;
+                document.getElementById('pm-service').textContent  = order.service;
+                document.getElementById('pm-date').textContent    = order.date;
+                document.getElementById('pm-amount').textContent  = '\u20B9' + Number(order.amount || 0).toFixed(2);
+                document.getElementById('pm-payment').textContent = order.paymentStatus;
 
-        historyTbody.innerHTML = ordersList.map(function (o) {
-            return historyRowHtml(o);
-        }).join('');
-
-        if (pagWrap) {
-            pagWrap.innerHTML = renderPaginationHtml(historyPagination, function (page) {
-                loadHistory(page);
-            });
-        }
-    }
-
-    /* ----- Order Details ----- */
-    var detailSelect = document.getElementById('details-order-select');
-    var detailView   = document.getElementById('order-detail-view');
-
-    function showOrderDetails(orderId) {
-        if (!orderId) {
-            detailView.classList.add('d-none');
-            return;
-        }
-
-        // Find order from the loaded data or fetch it
-        fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (!data.success) return;
-                var order = data.orders.find(function (o) { return o.id === orderId; });
-                if (!order) return;
-
-                document.getElementById('detail-order-id').textContent = order.id;
-                var statusBadge = document.getElementById('detail-order-status');
-                statusBadge.textContent = order.status;
-                statusBadge.className = 'panel-status-badge status-' + order.status.toLowerCase();
-
-                document.getElementById('detail-service').textContent = order.service;
-                document.getElementById('detail-date').textContent    = order.date;
-                document.getElementById('detail-amount').textContent  = '\u20B9' + order.amount;
-
-                var timeline = document.getElementById('detail-timeline');
-                var currentIdx = statusSteps.indexOf(order.status);
-                if (currentIdx === -1) currentIdx = 0;
-
-                timeline.innerHTML = statusSteps.map(function (step, i) {
-                    var cls = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : '');
-                    var icon = i < currentIdx ? 'fa-check-circle' : (i === currentIdx ? 'fa-circle-dot' : 'fa-circle');
-                    return '<div class="timeline-item ' + cls + '">' +
-                        '<i class="fa-solid ' + icon + '"></i>' +
-                        '<div>' +
-                            '<strong>' + step + '</strong>' +
-                        '</div>' +
-                    '</div>';
-                }).join('');
-
-                detailView.classList.remove('d-none');
-            });
-    }
-
-    if (detailSelect && detailView) {
-        // Populate order details select from first page of orders
-        fetch(basePath + 'includes/customer/orders-list.php?page=1&per_page=100')
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                if (!data.success || !data.orders) return;
-
-                var initialOrderId = (typeof customerReleasesConfig !== 'undefined' && customerReleasesConfig)
-                    ? customerReleasesConfig.initialOrderId
-                    : '';
-
-                data.orders.forEach(function (o) {
-                    var opt = document.createElement('option');
-                    opt.value = o.id;
-                    opt.textContent = o.id;
-                    detailSelect.appendChild(opt);
-                });
-
-                // Deep link: /dashboard/order-details?id=BDCM-XXXXXX
-                if (initialOrderId) {
-                    detailSelect.value = initialOrderId;
-                    showOrderDetails(initialOrderId);
+                // Status, plus the service progress steps the admin recorded.
+                var progressHtml = statusBadgeHtml(order.status);
+                if (order.progress && order.progress.length) {
+                    progressHtml += '<div class="tracking-list" style="margin-top:14px;">' +
+                        order.progress.map(function (step) {
+                            var icon = step.state === 'done' ? 'fa-check-circle'
+                                : (step.state === 'current' ? 'fa-circle-dot' : 'fa-circle');
+                            return '<div class="timeline-item ' + esc(step.state) + '">' +
+                                '<i class="fa-solid ' + icon + '"></i>' +
+                                '<div><strong>' + esc(step.label) + '</strong></div>' +
+                            '</div>';
+                        }).join('') + '</div>';
                 }
-            });
+                if (statusEl) statusEl.innerHTML = progressHtml;
 
-        detailSelect.addEventListener('change', function () {
-            showOrderDetails(this.value);
-        });
+                // Everything the customer filled in at order time.
+                var fieldsEl = document.getElementById('pm-order-fields');
+                var fieldsSection = document.getElementById('pm-order-fields-section');
+                if (order.metaFields && order.metaFields.length) {
+                    fieldsEl.innerHTML = order.metaFields.map(function (f) {
+                        return '<div class="detail-item">' +
+                            '<span class="panel-label">' + esc(f.label) + '</span>' +
+                            '<span class="panel-value">' + esc(f.value) + '</span>' +
+                        '</div>';
+                    }).join('');
+                    fieldsSection.classList.remove('d-none');
+                } else {
+                    fieldsEl.innerHTML = '';
+                    fieldsSection.classList.add('d-none');
+                }
+
+                // Customer note.
+                var messageEl   = document.getElementById('pm-message');
+                var messageSec  = document.getElementById('pm-message-section');
+                if (order.message) {
+                    messageEl.textContent = order.message;
+                    messageSec.classList.remove('d-none');
+                } else {
+                    messageSec.classList.add('d-none');
+                }
+
+                // Arrangements recorded by admin.
+                var arrangementEl = document.getElementById('pm-arrangement');
+                var emptyEl        = document.getElementById('pm-arrangement-empty');
+                var lockedNote     = document.getElementById('pm-locked-note');
+                var columns = ['headline', 'sub_headline', 'location', 'starts_on', 'ends_on'];
+
+                if (order.arrangement) {
+                    var labels = order.arrangementFields || {};
+                    arrangementEl.innerHTML = columns.map(function (column) {
+                        var value = order.arrangement[column];
+                        if (!value) return '';
+                        var meta = labels[column] || { label: column };
+                        return '<div class="detail-item">' +
+                            '<span class="panel-label">' + esc(meta.label) + '</span>' +
+                            '<span class="panel-value">' + esc(value) + '</span>' +
+                        '</div>';
+                    }).join('') +
+                    (order.arrangement.notes
+                        ? '<div class="detail-item" style="grid-column:1/-1;">' +
+                          '<span class="panel-label">Notes</span>' +
+                          '<span class="panel-value">' + esc(order.arrangement.notes) + '</span>' +
+                          '</div>'
+                        : '');
+                    if (emptyEl) emptyEl.classList.add('d-none');
+                } else {
+                    arrangementEl.innerHTML = '';
+                    if (emptyEl) {
+                        emptyEl.textContent = order.unlocked
+                            ? 'Our team has not added the arrangements for this order yet.'
+                            : 'Arrangements appear here once this order moves into progress.';
+                        emptyEl.classList.remove('d-none');
+                    }
+                }
+                if (lockedNote) lockedNote.classList.add('d-none');
+
+                // Files the customer uploaded.
+                var filesEl  = document.getElementById('pm-files-list');
+                var filesSec = document.getElementById('pm-files-section');
+                if (order.files && order.files.length) {
+                    filesEl.innerHTML = order.files.map(function (f) {
+                        var sizeMB = (f.file_size / (1024 * 1024)).toFixed(1);
+                        var sizeKB = (f.file_size / 1024).toFixed(1);
+                        var size   = f.file_size > 1048576 ? sizeMB + ' MB' : sizeKB + ' KB';
+                        var icon   = 'fa-file';
+                        if (f.mime_type && f.mime_type.indexOf('audio') !== -1) icon = 'fa-file-audio';
+                        else if (f.mime_type && f.mime_type.indexOf('video') !== -1) icon = 'fa-file-video';
+                        else if (f.mime_type && f.mime_type.indexOf('image') !== -1) icon = 'fa-file-image';
+                        else if (f.mime_type && f.mime_type.indexOf('pdf') !== -1) icon = 'fa-file-pdf';
+                        return '<div class="modal-file-item">' +
+                            '<i class="fa-solid ' + icon + ' modal-file-icon"></i>' +
+                            '<span class="modal-file-name">' + esc(f.original_name) + '</span>' +
+                            '<span class="modal-file-size">' + esc(size) + '</span>' +
+                            '<a href="' + basePath + 'includes/download-file.php?file=' + encodeURIComponent(f.file_path) + '" class="modal-file-download" target="_blank"><i class="fa-solid fa-download"></i></a>' +
+                        '</div>';
+                    }).join('');
+                    filesSec.classList.remove('d-none');
+                } else {
+                    filesEl.innerHTML = '';
+                    filesSec.classList.add('d-none');
+                }
+            })
+            .catch(function () {
+                if (statusEl) statusEl.innerHTML = '<span class="panel-muted">Could not load this order.</span>';
+            });
     }
+
+    function closeOrderModal() {
+        if (!orderModal) return;
+        orderModal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    if (orderCloseBtn) orderCloseBtn.addEventListener('click', closeOrderModal);
+    if (orderBackdrop) orderBackdrop.addEventListener('click', closeOrderModal);
 
     /* ----- Profile Picture Upload ----- */
     var avatarInput   = document.getElementById('avatar-file-input');
@@ -240,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var fd = new FormData();
             fd.append('profile_picture', file);
 
-            fetch(customerDashboardConfig.uploadProfilePicUrl, { method: 'POST', body: fd })
+            fetch(config.uploadProfilePicUrl, { method: 'POST', body: fd })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     if (data.success) {
@@ -302,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
             profileSaveBtn.disabled = true;
             profileSaveBtn.textContent = 'Saving...';
 
-            fetch(customerDashboardConfig.updateProfileUrl, { method: 'POST', body: fd })
+            fetch(config.updateProfileUrl, { method: 'POST', body: fd })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     if (data.success) {
@@ -369,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function () {
             passSaveBtn.disabled = true;
             passSaveBtn.textContent = 'Updating...';
 
-            fetch(customerDashboardConfig.changePasswordUrl, { method: 'POST', body: fd })
+            fetch(config.changePasswordUrl, { method: 'POST', body: fd })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     if (data.success) {
@@ -409,9 +438,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial loads (only for the sections present on this page)
     if (document.getElementById('orders-tbody')) {
         loadOrders(1);
-    }
-    if (document.getElementById('history-tbody')) {
-        loadHistory(1);
     }
 
 });

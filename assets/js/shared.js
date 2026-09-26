@@ -33,41 +33,6 @@ function statusBadgeHtml(status) {
 }
 
 /**
- * Render a table row for an order.
- * @param {object} o - order object
- * @param {boolean} showCustomer - include customer column
- * @returns {string}
- */
-function orderRowHtml(o, showCustomer) {
-    var html = '<tr>' +
-        '<td><strong>' + o.id + '</strong></td>';
-    if (showCustomer) {
-        html += '<td>' + o.customer + '</td>';
-    }
-    html += '<td>' + o.service + '</td>' +
-        '<td>' + o.date + '</td>' +
-        '<td>\u20B9' + o.amount + '</td>' +
-        '<td>' + statusBadgeHtml(o.status) + '</td>' +
-        '</tr>';
-    return html;
-}
-
-/**
- * Render a table row for order history (no action column).
- * @param {object} o
- * @returns {string}
- */
-function historyRowHtml(o) {
-    return '<tr>' +
-        '<td><strong>' + o.id + '</strong></td>' +
-        '<td>' + o.service + '</td>' +
-        '<td>' + o.date + '</td>' +
-        '<td>\u20B9' + o.amount + '</td>' +
-        '<td>' + statusBadgeHtml(o.status) + '</td>' +
-        '</tr>';
-}
-
-/**
  * Render pagination HTML for JS-driven pages.
  * @param {object} pagination - { currentPage, totalPages, totalRecords, perPage, hasPrev, hasNext }
  * @param {function} onPageClick - callback(pageNumber) when a page link is clicked

@@ -65,3 +65,5 @@ Requirements:
 16. After implementation, check the entire project for broken routes, imports, database references, API references, and existing functionality, and fix any issues.
 
 17. Keep the existing design and behavior unchanged everywhere that is not directly related to this requirement.
+
+18. if db update required give me the query to run in a text file. existing current sql file is inside databse folder

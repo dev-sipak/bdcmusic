@@ -600,6 +600,127 @@ ADMIN MODAL FILES
 }
 
 /*==================================================
+ORDER ARRANGEMENT FORM
+The labels are swapped in per service by admin-dashboard.js, so this only has
+to lay the generic six fields out.
+==================================================*/
+
+.modal-arrangement-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-field-wide {
+    grid-column: 1 / -1;
+}
+
+.modal-field .panel-label {
+    display: block;
+}
+
+.modal-field textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/*==================================================
+RELEASE EDITOR (admin)
+Track rows and platform-link rows are both built by admin-releases.js.
+==================================================*/
+
+.release-editor-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.release-editor-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.release-track-row {
+    .re-track-no {
+        flex: 0 0 64px;
+    }
+
+    .re-track-title {
+        flex: 2 1 0;
+    }
+
+    .re-track-isrc {
+        flex: 1 1 0;
+    }
+
+    .re-track-duration {
+        flex: 0 0 100px;
+    }
+}
+
+.release-link-row {
+    .re-link-platform {
+        flex: 0 0 180px;
+    }
+
+    .re-link-url {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+.release-link-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.release-add-row-btn {
+    font-size: 0.84rem;
+    padding: 8px 14px;
+    min-height: unset;
+}
+
+.release-platform-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+}
+
+.release-preset-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--secondary);
+    color: var(--text);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.release-preset-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/*==================================================
 RESPONSIVE
 ==================================================*/
 
@@ -643,6 +764,20 @@ RESPONSIVE
 
     .modal-detail-grid {
         grid-template-columns: 1fr;
+    }
+
+    .modal-arrangement-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .release-editor-row {
+        flex-wrap: wrap;
+    }
+
+    .release-track-row .re-track-no,
+    .release-track-row .re-track-duration,
+    .release-link-row .re-link-platform {
+        flex: 1 1 100%;
     }
 }
 

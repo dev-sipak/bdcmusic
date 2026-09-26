@@ -10,6 +10,7 @@
 $adminNavItems = array(
     'overview'  => array( 'label' => 'Dashboard', 'icon' => 'fa-gauge-high',      'url' => $adminBase ),
     'orders'    => array( 'label' => 'Orders',    'icon' => 'fa-box',             'url' => $adminBase . 'orders' ),
+    'releases'  => array( 'label' => 'Releases',  'icon' => 'fa-compact-disc',    'url' => $adminBase . 'releases' ),
     'customers' => array( 'label' => 'Customers', 'icon' => 'fa-users',           'url' => $adminBase . 'customers' ),
     'artists'   => array( 'label' => 'Artists',   'icon' => 'fa-palette',         'url' => $adminBase . 'artists' ),
     'enquiries' => array( 'label' => 'Enquiries', 'icon' => 'fa-envelope',        'url' => $adminBase . 'enquiries' ),

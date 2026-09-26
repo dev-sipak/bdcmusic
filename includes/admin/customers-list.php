@@ -23,9 +23,14 @@ try {
     $where  = [];
     $params = [];
 
+    // One placeholder per column. db_connect() turns EMULATE_PREPARES off, so
+    // MySQL rejects a named placeholder that appears more than once in a
+    // statement; a single shared :search would make every search a 500.
     if ( $search !== '' ) {
-        $where[] = '(u.name LIKE :search OR u.email LIKE :search OR u.mobile LIKE :search)';
-        $params[':search'] = '%' . $search . '%';
+        $where[] = '(u.name LIKE :searchName OR u.email LIKE :searchEmail OR u.mobile LIKE :searchMobile)';
+        $params[':searchName']   = '%' . $search . '%';
+        $params[':searchEmail']  = '%' . $search . '%';
+        $params[':searchMobile'] = '%' . $search . '%';
     }
 
     $whereSql = ! empty( $where ) ? 'WHERE ' . implode( ' AND ', $where ) : '';

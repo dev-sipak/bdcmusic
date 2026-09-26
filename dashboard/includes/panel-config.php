@@ -2,27 +2,30 @@
 /**
  * Client config for the customer dashboard pages.
  *
- * Requires: $userUploads (uploads page only), $activeReleaseStatus
- *           (releases page only). Emits customerDashboardConfig, which
- *           customer-dashboard.js reads, and customerReleasesConfig, which
- *           customer-releases.js reads.
+ * Requires: $activeReleaseStatus (releases page only),
+ *           $activeServiceSlug   (service page only),
+ *           $purchasedServices   (from panel-guard.php).
+ * Emits customerDashboardConfig, which customer-dashboard.js and
+ * customer-service.js read, and customerReleasesConfig, which
+ * customer-releases.js reads.
  */
 $activeReleaseStatus = isset( $activeReleaseStatus ) ? $activeReleaseStatus : 'all';
+$activeServiceSlug   = isset( $activeServiceSlug ) ? $activeServiceSlug : '';
 ?>
 <script>
 var customerDashboardConfig = {
-    uploads: <?php echo json_encode( isset( $userUploads ) ? $userUploads : array() ); ?>,
     basePath: <?php echo json_encode( $basePath ); ?>,
     updateProfileUrl: <?php echo json_encode( $basePath . 'includes/update-profile' ); ?>,
     changePasswordUrl: <?php echo json_encode( $basePath . 'includes/change-password' ); ?>,
     uploadProfilePicUrl: <?php echo json_encode( $basePath . 'includes/upload-profile-pic' ); ?>,
-    hasDistribution: <?php echo ! empty( $hasDistribution ) ? 'true' : 'false'; ?>
+    orderDetailUrl: <?php echo json_encode( $basePath . 'includes/customer/order-detail' ); ?>,
+    services: <?php echo json_encode( array_values( $purchasedServices ) ); ?>,
+    activeService: <?php echo json_encode( $activeServiceSlug ); ?>
 };
 </script>
 <script>
 var customerReleasesConfig = {
     basePath: <?php echo json_encode( $basePath ); ?>,
-    activeTab: <?php echo json_encode( $activeReleaseStatus ); ?>,
-    initialOrderId: <?php echo json_encode( isset( $initialOrderId ) ? $initialOrderId : '' ); ?>
+    activeTab: <?php echo json_encode( $activeReleaseStatus ); ?>
 };
 </script>
