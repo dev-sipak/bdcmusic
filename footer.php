@@ -9,7 +9,9 @@ require_once __DIR__ . '/includes/config.php';
                 <ul>
                     <li><a href="<?php echo $siteUrl; ?>all-services">Our Services</a></li>
                     <li><a href="<?php echo $siteUrl; ?>privacy-policy">Privacy Policy</a></li>
+                    <li><a href="<?php echo $siteUrl; ?>cookie-policy">Cookie Policy</a></li>
                     <li><a href="<?php echo $siteUrl; ?>terms-and-conditions">Terms and Conditions</a></li>
+                    <li><a href="<?php echo $siteUrl; ?>cancel-refund-policy">Cancellation &amp; Refund</a></li>
                 </ul>
             </div>
             <div>
@@ -51,6 +53,14 @@ require_once __DIR__ . '/includes/config.php';
         <div class="copyright">&copy; 2026 BDC Music Studio</div>
     </div>
 </footer>
+
+<!-- Back to top. Hidden until the visitor scrolls, and kept out of the tab order
+     while it is off screen so a keyboard user never lands on an invisible button.
+     app.js drives .is-visible and keeps aria-hidden in step. -->
+<button class="back-to-top" type="button" aria-label="Back to top" aria-hidden="true" tabindex="-1">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+</button>
+
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="<?php echo $assetPath; ?>js/shared.js"></script>
 <script src="<?php echo $assetPath; ?>js/app.js"></script>

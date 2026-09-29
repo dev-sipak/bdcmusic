@@ -10,7 +10,7 @@ ADMIN DASHBOARD
 
 .adm-layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
     align-items: start;
 }
@@ -19,14 +19,27 @@ ADMIN DASHBOARD
 ADMIN SIDEBAR
 ==================================================*/
 
+// Pinned to the left edge and stretched the full height of the viewport, on every
+// screen size. It is `fixed` rather than `sticky` so it never stops short of the
+// bottom of a long orders table, and the card chrome is gone with it: no rounded
+// corners, no floating shadow, just a rail with a right-hand border.
+//
+// Because it is out of flow, the page itself reserves the width. On desktop that
+// is a left padding on .adm-page; on mobile the sidebar is a drawer and the page
+// is full width (see the RESPONSIVE block at the foot of this file).
 .adm-sidebar {
-    position: sticky;
-    top: 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    height: 100vh;
     background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
+    border-right: 1px solid var(--border);
     padding: 24px 16px;
-    box-shadow: var(--shadow);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 300;
 }
 
 .adm-brand {
@@ -119,6 +132,9 @@ ADMIN SIDEBAR
 ADMIN MOBILE TOGGLE
 ==================================================*/
 
+// Replaced by the fixed top bar plus the off-canvas drawer, both of which live
+// outside .adm-layout. Kept only so the old in-flow button cannot reappear if a
+// page still renders it.
 .adm-mobile-toggle {
     display: none;
     margin-bottom: 16px;
@@ -126,6 +142,139 @@ ADMIN MOBILE TOGGLE
 
 .adm-menu-btn {
     font-size: 0.9rem;
+}
+
+// The top bar shown instead of the sidebar on a phone. Sits above the page
+// content and below the drawer, so the brand stays reachable while the drawer
+// is closed and the drawer covers it cleanly while open.
+.adm-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    height: 60px;
+    padding: 0 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+}
+
+.adm-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.adm-topbar-brand .adm-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: .95rem;
+}
+
+.adm-topbar-brand span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.adm-burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+}
+
+// The burger becomes the close control while the drawer is open.
+.adm-burger .fa-bars,
+.adm-burger .fa-xmark {
+    transition: transform .25s ease, opacity .2s ease;
+}
+
+.adm-burger .fa-xmark {
+    position: absolute;
+    opacity: 0;
+    transform: rotate(-45deg) scale(.6);
+}
+
+.adm-burger[aria-expanded="true"] .fa-bars {
+    opacity: 0;
+    transform: rotate(45deg) scale(.6);
+}
+
+.adm-burger[aria-expanded="true"] .fa-xmark {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+}
+
+// Tapping the shaded area behind the drawer closes it. Without this the only way
+// out on a phone is the X, which most people do not look for first.
+.adm-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: rgba(0, 0, 0, .45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+}
+
+.adm-backdrop.is-open {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+// Only offered where there is a drawer to close.
+.adm-sidebar-close {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+}
+
+// Stops the page behind the drawer from scrolling under the visitor's thumb.
+body.adm-drawer-open {
+    overflow: hidden;
 }
 
 .adm-page .btn {
@@ -139,7 +288,12 @@ ADMIN MOBILE TOGGLE
 ADMIN MAIN
 ==================================================*/
 
+// A grid item defaults to min-width:auto, so this column would otherwise be
+// forced to the min-content width of the widest table (900px+) and drag the
+// whole page wider than the phone. min-width:0 lets .adm-table-wrap do the
+// sideways scrolling inside its own box instead.
 .adm-main {
+    min-width: 0;
     min-height: 400px;
 }
 
@@ -173,7 +327,7 @@ STATS GRID
 
 .adm-stats-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 32px;
 }
@@ -264,6 +418,7 @@ ADMIN TABLE
 
 .adm-table-wrap {
     overflow-x: auto;
+    max-width: 100%;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -296,6 +451,14 @@ ADMIN TABLE
 
 .adm-table tbody tr:hover {
     background: rgba(228, 0, 43, .02);
+}
+
+/* Secondary note under a table cell value (add-on count, guest marker). */
+.adm-table-note {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
 }
 
 .adm-empty {
@@ -492,7 +655,7 @@ ADMIN MODAL
 
 .modal-detail-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
     margin-bottom: 24px;
 }
@@ -607,7 +770,7 @@ to lay the generic six fields out.
 
 .modal-arrangement-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 16px;
 }
@@ -724,50 +887,61 @@ Track rows and platform-link rows are both built by admin-releases.js.
 RESPONSIVE
 ==================================================*/
 
+// Desktop: the sidebar is a fixed rail, so the page reserves its width here.
+@media (min-width: 993px) {
+    .adm-page {
+        padding-left: 260px;
+    }
+}
+
 @media (max-width: 1200px) {
     .adm-stats-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 992px) {
-    .adm-layout {
-        grid-template-columns: 1fr;
+    .adm-page {
+        padding-top: 76px;
     }
 
+    .adm-topbar {
+        display: flex;
+    }
+
+    // The rail becomes a drawer. Transform rather than `left`, so opening it
+    // animates on the compositor and does not reflow the page. It is
+    // `visibility: hidden` when closed so its links stay out of the tab order and
+    // off the accessibility tree instead of hiding behind the top bar.
     .adm-sidebar {
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 260px;
-        height: 100vh;
-        border-radius: 0;
-        z-index: 200;
-        overflow-y: auto;
-        transition: left .3s ease;
-        padding-top: 80px;
+        width: 272px;
+        box-shadow: 12px 0 40px rgba(0, 0, 0, .28);
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform .28s ease, visibility .28s ease;
     }
 
-    .adm-sidebar.open {
-        left: 0;
+    .adm-sidebar.is-open {
+        transform: none;
+        visibility: visible;
     }
 
-    .adm-mobile-toggle {
-        display: block;
+    .adm-sidebar-close {
+        display: inline-flex;
     }
 }
 
 @media (max-width: 768px) {
     .adm-stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .modal-detail-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .modal-arrangement-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .release-editor-row {
@@ -785,7 +959,7 @@ RESPONSIVE
   
 
     .adm-stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .adm-filter-bar {

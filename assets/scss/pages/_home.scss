@@ -270,6 +270,7 @@ CTA
     bottom: -130px;
 	font: 900 380px Georgia;
     color: rgba(255, 255, 255, .08);
+	z-index: 1;
 }
 
 .cta .container {
@@ -442,6 +443,8 @@ ACADEMY
 	display: flex;
 	gap: 16px;
 	flex-wrap: wrap;
+	position: relative;
+    z-index: 2;
 }
 
 .brand-grid {

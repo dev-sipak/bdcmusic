@@ -198,7 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 lyrics: document.getElementById('rel-lyrics').value.trim(),
                 dolby: document.getElementById('rel-dolby').checked ? 1 : 0,
                 apple_itunes: document.getElementById('rel-apple').checked ? 1 : 0,
-                artists: artists
+                artists: artists,
+                csrf_token: config.csrfToken
             };
 
             fetch(basePath + 'includes/customer/release-save.php', {

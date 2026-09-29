@@ -1,11 +1,9 @@
-Desktop.ini
 node_modules/
 assets/dist/
 data/
 
 .env
 .env.*
-!.env.production
 
 npm-debug.log*
 yarn-debug.log*

@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -7,21 +7,18 @@ require_once __DIR__ . '/../../includes/pagination.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 $page    = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 $perPage = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
-$status  = isset( $_GET['status'] ) ? sanitize_input( $_GET['status'] ) : 'all';
-$service = isset( $_GET['service'] ) ? sanitize_input( $_GET['service'] ) : 'all';
-$search  = isset( $_GET['search'] ) ? sanitize_input( $_GET['search'] ) : '';
+$status  = isset( $_GET['status'] ) ? clean_text( $_GET['status'] ) : 'all';
+$service = isset( $_GET['service'] ) ? clean_text( $_GET['service'] ) : 'all';
+$payment = isset( $_GET['payment'] ) ? clean_text( $_GET['payment'] ) : 'all';
+$search  = isset( $_GET['search'] ) ? clean_text( $_GET['search'] ) : '';
 
 try {
-    $pdo = db_connect();
-
     $where  = [];
     $params = [];
 
@@ -33,6 +30,11 @@ try {
     if ( $service !== 'all' ) {
         $where[]  = 's.name = :service';
         $params[':service'] = $service;
+    }
+
+    if ( $payment !== 'all' ) {
+        $where[]  = 'b.payment_status = :payment';
+        $params[':payment'] = $payment;
     }
 
     // One placeholder per column. db_connect() turns EMULATE_PREPARES off, so
@@ -48,10 +50,16 @@ try {
 
     $whereSql = ! empty( $where ) ? 'WHERE ' . implode( ' AND ', $where ) : '';
 
+    // Plan, amount and contact columns are read from the snapshot on the
+    // booking, not re-joined from the live catalogue, so this list always
+    // reports what the customer was actually charged.
     $baseSql = 'SELECT b.booking_id AS id, u.name AS customer, u.email AS email, u.mobile AS phone,
+                       COALESCE(NULLIF(b.customer_name, ""), u.name) AS customer_name,
                        s.name AS service, s.name AS item, b.status,
-                       DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date,
-                       b.price AS amount
+                       b.customer_type, b.plan_id, b.plan_name, b.plan_group, b.plan_group_label,
+                       b.subtotal, b.addons_total, b.price AS amount, b.currency,
+                       b.payment_status, b.payment_method,
+                       DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date
                 FROM bookings b
                 LEFT JOIN users u ON b.customer_id = u.id
                 JOIN services s ON b.service_id = s.id
@@ -60,9 +68,50 @@ try {
 
     $pagination = paginate( $pdo, $baseSql, $params, $page, $perPage );
 
+    // Add-on and package lines for just this page of orders, so the list can
+    // show a count without a correlated subquery per row.
+    $addonsByBooking = booking_order_addons( $pdo, array_column( $pagination['items'], 'id' ) );
+    $itemsByBooking  = booking_order_items( $pdo, array_column( $pagination['items'], 'id' ) );
+
+    $orders = [];
+    foreach ( $pagination['items'] as $row ) {
+        $addons   = $addonsByBooking[ $row['id'] ] ?? [];
+        $items    = $itemsByBooking[ $row['id'] ] ?? [];
+        $amounts  = booking_order_amounts( $row );
+        $addonsTotal = $amounts['addonsTotal'];
+
+        $orders[] = [
+            'id'             => $row['id'],
+            'customer'       => $row['customer_name'] ?: 'Guest',
+            'email'          => $row['email'],
+            'phone'          => $row['phone'] ?: '',
+            'customerType'   => $row['customer_type'],
+            'service'        => $row['service'],
+            'item'           => $row['item'],
+            'date'           => $row['date'],
+            'status'         => $row['status'],
+            'paymentStatus'  => $row['payment_status'],
+            'paymentLabel'   => booking_payment_status_label( $row['payment_status'] ),
+            'paymentMethod'  => (string) ( $row['payment_method'] ?? '' ),
+            'plan'           => booking_order_plan( $row ),
+            'items'          => $items,
+            'itemsCount'     => count( $items ),
+            'addonsCount'    => count( $addons ),
+            'hasAddons'      => ! empty( $addons ),
+            'amounts'        => $amounts,
+            // Kept at the top level so existing consumers of `amount` and
+            // `payment_status` keep working unchanged.
+            'amount'         => $amounts['total'],
+            'subtotal'       => $amounts['subtotal'],
+            'addons_total'   => $addonsTotal,
+            'currency'       => $amounts['currency'],
+            'payment_status' => $row['payment_status'],
+        ];
+    }
+
     echo json_encode( [
         'success'   => true,
-        'orders'    => $pagination['items'],
+        'orders'    => $orders,
         'pagination' => [
             'currentPage'  => $pagination['currentPage'],
             'totalPages'   => $pagination['totalPages'],
@@ -72,6 +121,8 @@ try {
             'hasNext'      => $pagination['hasNext'],
         ],
     ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    app_log( 'orders-list', 'request failed', $e );
+    http_response_code( 500 );
+    echo json_encode( [ 'success' => false, 'message' => 'The orders could not be loaded. Please try again.' ] );
 }

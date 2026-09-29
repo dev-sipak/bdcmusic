@@ -74,7 +74,8 @@ try {
     $pagination = paginate( $pdo, $baseSql, $params, $currentPage, $perPage );
     $artists = $pagination['items'];
 
-} catch ( Exception $e ) {
+} catch ( Throwable $e ) {
+    app_log( 'artists/index', 'page data unavailable', $e );
     $artists = [];
     $allCats = [];
     $pagination = null;

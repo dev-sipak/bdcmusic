@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/admin-guard.php';
@@ -10,23 +10,57 @@ $pageTitle       = 'Admin Dashboard - BDC Music Studio';
 $metaDescription = 'Manage orders, services, and customers from the BDC Music Studio admin dashboard.';
 include_once __DIR__ . '/includes/admin-header.php';
 
-$adminOrders = array();
-$services    = array();
+// The overview needs three things: how many orders sit in each status, how many
+// distinct customers have ordered, and the ten most recent orders. Counting in
+// SQL keeps the page from loading every booking row and embedding the whole
+// history into the HTML, which is what it used to do.
+$adminOverview = [
+    'stats'  => [ 'total' => 0, 'pending' => 0, 'processing' => 0, 'delivered' => 0, 'customers' => 0 ],
+    'recent' => [],
+];
+
 try {
-    $pdo  = db_connect();
-    $stmt = $pdo->query(
-        'SELECT b.booking_id AS id, u.name AS customer, u.email AS email, u.mobile AS phone,
-                s.name AS service, s.name AS item, b.status,
-                DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date,
-                b.price AS amount
+    $pdo = db_connect();
+
+    $statusRows = $pdo->query( 'SELECT status, COUNT(*) AS total FROM bookings GROUP BY status' )->fetchAll( PDO::FETCH_KEY_PAIR );
+
+    foreach ( $statusRows as $status => $count ) {
+        $adminOverview['stats']['total'] += (int) $count;
+
+        if ( isset( $adminOverview['stats'][ $status ] ) ) {
+            $adminOverview['stats'][ $status ] = (int) $count;
+        }
+    }
+
+    // A booking with no linked user is a guest order, so the email comes off the
+    // snapshot on the booking rather than the users table.
+    $adminOverview['stats']['customers'] = (int) $pdo->query(
+        'SELECT COUNT(DISTINCT COALESCE(NULLIF(b.customer_email, ""), u.email))
+         FROM bookings b
+         LEFT JOIN users u ON b.customer_id = u.id
+         WHERE COALESCE(NULLIF(b.customer_email, ""), u.email) IS NOT NULL'
+    )->fetchColumn();
+
+    // Only the ten rows the recent-orders table actually renders.
+    $recent = $pdo->query(
+        'SELECT b.booking_id AS id,
+                COALESCE(NULLIF(b.customer_name, ""), u.name) AS customer,
+                COALESCE(NULLIF(b.customer_phone, ""), u.mobile) AS phone,
+                s.name AS service, b.status, b.price AS amount
          FROM bookings b
          LEFT JOIN users u ON b.customer_id = u.id
          JOIN services s ON b.service_id = s.id
-         ORDER BY b.created_at DESC'
-    );
-    $adminOrders = $stmt->fetchAll();
-} catch ( Exception $e ) {
-    $adminOrders = array();
+         ORDER BY b.created_at DESC
+         LIMIT 10'
+    )->fetchAll();
+
+    $adminOverview['recent'] = $recent;
+} catch ( Throwable $e ) {
+    app_log( 'admin-dashboard', 'page data unavailable', $e );
+    $adminOverview = [
+        'stats'  => [ 'total' => 0, 'pending' => 0, 'processing' => 0, 'delivered' => 0, 'customers' => 0 ],
+        'recent' => [],
+    ];
 }
 
 $adminScripts = array( 'admin-dashboard.js' );
@@ -38,13 +72,9 @@ $adminScripts = array( 'admin-dashboard.js' );
 
             <?php include __DIR__ . '/includes/admin-nav.php'; ?>
 
-            <main class="adm-main">
+            <?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
 
-                <div class="adm-mobile-toggle">
-                    <button type="button" class="btn adm-menu-btn" id="admin-menu-toggle">
-                        <i class="fa-solid fa-bars"></i> Menu
-                    </button>
-                </div>
+            <main class="adm-main">
 
                 <div class="adm-tab active" id="adm-tab-overview">
                     <div class="adm-tab-header">

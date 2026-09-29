@@ -33,10 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/'/g, '&#39;');
     }
 
-    function money(value) {
-        return '\u20B9' + Number(value || 0).toFixed(2);
-    }
-
     /* Progress values are free text such as "In Production", so they need a
        slugified modifier class rather than statusBadgeHtml's raw lowercase. */
     function progressBadgeHtml(progress) {
@@ -133,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '</div>' +
             '<div class="detail-grid">' +
                 '<div class="detail-item"><span class="panel-label">Order Date</span><span class="panel-value">' + esc(order.created_at) + '</span></div>' +
-                '<div class="detail-item"><span class="panel-label">Payment</span><span class="panel-value">' + esc(order.payment_status) + '</span></div>' +
+                '<div class="detail-item"><span class="panel-label">Payment</span><span class="panel-value">' + esc(order.paymentLabel || order.payment_status) + '</span></div>' +
             '</div>';
 
         var message = order.message
@@ -142,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return '<div class="panel-profile-card svc-card">' +
             head +
+            renderOrderPlan(order) +
             '<div class="panel-subsection">' +
                 '<span class="panel-label">Order Details</span>' +
                 (order.metaFields.length
@@ -157,6 +154,65 @@ document.addEventListener('DOMContentLoaded', function () {
             renderArrangement(order.arrangement, service.arrangement) +
             renderFiles(order.files) +
         '</div>';
+    }
+
+    /**
+     * Package, add-ons and money breakdown for one order, from the snapshot
+     * taken when it was placed.
+     * @param {object} order
+     * @returns {string}
+     */
+    function renderOrderPlan(order) {
+        var plan    = order.plan || {};
+        var amounts = order.amounts || {};
+        var addons  = order.addons || [];
+
+        var pairs = [];
+
+        if (plan.hasPlan) {
+            pairs.push({ label: 'Package', value: plan.name || '—' });
+            if (plan.groupLabel || plan.group) {
+                pairs.push({ label: 'Package Type', value: plan.groupLabel || plan.group });
+            }
+        } else {
+            // Order placed before packages existed: no package was recorded.
+            pairs.push({ label: 'Package', value: 'No package recorded (legacy order)' });
+        }
+
+        if (addons.length) {
+            pairs.push({ label: 'Add-ons', value: String(addons.length) });
+        }
+
+        pairs.push({ label: 'Package Price', value: money(amounts.subtotal) });
+        if (addons.length) {
+            pairs.push({ label: 'Add-ons Total', value: money(amounts.addonsTotal) });
+        }
+        pairs.push({ label: 'Total Paid', value: money(amounts.total) });
+
+        var html = '<div class="panel-subsection">' +
+            '<span class="panel-label">What You Ordered</span>' +
+            '<div class="detail-grid">' +
+                pairs.map(function (p) {
+                    return '<div class="detail-item">' +
+                        '<span class="panel-label">' + esc(p.label) + '</span>' +
+                        '<span class="panel-value">' + esc(p.value) + '</span>' +
+                    '</div>';
+                }).join('') +
+            '</div>';
+
+        if (addons.length) {
+            html += '<div class="detail-grid">' +
+                addons.map(function (a) {
+                    var qty = a.qty > 1 ? a.name + ' × ' + a.qty : a.name;
+                    return '<div class="detail-item">' +
+                        '<span class="panel-label">' + esc(qty) + '</span>' +
+                        '<span class="panel-value">' + esc(money(a.lineTotal)) + '</span>' +
+                    '</div>';
+                }).join('') +
+            '</div>';
+        }
+
+        return html + '</div>';
     }
 
     /* ----- Locked notice ----- */

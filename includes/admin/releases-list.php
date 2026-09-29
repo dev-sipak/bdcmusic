@@ -12,7 +12,7 @@
  * Admin-only.
  */
 
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -20,22 +20,18 @@ require_once __DIR__ . '/../../includes/pagination.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 $page     = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 $perPage  = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
-$status   = isset( $_GET['status'] ) ? sanitize_input( $_GET['status'] ) : 'all';
-$search   = isset( $_GET['search'] ) ? sanitize_input( $_GET['search'] ) : '';
+$status   = isset( $_GET['status'] ) ? clean_text( $_GET['status'] ) : 'all';
+$search   = isset( $_GET['search'] ) ? clean_text( $_GET['search'] ) : '';
 
 $validStatuses = array( 'draft', 'pending', 'verification', 'onhold', 'rejected', 'approved', 'live', 'takedown' );
 
 try {
-    $pdo = db_connect();
-
     $where  = [];
     $params = [];
 
@@ -146,7 +142,8 @@ try {
             'hasNext'      => $pagination['hasNext'],
         ],
     ] );
-} catch ( Exception $e ) {
-    http_response_code( 500 );
-    echo json_encode( [ 'success' => false, 'message' => 'Database error: ' . $e->getMessage() ] );
-}
+  } catch ( Throwable $e ) {
+      app_log( 'releases-list', 'load failed', $e );
+      http_response_code( 500 );
+      echo json_encode( [ 'success' => false, 'message' => 'The releases could not be loaded. Please try again.' ] );
+  }

@@ -1,16 +1,14 @@
 <?php
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code( 405 );
@@ -18,12 +16,26 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     exit;
 }
 
-$input          = json_decode( file_get_contents( 'php://input' ), true );
+$raw           = file_get_contents( 'php://input' );
+$input         = json_decode( $raw === false ? '' : $raw, true );
+
+if ( ! is_array( $input ) ) {
+    $input = array();
+}
+
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf( $input );
+
 $id             = intval( $input['id'] ?? 0 );
 $reply_message  = trim( $input['reply_message'] ?? '' );
 
-if ( $id <= 0 || empty( $reply_message ) ) {
+if ( $id <= 0 || $reply_message === '' ) {
     echo json_encode( [ 'success' => false, 'message' => 'Invalid data. Please provide an enquiry ID and reply message.' ] );
+    exit;
+}
+
+if ( strlen( $reply_message ) > 5000 ) {
+    echo json_encode( [ 'success' => false, 'message' => 'Reply is too long.' ] );
     exit;
 }
 
@@ -39,12 +51,11 @@ try {
     }
 
     $updateStmt = $pdo->prepare( 'UPDATE artist_enquiries SET status = :status WHERE id = :id' );
-    $updateStmt->execute( [ ':status' => 'replied', ':id' => $id ] );
 
     $adminEmail  = getenv( 'BOOKING_OWNER_EMAIL' ) ?: 'bdcmusic37@gmail.com';
     $siteName    = 'BDC Music Studio';
     $enquiryEmail = sanitize_email( $enquiry['email'] );
-    $enquiryName  = sanitize_input( $enquiry['name'] );
+    $enquiryName  = clean_text( $enquiry['name'] );
 
     $subject = 'Reply to your enquiry - ' . $siteName;
 
@@ -67,9 +78,23 @@ try {
     $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
     $headers .= 'From: ' . $siteName . ' <' . $adminEmail . '>' . "\r\n";
 
-    @mail( $enquiryEmail, $subject, $emailBody, $headers );
+    // The mail is sent first and its result checked. Marking the enquiry
+    // replied before knowing the mail left would silently lose the reply, and
+    // telling the admin "sent" when mail() failed would be worse.
+    $sent = @mail( $enquiryEmail, $subject, $emailBody, $headers );
+
+    if ( ! $sent ) {
+        app_log( 'enquiry-reply', 'mail() failed for enquiry ' . $id );
+        echo json_encode( [ 'success' => false, 'message' => 'The reply could not be sent. The enquiry is still open.' ] );
+        exit;
+    }
+
+    $updateStmt->execute( [ ':status' => 'replied', ':id' => $id ] );
 
     echo json_encode( [ 'success' => true, 'message' => 'Reply sent and enquiry marked as replied.' ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    // Throwable, not Exception: a TypeError or Error would otherwise escape as
+    // an unhandled fatal and return an HTML 500 to the admin panel.
+    app_log( 'enquiry-reply', 'failed to reply to enquiry ' . $id, $e );
+    echo json_encode( [ 'success' => false, 'message' => 'Something went wrong. Please try again.' ] );
 }

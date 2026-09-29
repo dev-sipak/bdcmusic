@@ -52,19 +52,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 imgSrc = basePath + imgSrc;
             }
             var imgHtml = imgSrc
-                ? '<img src="' + imgSrc + '" alt="" style="width:40px;height:56px;object-fit:cover;border-radius:6px;">'
+                ? '<img src="' + esc(imgSrc) + '" alt="" style="width:40px;height:56px;object-fit:cover;border-radius:6px;">'
                 : '<div style="width:40px;height:56px;background:var(--secondary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-user" style="color:var(--muted);"></i></div>';
             return '<tr>' +
                 '<td>' + imgHtml + '</td>' +
-                '<td><strong>' + a.name + '</strong></td>' +
-                '<td>' + a.category + '</td>' +
-                '<td>' + (a.location || 'N/A') + '</td>' +
-                '<td>' + (a.is_active == 1
-                    ? '<span class="panel-status-badge status-delivered">Active</span>'
-                    : '<span class="panel-status-badge status-cancelled">Inactive</span>') + '</td>' +
+                '<td><strong>' + esc(a.name) + '</strong></td>' +
+                '<td>' + esc(a.category) + '</td>' +
+                '<td>' + esc(a.location || 'N/A') + '</td>' +
                 '<td>' +
-                    '<button class="adm-view-btn adm-edit-artist" data-id="' + a.id + '"><i class="fa-solid fa-pen"></i></button> ' +
-                    '<button class="adm-view-btn adm-delete-artist" data-id="' + a.id + '" style="color:#ef4444;border-color:#fca5a5;"><i class="fa-solid fa-trash"></i></button>' +
+                    (a.is_active == 1
+                        ? '<span class="panel-status-badge status-delivered">Active</span>'
+                        : '<span class="panel-status-badge status-cancelled">Inactive</span>') + '</td>' +
+                '<td>' +
+                    '<button class="adm-view-btn adm-edit-artist" data-id="' + esc(a.id) + '"><i class="fa-solid fa-pen"></i></button> ' +
+                    '<button class="adm-view-btn adm-delete-artist" data-id="' + esc(a.id) + '" style="color:#ef4444;border-color:#fca5a5;"><i class="fa-solid fa-trash"></i></button>' +
                 '</td>' +
             '</tr>';
         }).join('');
@@ -93,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var artistModal = document.getElementById('adm-artist-modal');
     var artistBackdrop = document.getElementById('artist-modal-backdrop');
     var artistCloseBtn = document.getElementById('artist-modal-close');
+    var artistCancelBtn = document.getElementById('artist-modal-close-btn');
     var addArtistBtn = document.getElementById('adm-add-artist-btn');
 
     if (addArtistBtn) {
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var catSelect = document.getElementById('artist-category');
         catSelect.innerHTML = '<option value="">Select Category</option>';
         categories.forEach(function (c) {
-            catSelect.innerHTML += '<option value="' + c.id + '">' + c.name + '</option>';
+            catSelect.innerHTML += '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>';
         });
 
         var pricingBody = document.getElementById('artist-pricing-body');
@@ -158,14 +160,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (artistCloseBtn) artistCloseBtn.addEventListener('click', closeArtistModal);
+    if (artistCancelBtn) artistCancelBtn.addEventListener('click', closeArtistModal);
     if (artistBackdrop) artistBackdrop.addEventListener('click', closeArtistModal);
 
     function addPricingRow(serviceType, price) {
         var tbody = document.getElementById('artist-pricing-body');
         var tr = document.createElement('tr');
         tr.innerHTML =
-            '<td><input type="text" class="panel-input pricing-service" value="' + (serviceType || '') + '" placeholder="e.g. Each Video"></td>' +
-            '<td><input type="number" class="panel-input pricing-price" value="' + (price || '') + '" placeholder="0.00" step="0.01" min="0"></td>' +
+            '<td><input type="text" class="panel-input pricing-service" value="' + esc(serviceType || '') + '" placeholder="e.g. Each Video"></td>' +
+            '<td><input type="number" class="panel-input pricing-price" value="' + esc(price || '') + '" placeholder="0.00" step="0.01" min="0"></td>' +
             '<td><button type="button" class="adm-view-btn remove-pricing-row" style="color:#ef4444;border-color:#fca5a5;"><i class="fa-solid fa-xmark"></i></button></td>';
         tbody.appendChild(tr);
 
@@ -186,8 +189,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var file = this.files[0];
         if (!file) return;
         if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2 MB.'); this.value = ''; return; }
-        var fd = new FormData();
-        fd.append('artist_image', file);
+          var fd = new FormData();
+          fd.append('artist_image', file);
+          fd.append('csrf_token', adminDashboardConfig.csrfToken);
         fetch(basePath + 'includes/upload-artist-image.php', { method: 'POST', body: fd })
             .then(function (r) { return r.json(); })
             .then(function (data) {
@@ -221,10 +225,11 @@ document.addEventListener('DOMContentLoaded', function () {
             category_id: parseInt(document.getElementById('artist-category').value) || 0,
             location: document.getElementById('artist-location').value.trim(),
             bio: document.getElementById('artist-bio').value.trim(),
-            is_active: document.getElementById('artist-active').checked ? 1 : 0,
-            image: document.getElementById('artist-image-url').value,
-            pricing: pricing
-        };
+              is_active: document.getElementById('artist-active').checked ? 1 : 0,
+              image: document.getElementById('artist-image-url').value,
+              pricing: pricing,
+              csrf_token: adminDashboardConfig.csrfToken
+          };
 
         fetch(basePath + 'includes/admin/artist-save.php', {
             method: 'POST',
@@ -247,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(basePath + 'includes/admin/artist-delete.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+                body: JSON.stringify({ id: id, csrf_token: adminDashboardConfig.csrfToken })
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {

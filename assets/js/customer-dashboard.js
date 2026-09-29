@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var basePath = config.basePath;
 
+    // Server-authoritative, so the browser check can never drift from the
+    // policy enforced by password_policy_error() in includes/helpers.php.
+    var PASSWORD_MIN_LENGTH = config.passwordMinLength || 10;
+
     initSidebarToggle('.panel-sidebar', '#dash-menu-toggle');
 
     function esc(value) {
@@ -52,12 +56,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (emptyMsg) emptyMsg.classList.add('d-none');
         tbody.innerHTML = ordersList.map(function (o) {
+            var plan    = o.plan || {};
+            var items   = o.items || [];
+            var amounts = o.amounts || {};
+
+            // Several packages on one order are listed together; the plan
+            // snapshot only names the first of them.
+            var planName = items.length > 1
+                ? items.map(function (it) { return it.name; }).join(', ')
+                : (plan.name || (items.length === 1 ? items[0].name : '\u2014'));
+
             return '<tr>' +
                 '<td><strong>' + esc(o.id) + '</strong></td>' +
                 '<td>' + esc(o.service) + '</td>' +
+                '<td>' + esc(planName) + '</td>' +
                 '<td>' + esc(o.date) + '</td>' +
-                '<td>\u20B9' + esc(o.amount) + '</td>' +
+                '<td>' + money(amounts.total !== undefined ? amounts.total : o.amount) + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
+                '<td>' + paymentBadgeHtml(o.paymentStatus, o.paymentLabel) + '</td>' +
                 '<td><button class="adm-view-btn view-order" data-order-id="' + esc(o.id) + '" title="View full order details"><i class="fa-solid fa-eye"></i></button></td>' +
             '</tr>';
         }).join('');
@@ -99,11 +115,98 @@ document.addEventListener('DOMContentLoaded', function () {
     var orderBackdrop = document.getElementById('panel-modal-backdrop');
     var orderCloseBtn = document.getElementById('pm-close');
 
+    /**
+     * Build one label/value pair for the detail grids in the order modal.
+     * @param {string} label
+     * @param {string} value
+     * @returns {string}
+     */
+    function detailItem(label, value) {
+        return '<div class="detail-item">' +
+            '<span class="panel-label">' + esc(label) + '</span>' +
+            '<span class="panel-value">' + esc(value) + '</span>' +
+        '</div>';
+    }
+
+    /**
+     * Render the package, money breakdown and add-on lines for one order.
+     * Everything here comes from the order-time snapshot, so it always
+     * matches the amount charged even if catalogue prices change later.
+     * @param {object} order
+     */
+    function renderCustomerPlan(order) {
+        var plan    = order.plan || {};
+        var items   = order.items || [];
+        var amounts = order.amounts || {};
+        var addons  = order.addons || [];
+
+        var pairs = [];
+
+        if (items.length > 1) {
+            // Several packages on one order: one line each, because
+            // bookings.plan_id only names the first of them.
+            pairs.push(detailItem('Packages', String(items.length)));
+            items.forEach(function (it) {
+                var label = it.groupLabel || it.group || 'Package';
+                pairs.push(detailItem(label, it.name + ' \u2014 ' + money(it.lineTotal)));
+            });
+        } else if (plan.hasPlan) {
+            pairs.push(detailItem('Package', plan.name || '—'));
+            if (plan.groupLabel || plan.group) {
+                pairs.push(detailItem('Package Type', plan.groupLabel || plan.group));
+            }
+        } else {
+            // Order placed before packages existed: no package was recorded.
+            pairs.push(detailItem('Package', 'No package recorded (legacy order)'));
+        }
+
+        if (addons.length) {
+            pairs.push(detailItem('Add-ons', String(addons.length)));
+        }
+
+        pairs.push(detailItem('Package Price', money(amounts.subtotal)));
+        if (addons.length) {
+            pairs.push(detailItem('Add-ons Total', money(amounts.addonsTotal)));
+        }
+        pairs.push(detailItem('Total Paid', money(amounts.total)));
+        pairs.push(detailItem('Currency', amounts.currency || 'INR'));
+        if (order.paidAt) {
+            pairs.push(detailItem('Paid On', order.paidAt));
+        }
+
+        var planEl = document.getElementById('pm-plan-fields');
+        if (planEl) planEl.innerHTML = pairs.join('');
+
+        var addonsEl = document.getElementById('pm-addons-fields');
+        var addonsSec = document.getElementById('pm-addons-section');
+        if (addonsEl && addonsSec) {
+            if (addons.length) {
+                addonsEl.innerHTML = addons.map(function (a) {
+                    var qty = a.qty > 1 ? a.name + ' × ' + a.qty : a.name;
+                    return detailItem(qty, money(a.lineTotal));
+                }).join('');
+                addonsSec.classList.remove('d-none');
+            } else {
+                addonsEl.innerHTML = '';
+                addonsSec.classList.add('d-none');
+            }
+        }
+    }
+
     function showOrderDetail(orderId) {
         if (!orderModal || !orderId) return;
 
         var statusEl = document.getElementById('pm-status');
         if (statusEl) statusEl.innerHTML = '<span class="panel-muted">Loading...</span>';
+
+        // Clear the async sections so a previous order's package and add-on
+        // lines cannot linger while the next one loads.
+        var planEl = document.getElementById('pm-plan-fields');
+        if (planEl) planEl.innerHTML = '';
+        var addonsEl = document.getElementById('pm-addons-fields');
+        if (addonsEl) addonsEl.innerHTML = '';
+        var addonsSec = document.getElementById('pm-addons-section');
+        if (addonsSec) addonsSec.classList.add('d-none');
 
         orderModal.classList.add('open');
         document.body.style.overflow = 'hidden';
@@ -121,8 +224,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('pm-order-id').textContent = 'Order ' + order.id;
                 document.getElementById('pm-service').textContent  = order.service;
                 document.getElementById('pm-date').textContent    = order.date;
-                document.getElementById('pm-amount').textContent  = '\u20B9' + Number(order.amount || 0).toFixed(2);
-                document.getElementById('pm-payment').textContent = order.paymentStatus;
+                document.getElementById('pm-amount').textContent  = money(order.amount);
+
+                var payEl = document.getElementById('pm-payment');
+                if (payEl) {
+                    var payment = order.payment || {};
+                    payEl.textContent = payment.statusLabel || order.paymentLabel || order.paymentStatus || '';
+                }
+
 
                 // Status, plus the service progress steps the admin recorded.
                 var progressHtml = statusBadgeHtml(order.status);
@@ -138,6 +247,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }).join('') + '</div>';
                 }
                 if (statusEl) statusEl.innerHTML = progressHtml;
+
+                // What was ordered, at the prices charged at the time.
+                renderCustomerPlan(order);
 
                 // Everything the customer filled in at order time.
                 var fieldsEl = document.getElementById('pm-order-fields');
@@ -268,6 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             var fd = new FormData();
             fd.append('profile_picture', file);
+            fd.append('csrf_token', config.csrfToken);
 
             fetch(config.uploadProfilePicUrl, { method: 'POST', body: fd })
                 .then(function (r) { return r.json(); })
@@ -327,6 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var fd = new FormData();
             fd.append('name', name);
             fd.append('phone', phone);
+            fd.append('csrf_token', config.csrfToken);
 
             profileSaveBtn.disabled = true;
             profileSaveBtn.textContent = 'Saving...';
@@ -378,8 +492,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            if (newPass.length < 6) {
-                passError.querySelector('#pass-error-msg').textContent = 'New password must be at least 6 characters.';
+            if (newPass.length < PASSWORD_MIN_LENGTH) {
+                passError.querySelector('#pass-error-msg').textContent =
+                    'New password must be at least ' + PASSWORD_MIN_LENGTH + ' characters.';
                 passError.classList.remove('d-none');
                 return;
             }
@@ -394,6 +509,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fd.append('current_password', current);
             fd.append('new_password', newPass);
             fd.append('confirm_password', confirm);
+            fd.append('csrf_token', config.csrfToken);
 
             passSaveBtn.disabled = true;
             passSaveBtn.textContent = 'Updating...';

@@ -98,8 +98,10 @@ function process_file_upload( $file, $uploadDir, $allowedMime = [], $maxSize = 5
 
     $originalName = basename( $file['name'] );
     $safeName = preg_replace( '/[^a-zA-Z0-9._-]/', '_', $originalName );
-    $timestamp = time();
-    $finalName = $timestamp . '_' . $safeName;
+    // The random component is load-bearing. Several files in one multi-file
+    // upload can share an original name (track.mp3 twice), and time() alone
+    // would give them the same destination and silently keep only the last.
+    $finalName = time() . '_' . bin2hex( random_bytes( 4 ) ) . '_' . $safeName;
     $destination = $uploadDir . '/' . $finalName;
 
     if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
@@ -144,24 +146,4 @@ function process_multiple_uploads( $files, $uploadDir, $allowedMime = [], $maxSi
     }
 
     return $stored;
-}
-
-/**
- * Save file references to a booking's JSON data.
- */
-function save_booking_files( $bookingsPath, $bookingId, $files ) {
-    $bookings = [];
-    if ( file_exists( $bookingsPath ) ) {
-        $bookings = json_decode( file_get_contents( $bookingsPath ), true ) ?: [];
-    }
-
-    foreach ( $bookings as &$booking ) {
-        if ( ( $booking['booking_id'] ?? '' ) === $bookingId || ( $booking['id'] ?? '' ) === $bookingId ) {
-            $booking['files'] = $files;
-            break;
-        }
-    }
-    unset( $booking );
-
-    return file_put_contents( $bookingsPath, json_encode( $bookings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) ) !== false;
 }

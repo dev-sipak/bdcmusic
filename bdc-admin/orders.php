@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/admin-guard.php';
@@ -10,29 +10,20 @@ $pageTitle       = 'Orders Management - BDC Music Studio';
 $metaDescription = 'View, filter, and manage all customer orders across services from the BDC Music Studio admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
-// The admin overview stats read from this in-memory list.
-$adminOrders = array();
-$services    = array();
-try {
-    $pdo  = db_connect();
-    $stmt = $pdo->query(
-        'SELECT b.booking_id AS id, u.name AS customer, u.email AS email, u.mobile AS phone,
-                s.name AS service, s.name AS item, b.status,
-                DATE_FORMAT(b.created_at, "%Y-%m-%d") AS date,
-                b.price AS amount
-         FROM bookings b
-         LEFT JOIN users u ON b.customer_id = u.id
-         JOIN services s ON b.service_id = s.id
-         ORDER BY b.created_at DESC'
-    );
-    $adminOrders = $stmt->fetchAll();
+  // Only the service list is needed here: the Orders tab renders its rows from
+  // includes/admin/orders-list.php, which paginates server-side. The overview
+  // totals that used to be embedded in this page are now computed in SQL on
+  // bdc-admin/index.php.
+  $services = array();
+  try {
+      $pdo = db_connect();
+      $svcStmt = $pdo->query( 'SELECT name AS service FROM services ORDER BY name' );
+      $services = $svcStmt->fetchAll( PDO::FETCH_COLUMN );
+  } catch ( Throwable $e ) {
+      app_log( 'admin-orders', 'page data unavailable', $e );
+      $services = array();
+  }
 
-    $svcStmt = $pdo->query( 'SELECT name AS service FROM services ORDER BY name' );
-    $services = $svcStmt->fetchAll( PDO::FETCH_COLUMN );
-} catch ( Exception $e ) {
-    $adminOrders = array();
-    $services    = array();
-}
 
 $adminScripts = array( 'admin-dashboard.js' );
 ?>
@@ -43,13 +34,9 @@ $adminScripts = array( 'admin-dashboard.js' );
 
             <?php include __DIR__ . '/includes/admin-nav.php'; ?>
 
-            <main class="adm-main">
+            <?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
 
-                <div class="adm-mobile-toggle">
-                    <button type="button" class="btn adm-menu-btn" id="admin-menu-toggle">
-                        <i class="fa-solid fa-bars"></i> Menu
-                    </button>
-                </div>
+            <main class="adm-main">
 
                 <div class="adm-tab active" id="adm-tab-orders">
                     <div class="adm-tab-header">
@@ -74,6 +61,14 @@ $adminScripts = array( 'admin-dashboard.js' );
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <select class="adm-filter-select" id="admin-order-payment">
+                            <option value="all">All Payments</option>
+                            <option value="awaiting">Awaiting Payment</option>
+                            <option value="paid">Paid</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="failed">Failed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
                         <div class="adm-search-wrap">
                             <i class="fa-solid fa-search"></i>
                             <input type="text" id="admin-order-search" placeholder="Search by ID, customer, or phone...">
@@ -84,14 +79,16 @@ $adminScripts = array( 'admin-dashboard.js' );
                         <table class="adm-table">
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Phone</th>
-                                    <th>Service</th>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Service</th>
+                                <th>Package</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-orders-tbody"></tbody>

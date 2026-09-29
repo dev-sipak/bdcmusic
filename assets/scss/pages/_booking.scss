@@ -1,0 +1,449 @@
+.field-error {
+	display: block;
+	color: var(--error);
+	font-size: 0.82rem;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.field-help {
+	display: block;
+	color: var(--muted);
+	font-size: 0.82rem;
+	line-height: 1.4;
+}
+
+// ─── Page frame ───────────────────────────────────────────────────
+
+.booking-page { padding: 120px 0 80px; }
+
+
+.booking-page h1 {
+	margin-bottom: 1.5rem;
+}
+
+// A payment that the server refused. booking-checkout.js adds .is-error to the
+// status line; the step itself stays put so the customer can try again.
+.booking-intro.is-error {
+	color: var(--error);
+	font-weight: 600;
+}
+
+// Shown next to a control by the registry when a field is required.
+.required-star {
+	color: var(--error);
+}
+
+// An invalid control is tinted, so it is obvious on a long form without
+// hunting for the message.
+.form-field:has(.field-error) {
+	input,
+	select,
+	textarea {
+		border-color: var(--error);
+	}
+
+	.radio-card,
+	.checkbox-card {
+		border-color: var(--error);
+	}
+
+	label {
+		color: var(--error);
+	}
+}
+
+// ─── Attached files ──────────────────────────────────────────────
+
+.field-files {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 4px 0 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--muted);
+		font-size: 0.82rem;
+		word-break: break-all;
+	}
+
+	i {
+		color: var(--primary);
+		flex-shrink: 0;
+	}
+}
+
+// ─── Progress indicator ──────────────────────────────────────────
+
+.booking-progress {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 28px;
+	padding: 0;
+	list-style: none;
+	counter-reset: booking-step;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		padding: 8px 10px;
+		background: #fff;
+		color: var(--muted);
+		font-size: 0.85rem;
+		font-weight: 600;
+		counter-increment: booking-step;
+
+		&::before {
+			content: counter(booking-step);
+			display: grid;
+			place-items: center;
+			width: 22px;
+			height: 22px;
+			border-radius: 50%;
+			background: var(--border);
+			color: var(--text);
+			font-size: 0.72rem;
+			font-weight: 700;
+		}
+	}
+
+	// A step already answered. The indicator is a read-only trail, so these are
+	// not links: going back is done with the Back button, not by skipping
+	// ahead through the trail.
+	li.is-done {
+		border-color: var(--primary);
+		color: var(--text);
+
+		&::before {
+			background: var(--primary);
+			color: #fff;
+		}
+	}
+
+	li.is-current {
+		border-color: var(--primary);
+		background: var(--primary);
+		color: #fff;
+
+		&::before {
+			background: #fff;
+			color: var(--primary);
+		}
+	}
+}
+
+// ─── Layout ──────────────────────────────────────────────────────
+
+.booking-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	gap: 32px;
+	align-items: start;
+
+	@media (max-width: 992px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.booking-panel {
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	padding: 28px;
+	background: #fff;
+	box-shadow: var(--shadow-sm);
+
+	> h2 {
+		margin-bottom: 6px;
+	}
+
+	> p.booking-intro {
+		margin-bottom: 22px;
+		color: var(--muted);
+	}
+}
+
+.booking-aside {
+	position: sticky;
+	top: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@media (max-width: 992px) {
+		position: static;
+	}
+}
+
+// ─── Summary card ────────────────────────────────────────────────
+
+.booking-summary {
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	padding: 22px;
+	background: #fff;
+	box-shadow: var(--shadow-sm);
+
+	h3 {
+		margin-bottom: 14px;
+		font-size: 1.05rem;
+	}
+}
+
+.booking-summary-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--border);
+	font-size: 0.92rem;
+
+	&:last-of-type {
+		border-bottom: 0;
+	}
+
+	dt {
+		color: var(--muted);
+	}
+
+	dd {
+		margin: 0;
+		font-weight: 600;
+		text-align: right;
+	}
+}
+
+.booking-summary-total {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 16px;
+	margin-top: 12px;
+	padding-top: 14px;
+	border-top: 2px solid var(--border);
+	font-size: 1.1rem;
+	font-weight: 700;
+
+	span:first-child {
+		color: var(--muted);
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+}
+
+// ─── Package selection cards ─────────────────────────────────────
+
+.booking-plans {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 16px;
+	margin-bottom: 22px;
+}
+
+.booking-plan {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	padding: 20px;
+	background: #fff;
+	cursor: pointer;
+	transition: var(--transition);
+
+	&:hover {
+		border-color: var(--primary);
+		box-shadow: var(--shadow-md);
+	}
+
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	h4 {
+		font-size: 1.02rem;
+	}
+
+	p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.88rem;
+	}
+}
+
+.booking-plan:has(input:checked) {
+	border-color: var(--primary);
+	background: #fffaf0;
+	box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 245, 158, 11), 0.12);
+}
+
+.booking-plan-price {
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: var(--primary);
+}
+
+.booking-plan-features {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: var(--muted);
+	font-size: 0.85rem;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+
+		&::before {
+			content: "\f00c";
+			flex-shrink: 0;
+			color: var(--success);
+			font-family: "Font Awesome 6 Free";
+			font-size: 0.7rem;
+			font-weight: 900;
+		}
+	}
+}
+
+.booking-plan-flag {
+	position: absolute;
+	top: -10px;
+	right: 16px;
+	border-radius: 999px;
+	padding: 4px 12px;
+	background: var(--primary);
+	color: #fff;
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+// ─── Review list ─────────────────────────────────────────────────
+
+.booking-review {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 20px;
+	margin-bottom: 22px;
+}
+
+.booking-review-block {
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	padding: 18px 20px;
+	background: #fff;
+
+	h3 {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		margin-bottom: 12px;
+		font-size: 0.95rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--muted);
+	}
+}
+
+.booking-review-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+
+	dt {
+		color: var(--muted);
+		font-size: 0.8rem;
+	}
+
+	dd {
+		margin: 0 0 4px;
+		font-size: 0.95rem;
+		word-break: break-word;
+	}
+}
+
+// A "Change" link back to the step that owns this block.
+.booking-review-edit {
+	border: 0;
+	padding: 0;
+	background: none;
+	color: var(--primary);
+	font: inherit;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	cursor: pointer;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+// ─── Quote notice ────────────────────────────────────────────────
+//
+// Promotion is quote mode: nothing is charged here, so the panel says so
+// plainly rather than showing a payment total of zero as if it were real.
+
+.booking-quote-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 22px;
+	border-radius: 16px;
+	padding: 18px 20px;
+	background: rgba(var(--primary-rgb, 245, 158, 11), 0.1);
+
+	i {
+		flex-shrink: 0;
+		margin-top: 3px;
+		color: var(--primary);
+	}
+
+	p {
+		margin: 0;
+		font-size: 0.9rem;
+	}
+}
+
+// ─── Navigation ──────────────────────────────────────────────────
+
+.booking-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 26px;
+	padding-top: 22px;
+	border-top: 1px solid var(--border);
+
+	.btn {
+		min-width: 150px;
+	}
+
+	.booking-nav-right {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+}

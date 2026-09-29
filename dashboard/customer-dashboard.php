@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/panel-guard.php';
@@ -24,7 +24,8 @@ try {
         $userSince = $uRow['member_since'] ?? '';
         $userPic   = $uRow['profile_picture'] ?? '';
     }
-} catch ( Exception $e ) {
+} catch ( Throwable $e ) {
+    app_log( 'customer-dashboard', 'page data unavailable', $e );
     $userPhone = '';
 }
 $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
@@ -125,7 +126,8 @@ $userPicUrl = $userPic ? ( $basePath . $userPic ) : '';
                                 <label class="panel-label" for="new-password">New Password</label>
                                 <div style="position:relative;flex:1;">
                                     <i class="fa-solid fa-lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
-                                    <input type="password" id="new-password" class="panel-input" style="padding-left:34px;" placeholder="Min 6 characters" required minlength="6">
+<input type="password" id="new-password" class="panel-input" style="padding-left:34px;" placeholder="Min <?php echo PASSWORD_MIN_LENGTH; ?> characters" required minlength="<?php echo PASSWORD_MIN_LENGTH; ?>">
+
                                 </div>
                             </div>
                             <div class="panel-detail-row">

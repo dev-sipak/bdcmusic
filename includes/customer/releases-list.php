@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -7,18 +7,27 @@ require_once __DIR__ . '/../../includes/pagination.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'customer' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'customer' );
 
 $page    = max( 1, (int) ( $_GET['page'] ?? 1 ) );
 $perPage = max( 1, min( 100, (int) ( $_GET['per_page'] ?? 10 ) ) );
-$status  = isset( $_GET['status'] ) ? sanitize_input( $_GET['status'] ) : 'all';
+$status  = isset( $_GET['status'] ) ? clean_text( $_GET['status'] ) : 'all';
 
 try {
-    $pdo = db_connect();
+    // Releases belong to Digital Music Distribution, so the same entitlement the
+    // page gate in dashboard/releases.php applies has to be enforced here too.
+    // Without it, any signed-in customer could read releases by calling this
+    // endpoint directly. The true asks for an *unlocked* booking
+    // (SERVICE_UNLOCK_STATUSES: processing or delivered); without it a customer
+    // whose only distribution booking is still pending or cancelled would be
+    // refused the page but could still read their releases through this API.
+    if ( ! customer_has_service_booking( $pdo, $_SESSION['user_id'], 'digital-distribution', true ) ) {
+        http_response_code( 403 );
+        echo json_encode( [ 'success' => false, 'message' => 'You have not purchased this service.' ] );
+        exit;
+    }
 
     $where  = [ 'r.customer_id = :cid' ];
     $params = [ ':cid' => $_SESSION['user_id'] ];
@@ -130,6 +139,8 @@ try {
             'hasNext'      => $pagination['hasNext'],
         ],
     ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    app_log( 'customer-releases-list', 'request failed', $e );
+    http_response_code( 500 );
+    echo json_encode( [ 'success' => false, 'message' => 'Your releases could not be loaded. Please try again.' ] );
 }

@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var currentReleases = [];
     var currentReleaseId = null;
 
+    initSidebarToggle('.adm-sidebar', '#admin-menu-toggle');
+
     // Platforms BDC distributes to. Offered as one-click presets so admin does
     // not retype the same names; anything else can still be typed in.
     var PLATFORM_PRESETS = [
@@ -236,6 +238,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var originalHtml = button.innerHTML;
         button.disabled = true;
         button.textContent = busyLabel;
+
+        // The CSRF token is added here so every caller of this save is covered.
+        payload.csrf_token = config.csrfToken;
 
         return fetch(basePath + 'includes/admin/release-save.php', {
             method: 'POST',

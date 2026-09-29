@@ -1,6 +1,6 @@
 <?php
 if ( session_status() === PHP_SESSION_NONE ) {
-    session_start();
+require_once __DIR__ . '/includes/session.php';
 }
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
@@ -37,6 +37,26 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,706,53.5;1,9..144,706,53.5&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $assetPath; ?>dist/main.css">
     <link rel="icon" href="<?php echo $assetPath; ?>images/favicon.png" type="image/png">
+
+    <!--
+      GOOGLE ANALYTICS (gtag) - NOT YET ENABLED.
+
+      No analytics tag is loaded on this site today, and cookie-policy.php says
+      so, so the two stay consistent. When analytics is switched on:
+
+        1. Add the GA4 measurement id and the secret below from a server-side
+           env var, never as a literal, and add GA_MEASUREMENT_ID /
+           GA_API_SECRET to .env and .env.example (see includes/config.php).
+        2. Paste the gtag.js snippet from the Google admin into this block,
+           after the stylesheets so it never blocks rendering.
+        3. Update the "Analytics Cookies We Will Use" section of
+           cookie-policy.php to drop the "not yet switched on" wording.
+        4. The consent banner still has to be added if analytics is loaded
+           before consent, which is what GDPR and the DPDP Act require.
+
+      config.php has no GA_MEASUREMENT_ID define yet, so nothing here is live.
+    -->
+
 </head>
 
 <body>
@@ -92,7 +112,8 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
                             $apdo   = db_connect();
                             $acStmt = $apdo->query( 'SELECT name, slug FROM artist_categories WHERE is_active = 1 ORDER BY sort_order' );
                             $artistCats = $acStmt->fetchAll();
-                        } catch ( Exception $e ) {
+                        } catch ( Throwable $e ) {
+                            app_log( 'header', 'artist categories unavailable', $e );
                             $artistCats = [];
                         }
                         foreach ( $artistCats as $ac ) : ?>

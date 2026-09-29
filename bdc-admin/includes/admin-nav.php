@@ -13,10 +13,11 @@ $adminNavItems = array(
     'releases'  => array( 'label' => 'Releases',  'icon' => 'fa-compact-disc',    'url' => $adminBase . 'releases' ),
     'customers' => array( 'label' => 'Customers', 'icon' => 'fa-users',           'url' => $adminBase . 'customers' ),
     'artists'   => array( 'label' => 'Artists',   'icon' => 'fa-palette',         'url' => $adminBase . 'artists' ),
+    'services'  => array( 'label' => 'Services',  'icon' => 'fa-layer-group',     'url' => $adminBase . 'services' ),
     'enquiries' => array( 'label' => 'Enquiries', 'icon' => 'fa-envelope',        'url' => $adminBase . 'enquiries' ),
 );
 ?>
-<aside class="adm-sidebar">
+<aside class="adm-sidebar" id="adm-sidebar">
     <div class="adm-brand">
         <div class="adm-logo">
             <i class="fa-solid fa-shield-halved"></i>
@@ -25,6 +26,10 @@ $adminNavItems = array(
             <strong>BDC Admin</strong>
             <span>Management Panel</span>
         </div>
+        <button class="adm-sidebar-close" type="button" id="adm-sidebar-close"
+            aria-label="Close navigation menu">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
     </div>
     <nav class="adm-nav">
         <?php foreach ( $adminNavItems as $adminNavKey => $adminNavItem ) : ?>

@@ -1,0 +1,107 @@
+/*==================================================
+BOOKING ELEMENTS ON SERVICE PAGES
+==================================================*/
+
+// The service pages render their package cards, booking links and the "Book now"
+// call to action from includes/booking-marketing.php, so the prices on the page
+// and the prices the checkout charges come from the same table.
+//
+// These are the styles for that markup. They sit apart from pages/_booking.scss,
+// which styles the checkout itself, because these appear on the public service
+// pages and have to work inside .plans-grid there.
+
+// ─── The "Book now" call to action ────────────────────────────────
+//
+// Replaces the enquiry form each service page used to carry. Centred, because it
+// sits alone in a section with nothing competing with it.
+
+.booking-cta {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	margin: 28px 0 8px;
+	text-align: center;
+
+	.booking-cta-sub {
+		max-width: 46ch;
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.92rem;
+	}
+}
+
+// ─── The "Get This Package" link on a card ────────────────────────
+//
+// Pushed to the bottom of the card so the cards in a row line their buttons up
+// even when the feature lists are different lengths. A card is a flex column, so
+// the button takes the margin-top:auto.
+//
+// Two card shapes have to be covered, not one: `.plan-card` is what
+// booking_plan_card() emits, and the Classes page builds its own `.detail-card`
+// comparison cards. Scoping this to `.plans-grid` alone left all sixteen Classes
+// buttons unaligned, so the rule is keyed on the button instead of the grid.
+
+.plan-card,
+.detail-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.plan-card .btn-book,
+.detail-card .btn-book {
+	// Pins the button to the bottom edge of the card and soaks up whatever slack
+	// the row has.
+	margin-top: auto;
+}
+
+// margin-top:auto only ever distributes *existing* space. A card whose content
+// already fills it exactly would end up with the button touching the list above
+// it, so the element above carries a floor of its own. The :has() is load
+// bearing: audio-video ships delivery-scope .plan-cards with no button at all,
+// and without it those cards would gain a phantom gap under the price.
+.plan-card:has(> .btn-book:last-child) > :nth-last-child(2),
+.detail-card:has(> .btn-book:last-child) > :nth-last-child(2) {
+	margin-bottom: 20px;
+}
+
+.btn-book {
+	align-self: stretch;
+	margin-top: 18px;
+	padding: 13px 24px;
+	font-size: 0.95rem;
+}
+
+// The card that service_plans marks is_default, and which the checkout therefore
+// preselects. Tinting it keeps the two in agreement visually: the highlighted
+// card is the one that gets chosen for you.
+.plan-card.is-featured {
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 245, 158, 11), 0.12);
+}
+
+.plan-card-flag {
+	align-self: flex-start;
+	margin-bottom: 8px;
+	border-radius: 999px;
+	padding: 4px 12px;
+	background: var(--primary);
+	color: var(--dark);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+// ─── Quote-mode notice ────────────────────────────────────────────
+//
+// A service with no fixed price says so rather than looking like an oversight.
+// Reused from the checkout, which shows the same notice before the details step.
+
+.booking-quote-note {
+	margin: 20px 0;
+
+	p {
+		margin: 0;
+	}
+}

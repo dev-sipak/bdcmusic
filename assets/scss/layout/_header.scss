@@ -28,7 +28,31 @@ HEADER
     padding: 20px 0;
   }
 
+  .header .container {
+    gap: 10px;
+  }
+
+  .header .logo {
+    margin-right: auto;
+  }
+
+  // The Sign In call to action used to be switched off entirely below 992px,
+  // which left a signed-out visitor with no way in from a phone. It stays on
+  // now, shrunk to a compact pill: _buttons.scss makes every .btn full width
+  // under 576px, so width and padding are pinned back here, and the button is
+  // ordered ahead of the menu toggle to keep the header reading
+  // logo -> action -> menu.
   .header .btn {
-    display: none;
+    display: inline-flex;
+    order: 2;
+    width: auto;
+    padding: 12px 22px;
+    min-height: 44px;
+    font-size: .875rem;
+  }
+
+  .header .menu-toggle {
+    order: 3;
+    margin-left: 0;
   }
 }

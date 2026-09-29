@@ -22,6 +22,29 @@ body {
   color: var(--text);
   line-height: $line-height-base;
   -webkit-font-smoothing: antialiased;
+
+  // Last line of defence against sideways scrolling on a phone. The site's entry
+  // animations (fadeLeft / fadeRight / .reveal) translate their element up to
+  // 60px along the X axis while it plays, which briefly widened the document and
+  // made the whole page scroll horizontally. `clip` rather than `hidden` on
+  // purpose: `hidden` would turn <body> into a scroll container, and that breaks
+  // every `position: sticky` descendant, including the admin sidebar and the
+  // checkout summary. `clip` trims the overflow without creating a scrollport.
+  overflow-x: clip;
+}
+
+// Service and package names are compound words -- "Online/Offline",
+// "Digital/Music", "Audio/Video" -- and a slash is not a break opportunity. At
+// the h1 clamp these render as one unbreakable token wider than a 320px phone, so
+// the heading pushed the document sideways. `break-word` only kicks in when a
+// word genuinely cannot fit, so desktop line breaks are untouched.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
 }
 
 img {

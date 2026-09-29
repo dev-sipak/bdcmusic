@@ -49,15 +49,15 @@ document.addEventListener('DOMContentLoaded', function () {
             var msg = e.message || '';
             if (msg.length > 60) { msg = msg.substring(0, 60) + '...'; }
 
-            var eyeIcon = '<button class="btn enquiry-view-btn" data-id="' + e.id + '" title="View Enquiry" style="background:transparent;border:none;cursor:pointer;padding:4px 8px;color:var(--primary);font-size:1rem;">' +
+            var eyeIcon = '<button class="btn enquiry-view-btn" data-id="' + esc(e.id) + '" title="View Enquiry" style="background:transparent;border:none;cursor:pointer;padding:4px 8px;color:var(--primary);font-size:1rem;">' +
                 '<i class="fa-solid fa-eye"></i></button>';
 
             return '<tr>' +
-                '<td><strong>' + e.name + '</strong></td>' +
-                '<td>' + e.email + '</td>' +
-                '<td>' + (e.phone || '-') + '</td>' +
-                '<td title="' + (e.message || '').replace(/"/g, '&quot;') + '">' + msg + '</td>' +
-                '<td>' + e.created_at + '</td>' +
+                '<td><strong>' + esc(e.name) + '</strong></td>' +
+                '<td>' + esc(e.email) + '</td>' +
+                '<td>' + esc(e.phone || '-') + '</td>' +
+                '<td title="' + esc(e.message || '') + '">' + esc(msg) + '</td>' +
+                '<td>' + esc(e.created_at) + '</td>' +
                 '<td>' + statusBadge + '</td>' +
                 '<td>' + eyeIcon + '</td>' +
             '</tr>';
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(basePath + 'includes/admin/enquiry-update-status.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id, status: status })
+                body: JSON.stringify({ id: id, status: status, csrf_token: adminDashboardConfig.csrfToken })
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(basePath + 'includes/admin/enquiry-reply.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id, reply_message: message })
+                body: JSON.stringify({ id: id, reply_message: message, csrf_token: adminDashboardConfig.csrfToken })
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {

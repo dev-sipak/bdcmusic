@@ -1,67 +1,127 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector(".premium-booking-form");
+    var modal = document.getElementById("plan-enquiry-modal");
 
-    if (!form) {
+    if (!modal) {
         return;
     }
 
-    const categoryInputs = form.querySelectorAll('input[name="service_category"]');
-    const serviceSelect = form.querySelector("#service_type");
-    const summary = document.querySelector("#live-summary");
+    var form = document.getElementById("plan-enquiry-form");
+    var planIdInput = document.getElementById("enquiry-plan-id");
+    var packageLabel = document.getElementById("plan-enquiry-package");
+    var errorBox = document.getElementById("plan-enquiry-error");
+    var lastTrigger = null;
 
-    if (!serviceSelect) {
-        return;
-    }
-
-    function currentCategory() {
-        const selected = form.querySelector('input[name="service_category"]:checked');
-        return selected ? selected.value : "Audio";
-    }
-
-    function filterServices() {
-        const category = currentCategory();
-
-        Array.from(serviceSelect.options).forEach(function (option) {
-            if (!option.dataset.category) {
-                option.hidden = false;
-                return;
-            }
-
-            option.hidden = option.dataset.category !== category;
-        });
-
-        if (serviceSelect.selectedOptions[0] && serviceSelect.selectedOptions[0].hidden) {
-            serviceSelect.value = "";
-        }
-    }
-
-    function updateSummary() {
-        if (!summary) {
+    function showError(message) {
+        if (!errorBox) {
             return;
         }
 
-        const formats = Array.from(form.querySelectorAll('input[name="delivery_format[]"]:checked'))
-            .map(function (input) {
-                return input.value;
-            })
-            .join(", ");
-
-        summary.innerHTML = "Category: <strong>" + currentCategory() + "</strong><br>" +
-            "Service: <strong>" + (serviceSelect.value || "Not selected") + "</strong><br>" +
-            "Delivery: <strong>" + (formats || "Not selected") + "</strong>";
+        errorBox.innerHTML = "<strong>" + message + "</strong>";
+        errorBox.style.display = "block";
     }
 
-    categoryInputs.forEach(function (input) {
-        input.addEventListener("change", function () {
-            filterServices();
-            updateSummary();
+    function clearError() {
+        if (!errorBox) {
+            return;
+        }
+
+        errorBox.style.display = "none";
+        errorBox.innerHTML = "";
+    }
+
+    function openModal(trigger) {
+        var planId = trigger.getAttribute("data-plan-enquiry") || "";
+        var name = trigger.getAttribute("data-plan-name") || "";
+
+        // The plan id comes from the button, never from the URL, so a hand-edited
+        // link cannot ask for a package the customer did not pick.
+        if (planIdInput) {
+            planIdInput.value = planId;
+        }
+
+        if (packageLabel) {
+            packageLabel.textContent = name;
+        }
+
+        clearError();
+        lastTrigger = trigger;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+
+        var first = document.getElementById("enquiry-name");
+        if (first) {
+            first.focus();
+        }
+    }
+
+    function closeModal() {
+        modal.classList.remove("open");
+        document.body.style.overflow = "";
+
+        if (lastTrigger && typeof lastTrigger.focus === "function") {
+            lastTrigger.focus();
+        }
+
+        lastTrigger = null;
+    }
+
+    document.querySelectorAll("[data-plan-enquiry]").forEach(function (trigger) {
+        trigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            openModal(trigger);
         });
     });
 
-    form.querySelectorAll("select, input").forEach(function (input) {
-        input.addEventListener("change", updateSummary);
+    modal.querySelectorAll("[data-enquiry-close]").forEach(function (el) {
+        el.addEventListener("click", closeModal);
     });
 
-    filterServices();
-    updateSummary();
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("open")) {
+            closeModal();
+        }
+    });
+
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            // Read by id rather than off the form: HTMLFormElement.name is the
+            // form's own name attribute, not the control called "name".
+            var planId = planIdInput ? planIdInput.value.trim() : "";
+            var name = (document.getElementById("enquiry-name") || {}).value || "";
+            var email = (document.getElementById("enquiry-email") || {}).value || "";
+            var phone = (document.getElementById("enquiry-phone") || {}).value || "";
+
+            name = name.trim();
+            email = email.trim();
+            phone = phone.trim();
+
+            var digits = phone.replace(/\D+/g, "");
+
+            clearError();
+
+            if (!planId) {
+                event.preventDefault();
+                showError("Please choose the package you want a quote for.");
+                return;
+            }
+
+            if (name.length < 2) {
+                event.preventDefault();
+                showError("Please enter your full name.");
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                event.preventDefault();
+                showError("Please enter a valid email address.");
+                return;
+            }
+
+            if (digits.length < 7 || digits.length > 15) {
+                event.preventDefault();
+                showError("Please enter a valid phone number.");
+                return;
+            }
+        });
+    }
 });

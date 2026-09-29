@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/admin-guard.php';
@@ -19,13 +19,9 @@ $adminScripts = array( 'admin-enquiries.js' );
 
             <?php include __DIR__ . '/includes/admin-nav.php'; ?>
 
-            <main class="adm-main">
+            <?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
 
-                <div class="adm-mobile-toggle">
-                    <button type="button" class="btn adm-menu-btn" id="admin-menu-toggle">
-                        <i class="fa-solid fa-bars"></i> Menu
-                    </button>
-                </div>
+            <main class="adm-main">
 
                 <div class="adm-tab active" id="adm-tab-enquiries">
                     <div class="adm-tab-header">

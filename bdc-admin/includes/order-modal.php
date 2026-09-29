@@ -40,6 +40,31 @@
                 </div>
             </div>
 
+            <!--
+                What was actually bought. The package and add-on lines are the
+                snapshot taken when the order was placed, so they always match
+                the amount charged even after catalogue prices change.
+            -->
+            <div class="modal-files-section" id="modal-plan-section">
+                <label class="panel-label">Package Ordered</label>
+                <div class="detail-grid" id="modal-plan-fields"></div>
+            </div>
+
+            <div class="modal-files-section d-none" id="modal-addons-section">
+                <label class="panel-label">Add-ons</label>
+                <div class="detail-grid" id="modal-addons-fields"></div>
+            </div>
+
+            <div class="modal-files-section" id="modal-payment-section">
+                <label class="panel-label">Payment</label>
+                <div class="detail-grid" id="modal-payment-fields"></div>
+            </div>
+
+            <div class="modal-files-section d-none" id="modal-payment-attempts-section">
+                <label class="panel-label">Payment Attempts</label>
+                <div class="modal-files-list" id="modal-payment-attempts"></div>
+            </div>
+
             <div class="modal-files-section" id="modal-meta-section">
                 <label class="panel-label">Details Submitted by Customer</label>
                 <div class="detail-grid" id="modal-meta-fields"></div>

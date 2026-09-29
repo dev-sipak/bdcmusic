@@ -20,7 +20,7 @@
  * Admin-only.
  */
 
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -28,11 +28,9 @@ require_once __DIR__ . '/../../includes/service-fields.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code( 405 );
@@ -45,7 +43,10 @@ if ( ! $input ) {
     $input = $_POST;
 }
 
-$bookingId = sanitize_input( $input['id'] ?? '' );
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf( $input );
+
+$bookingId = clean_text( $input['id'] ?? '' );
 if ( $bookingId === '' ) {
     echo json_encode( [ 'success' => false, 'message' => 'Order id is required.' ] );
     exit;
@@ -53,7 +54,7 @@ if ( $bookingId === '' ) {
 
 $validStatuses = array( 'pending', 'processing', 'hold', 'delivered', 'cancelled' );
 
-$newStatus   = isset( $input['status'] ) ? sanitize_input( $input['status'] ) : null;
+$newStatus   = isset( $input['status'] ) ? clean_text( $input['status'] ) : null;
 $hasRecord   = isset( $input['record'] ) && is_array( $input['record'] );
 $record      = $hasRecord ? $input['record'] : [];
 
@@ -68,8 +69,6 @@ if ( $newStatus === null && ! $hasRecord ) {
 }
 
 try {
-    $pdo = db_connect();
-
     $pdo->beginTransaction();
 
     // Lock the booking row for the duration so a concurrent status write cannot
@@ -106,11 +105,11 @@ try {
         $options = service_progress_options( $slug );
 
         if ( $hasRecord ) {
-            $headline     = sanitize_input( $record['headline'] ?? '' );
-            $subHeadline  = sanitize_input( $record['sub_headline'] ?? '' );
-            $location     = sanitize_input( $record['location'] ?? '' );
+            $headline     = clean_text( $record['headline'] ?? '' );
+            $subHeadline  = clean_text( $record['sub_headline'] ?? '' );
+            $location     = clean_text( $record['location'] ?? '' );
             $notes        = trim( $record['notes'] ?? '' );
-            $progress     = sanitize_input( $record['progress'] ?? '' );
+            $progress     = clean_text( $record['progress'] ?? '' );
             $startsOn     = $record['starts_on'] ?? '';
             $endsOn       = $record['ends_on'] ?? '';
 
@@ -173,11 +172,22 @@ try {
         } elseif ( ! empty( $options ) ) {
             // Status-only save on a delivered order: advance the arrangement that
             // already exists to its terminal step instead of leaving it mid-way.
-            $upd = $pdo->prepare(
-                'UPDATE service_records SET progress = :progress WHERE booking_id = :id'
-            );
-            $upd->execute( [ ':progress' => end( $options ), ':id' => $bookingId ] );
-            $progressMoved = ( $upd->rowCount() > 0 );
+            // The previous progress is read first because rowCount() reports 0
+            // when the value is already the terminal one, which would silently
+            // drop the "marked as complete" message even though the order was
+            // saved.
+            $prev = $pdo->prepare( 'SELECT progress FROM service_records WHERE booking_id = :id LIMIT 1' );
+            $prev->execute( [ ':id' => $bookingId ] );
+            $previousProgress = $prev->fetchColumn();
+
+            if ( $previousProgress !== false ) {
+                $terminal = end( $options );
+                $upd = $pdo->prepare(
+                    'UPDATE service_records SET progress = :progress WHERE booking_id = :id'
+                );
+                $upd->execute( [ ':progress' => $terminal, ':id' => $bookingId ] );
+                $progressMoved = ( $previousProgress !== $terminal );
+            }
         }
     }
 
@@ -197,10 +207,11 @@ try {
         'success'  => true,
         'message'  => implode( ' ', $messages ),
     ] );
-} catch ( Exception $e ) {
-    if ( isset( $pdo ) && $pdo->inTransaction() ) {
-        $pdo->rollBack();
-    }
-    http_response_code( 500 );
-    echo json_encode( [ 'success' => false, 'message' => 'Database error: ' . $e->getMessage() ] );
-}
+  } catch ( Throwable $e ) {
+      if ( isset( $pdo ) && $pdo->inTransaction() ) {
+          $pdo->rollBack();
+      }
+      app_log( 'order-update', 'update failed', $e );
+      http_response_code( 500 );
+      echo json_encode( [ 'success' => false, 'message' => 'The order could not be updated. Please try again.' ] );
+  }

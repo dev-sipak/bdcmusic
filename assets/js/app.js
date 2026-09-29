@@ -338,4 +338,67 @@ document.querySelectorAll(".faq-item").forEach(item => {
     });
 });
 
+/*=========================================================
+BACK TO TOP
+========================================================*/
+
+// The button is rendered by footer.php, so it exists on every page that uses the
+// shared footer. It stays out of the way until the visitor has scrolled far
+// enough for "back to top" to mean anything, then fades in.
+(() => {
+
+    const btn = document.querySelector(".back-to-top");
+
+    if (!btn) return;
+
+    // Shown after roughly one and a half screens of scrolling.
+    const SHOW_AFTER = 500;
+
+    // Lets the same rule drive both the class and the inline aria state, so the
+    // control is never left visible to a screen reader while hidden on screen.
+    function setVisible(visible) {
+        btn.classList.toggle("is-visible", visible);
+        btn.setAttribute("aria-hidden", visible ? "false" : "true");
+        // Keep it out of the tab order while it is off screen, so a keyboard user
+        // does not tab into a button they cannot see.
+        btn.tabIndex = visible ? 0 : -1;
+    }
+
+    let ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(() => {
+            setVisible(window.scrollY > SHOW_AFTER);
+            ticking = false;
+        });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    btn.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth"
+        });
+    });
+
+    // Keyboard shortcut, the convention for this control.
+    document.addEventListener("keydown", (e) => {
+        if (e.key !== "Home" || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        // Let a Home keypress inside a field move the caret, not the page.
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // The page can be loaded already scrolled (a refresh part way down, or a
+    // fragment link), so set the initial state rather than waiting for a scroll.
+    setVisible(window.scrollY > SHOW_AFTER);
+
+})();
+
 });

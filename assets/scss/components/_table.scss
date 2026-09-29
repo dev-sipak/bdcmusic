@@ -6,10 +6,18 @@ COMPARISON TABLE
   display: grid;
   gap: 70px;
   margin-top: 24px;
+  // `minmax(0, 1fr)` rather than the implicit `auto`. Each `.category-block` is a
+  // grid item, and a grid item's automatic minimum size is its min-content width
+  // -- which here is the 560-700px rate card table. With an `auto` track the
+  // block refused to shrink below that, so the whole page scrolled sideways on a
+  // phone instead of the table scrolling inside `.table-scroll`. Letting the
+  // track go to 0 is what keeps the overflow where the design intends it.
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .table-scroll {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   border: 1px solid var(--border);
@@ -58,6 +66,17 @@ COMPARISON TABLE
   tr:last-child td {
     border-bottom: 0;
   }
+}
+
+// A rate card cell for a plan that is published as a price list but cannot be
+// bought. It sits where a buy button would otherwise be, so it is styled to read
+// as an amount rather than as a control: no button chrome, no hover, muted.
+.rate-card-reference {
+  display: inline-block;
+  color: var(--muted);
+  font-size: .95rem;
+  white-space: nowrap;
+  cursor: default;
 }
 
 /*==============================

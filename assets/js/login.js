@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Server-authoritative, so the browser check can never drift from the
+    // policy enforced by password_policy_error() in includes/helpers.php.
+    var PASSWORD_MIN_LENGTH = (window.loginPageConfig && window.loginPageConfig.passwordMinLength) || 10;
+
     var isSignUp = false;
     var title    = document.getElementById('auth-title');
     var subtitle = document.getElementById('auth-subtitle');
@@ -93,8 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            if (password.length < 6) {
-                errorMsg.textContent   = 'Password must be at least 6 characters.';
+            if (password.length < PASSWORD_MIN_LENGTH) {
+                errorMsg.textContent   = 'Password must be at least ' + PASSWORD_MIN_LENGTH + ' characters.';
                 errorBox.classList.remove('d-none');
                 return;
             }

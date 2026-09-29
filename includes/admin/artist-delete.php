@@ -1,16 +1,14 @@
 <?php
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code( 405 );
@@ -23,6 +21,9 @@ if ( ! $input ) {
     $input = $_POST;
 }
 
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf( $input );
+
 $id = intval( $input['id'] ?? 0 );
 if ( $id <= 0 ) {
     echo json_encode( [ 'success' => false, 'message' => 'Invalid artist ID.' ] );
@@ -34,6 +35,8 @@ try {
     $stmt = $pdo->prepare( 'UPDATE artists SET is_active = 0 WHERE id = :id' );
     $stmt->execute( [ ':id' => $id ] );
     echo json_encode( [ 'success' => true, 'message' => 'Artist deleted.' ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    app_log( 'artist-delete', 'request failed', $e );
+    http_response_code( 500 );
+    echo json_encode( [ 'success' => false, 'message' => 'The artist could not be deleted. Please try again.' ] );
 }

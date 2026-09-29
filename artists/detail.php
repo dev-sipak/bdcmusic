@@ -50,7 +50,8 @@ try {
 
     $allStmt = $pdo->query( 'SELECT name, slug FROM artist_categories WHERE is_active = 1 ORDER BY sort_order' );
     $allCats = $allStmt->fetchAll();
-} catch ( Exception $e ) {
+} catch ( Throwable $e ) {
+    app_log( 'artists/detail', 'page data unavailable', $e );
     $artist = null;
 }
 ?>

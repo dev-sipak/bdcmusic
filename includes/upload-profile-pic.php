@@ -7,14 +7,18 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     exit;
 }
 
-session_start();
+require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/helpers.php';
 
 if ( ! isset( $_SESSION['user_id'] ) ) {
     echo json_encode( [ 'success' => false, 'message' => 'Please log in first.' ] );
     exit;
 }
+
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf();
 
 if ( ! isset( $_FILES['profile_picture'] ) || $_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK ) {
     $errCode = isset( $_FILES['profile_picture'] ) ? $_FILES['profile_picture']['error'] : -1;
@@ -69,7 +73,7 @@ try {
         ':pic' => $relativePath,
         ':id'  => $userId,
     ] );
-} catch ( Exception $e ) {
+} catch ( Throwable $e ) {
     // Column may not exist yet — silently continue
 }
 

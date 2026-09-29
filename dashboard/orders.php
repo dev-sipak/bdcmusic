@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/database.php';
 require_once __DIR__ . '/includes/panel-guard.php';
@@ -55,9 +55,11 @@ include_once __DIR__ . '/../header.php';
                                 <tr>
                                     <th>Order ID</th>
                                     <th>Service</th>
+                                    <th>Package</th>
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Status</th>
+                                    <th>Payment</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>

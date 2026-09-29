@@ -5,14 +5,17 @@
  * GET ?id=<bookings.booking_id>
  *
  * Returns the complete record of one order belonging to the signed-in
- * customer: every field they filled in at order time (decoded from
- * bookings.meta and mapped to human labels), the files they uploaded, and the
- * arrangements the admin has recorded in service_records.
+ * customer: the package and add-ons they bought at their snapshotted prices,
+ * every field they filled in at order time (decoded from bookings.meta and
+ * mapped to human labels), the files they uploaded, and the arrangements the
+ * admin has recorded in service_records.
  *
  * Replaces the old standalone "Order Details" page, which is now the View More
- * dialog on My Orders. The customer_id filter is what keeps orders private.
+ * dialog on My Orders. The customer_id filter is what keeps orders private,
+ * and payment internals (provider ids, signature, failure reasons) are never
+ * included in this response.
  */
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -20,13 +23,11 @@ require_once __DIR__ . '/../../includes/service-fields.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'customer' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'customer' );
 
-$bookingId = isset( $_GET['id'] ) ? sanitize_input( $_GET['id'] ) : '';
+$bookingId = isset( $_GET['id'] ) ? clean_text( $_GET['id'] ) : '';
 
 if ( $bookingId === '' ) {
     echo json_encode( [ 'success' => false, 'message' => 'Order not found.' ] );
@@ -34,11 +35,11 @@ if ( $bookingId === '' ) {
 }
 
 try {
-    $pdo = db_connect();
-
     $stmt = $pdo->prepare(
         'SELECT b.booking_id, b.invoice_no, b.status, b.payment_status, b.price, b.message, b.meta,
-                b.service_id, s.slug AS service_slug, s.name AS service_name,
+                b.service_id, b.plan_id, b.plan_name, b.plan_group, b.plan_group_label,
+                b.subtotal, b.addons_total, b.currency,
+                s.slug AS service_slug, s.name AS service_name,
                 DATE_FORMAT(b.created_at, "%Y-%m-%d") AS created_at,
                 DATE_FORMAT(b.paid_at, "%Y-%m-%d") AS paid_at
          FROM bookings b
@@ -60,6 +61,13 @@ try {
     $meta      = json_decode( (string) $order['meta'], true );
     $meta      = is_array( $meta ) ? $meta : array();
     $metaPairs = service_meta_pairs( $slug, $meta );
+
+    // Package and add-on lines at the prices this order was charged.
+    $addonsByBooking = booking_order_addons( $pdo, array( $order['booking_id'] ) );
+    // Every package line on this order: one booking can carry several, and the
+    // plan_id snapshot on the booking only names the first of them.
+    $itemsByBooking  = booking_order_items( $pdo, array( $order['booking_id'] ) );
+    $amounts         = booking_order_amounts( $order );
 
     // Files the customer uploaded for this order.
     $fileStmt = $pdo->prepare(
@@ -100,11 +108,21 @@ try {
             'statusLabel'   => service_status_label( $order['status'] ),
             'unlocked'      => service_status_unlocks( $order['status'] ),
             'paymentStatus' => $order['payment_status'],
+            'paymentLabel'  => booking_payment_status_label( $order['payment_status'] ),
             'amount'        => (float) $order['price'],
             'date'          => $order['created_at'],
             'paidAt'        => $order['paid_at'],
             'message'       => (string) $order['message'],
             'metaFields'    => $metaPairs,
+            // Snapshot of what was bought and charged. The customer is shown
+            // their own package and add-on lines but none of the admin-side
+            // payment internals (no provider ids, signature or failure text).
+            'plan'          => booking_order_plan( $order ),
+            'items'         => $itemsByBooking[ $order['booking_id'] ] ?? array(),
+            'addons'        => $addonsByBooking[ $order['booking_id'] ] ?? array(),
+            'amounts'       => $amounts,
+            'currency'      => $amounts['currency'],
+            'payment'       => booking_order_payment_customer( $order ),
             'files'         => $fileStmt->fetchAll(),
             'arrangement'   => $record,
             'arrangementFields' => service_arrangement_fields( $slug ),
@@ -116,6 +134,8 @@ try {
             }, $progressOptions, array_keys( $progressOptions ) ) ),
         ),
     ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    app_log( 'customer-order-detail', 'request failed', $e );
+    http_response_code( 500 );
+    echo json_encode( [ 'success' => false, 'message' => 'The order could not be loaded. Please try again.' ] );
 }

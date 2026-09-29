@@ -19,18 +19,16 @@
  * Admin-only.
  */
 
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'admin' );
 
 if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code( 405 );
@@ -43,6 +41,9 @@ if ( ! $input ) {
     $input = $_POST;
 }
 
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf( $input );
+
 $releaseId = (int) ( $input['id'] ?? 0 );
 if ( $releaseId <= 0 ) {
     echo json_encode( [ 'success' => false, 'message' => 'Release id is required.' ] );
@@ -50,7 +51,7 @@ if ( $releaseId <= 0 ) {
 }
 
 $validStatuses = array( 'draft', 'pending', 'verification', 'onhold', 'rejected', 'approved', 'live', 'takedown' );
-$newStatus     = isset( $input['status'] ) ? sanitize_input( $input['status'] ) : null;
+$newStatus     = isset( $input['status'] ) ? clean_text( $input['status'] ) : null;
 $reviewerNote  = isset( $input['reviewer_note'] ) ? trim( $input['reviewer_note'] ) : '';
 
 if ( $newStatus !== null && ! in_array( $newStatus, $validStatuses, true ) ) {
@@ -141,14 +142,14 @@ try {
         // uq_rt_release_no would turn a duplicate number into a failed write.
         $no = 0;
         foreach ( $tracks as $track ) {
-            $title = sanitize_input( $track['title'] ?? '' );
+            $title = clean_text( $track['title'] ?? '' );
             if ( $title === '' ) continue;
             $ins->execute( [
                 ':rid'      => $releaseId,
                 ':no'       => ++$no,
                 ':title'    => $title,
-                ':isrc'     => sanitize_input( $track['isrc'] ?? '' ) ?: null,
-                ':duration' => sanitize_input( $track['duration'] ?? '' ) ?: null,
+                ':isrc'     => clean_text( $track['isrc'] ?? '' ) ?: null,
+                ':duration' => clean_text( $track['duration'] ?? '' ) ?: null,
             ] );
         }
     }
@@ -164,7 +165,7 @@ try {
         $sort = 0;
         $seen = array();
         foreach ( $links as $link ) {
-            $platform = sanitize_input( $link['platform'] ?? '' );
+            $platform = clean_text( $link['platform'] ?? '' );
             $url      = trim( (string) ( $link['url'] ?? '' ) );
             // Only a named platform with a URL is worth storing.
             if ( $platform === '' || $url === '' ) continue;
@@ -186,10 +187,11 @@ try {
     $pdo->commit();
 
     echo json_encode( [ 'success' => true, 'message' => 'Release updated.' ] );
-} catch ( Exception $e ) {
-    if ( isset( $pdo ) && $pdo->inTransaction() ) {
-        $pdo->rollBack();
-    }
-    http_response_code( 500 );
-    echo json_encode( [ 'success' => false, 'message' => 'Database error: ' . $e->getMessage() ] );
-}
+  } catch ( Throwable $e ) {
+      if ( isset( $pdo ) && $pdo->inTransaction() ) {
+          $pdo->rollBack();
+      }
+      app_log( 'admin-release-save', 'save failed', $e );
+      http_response_code( 500 );
+      echo json_encode( [ 'success' => false, 'message' => 'The release could not be saved. Please try again.' ] );
+  }

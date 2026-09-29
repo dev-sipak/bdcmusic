@@ -16,7 +16,7 @@ GLOBAL
 	letter-spacing: 1.4px;
 }
 
-.most-popular {
+.most-popular,.plan-card-flag  {
 	font-family: $font-body;
 	font-weight: $font-weight-medium;
 	text-transform: uppercase;
@@ -28,6 +28,7 @@ GLOBAL
 	background: var(--primary);
 	padding: 5px 15px;
 	border-radius: 30px;
+	right: 28px;
 }
 
 .section-heading h2 {
@@ -159,4 +160,35 @@ SECTION REVEAL ANIMATIONS
 
 .card:nth-child(6) {
 	animation-delay: .75s;
+}
+
+/*==================================================
+REDUCED MOTION
+==================================================*/
+
+// The entry animations above translate along X as well as fading, which widens the
+// document while they run. Visitors who ask for less motion should get the fade
+// without the sideways movement, so the transforms are dropped and only opacity
+// animates.
+@media (prefers-reduced-motion: reduce) {
+	.hero-content,
+	.hero-image,
+	.about-images,
+	.about-content,
+	.section-heading,
+	.card,
+	.person-card,
+	.blog-grid article,
+	.counter-grid>div,
+	.gallery-grid img,
+	.feature {
+		animation-name: none;
+		transform: none;
+		opacity: 1;
+	}
+
+	.reveal {
+		transform: none;
+		transition: opacity .3s ease;
+	}
 }

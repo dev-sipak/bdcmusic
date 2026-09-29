@@ -17,6 +17,7 @@
  */
 
 require_once __DIR__ . '/../../includes/service-fields.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 
 if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'customer' ) {
     header( 'Location: ' . $basePath . 'login' );
@@ -41,6 +42,15 @@ $purchasedServices = array();
 
 try {
     $pdo = db_connect();
+
+    // A password change elsewhere must end this session too. The fingerprint
+    // recorded at sign-in no longer matches the stored hash, so the session is
+    // dropped and the customer has to sign in again.
+    if ( ! session_password_is_current( $pdo, $_SESSION['user_id'] ) ) {
+        app_session_destroy();
+        header( 'Location: ' . $basePath . 'login' );
+        exit;
+    }
 
     $unlockPlaceholders = array();
     $unlockParams       = array();
@@ -72,9 +82,10 @@ try {
             'orderCount' => (int) $row['order_count'],
         );
     }
-} catch ( Exception $e ) {
-    $purchasedServices = array();
-}
+  } catch ( Throwable $e ) {
+      app_log( 'panel-guard', 'could not resolve entitlements for ' . ( $_SESSION['user_id'] ?? 'unknown' ), $e );
+      $purchasedServices = array();
+  }
 
 // The My Releases link is the Digital Music Distribution section, so the
 // existing gate is now just a lookup into the resolved entitlement list.

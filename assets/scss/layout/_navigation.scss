@@ -112,17 +112,26 @@
   }
 }
 
-#artists-dropdown {
-  min-width: 420px;
-  columns: 2;
-  column-gap: 4px;
+// The wide, two-column artists list only makes sense when the menu is a
+// dropdown beside the logo. It has to live inside a desktop-only query for two
+// reasons: the 420px minimum is wider than most phones, and as an ID selector it
+// outranked the mobile `.dropdown-menu { min-width: 0 }`, so the 420px floor
+// survived the mobile breakpoint and sized the `.nav > ul` grid track to 420px.
+// That pushed the whole document 134px wider than the viewport, which is what
+// gave every page a sideways scroll on a phone.
+@media (min-width: 993px) {
+  #artists-dropdown {
+    min-width: 420px;
+    columns: 2;
+    column-gap: 4px;
 
-  li {
-    break-inside: avoid;
-  }
+    li {
+      break-inside: avoid;
+    }
 
-  a {
-    white-space: normal;
+    a {
+      white-space: normal;
+    }
   }
 }
 

@@ -1,246 +1,337 @@
 <?php
 /**
- * Razorpay Payment Verification Endpoint
+ * Confirm a Razorpay payment and settle the booking.
  *
- * Verifies payment signature server-side and confirms booking.
+ * This is the only place a booking becomes 'paid', so it is also the only place
+ * a client could try to convince the server that money arrived. It therefore
+ * trusts nothing it is sent: the order id is used to look up a row this server
+ * created, the amount is compared against the amount that row recorded, and the
+ * signature is verified with the key secret.
+ *
+ * Checks, in order:
+ *   1. POST only, and the body is parsed as JSON or form data.
+ *   2. A CSRF token and the three Razorpay fields are present.
+ *   3. This session created the booking being paid for.
+ *   4. booking_payments has a row with that razorpay_order_id, still 'created'.
+ *      The unique index on that column is what stops a client inventing one.
+ *   5. The booking is still awaiting payment, so a replay cannot re-settle it.
+ *   6. HMAC( razorpay_order_id . '|' . razorpay_payment_id ) matches.
+ *   7. The amount Razorpay actually captured equals the amount we recorded.
+ *   8. One transaction marks the payment paid and the booking paid.
+ *
+ * Demo mode (outside production only) skips 6 and 7 because there is no gateway
+ * to ask, but still enforces 1-5, so it cannot confirm a booking this session
+ * did not create.
+ *
+ * Responds JSON to the checkout script.
  */
-session_start();
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/booking-session.php';
+
+$razorpayInclude = dirname( __DIR__ ) . '/vendor/razorpay/razorpay/src/Api.php';
+if ( file_exists( $razorpayInclude ) ) {
+    require_once $razorpayInclude;
+}
+
+if ( ! booking_ensure_session() ) {
+    http_response_code( 500 );
+    header( 'Content-Type: application/json' );
+    echo json_encode( array(
+        'success' => false,
+        'message' => 'Booking is temporarily unavailable. Please try again.',
+    ) );
+    exit;
+}
 
 header( 'Content-Type: application/json' );
 
-if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-    http_response_code( 405 );
-    echo json_encode( [ 'error' => 'Method not allowed' ] );
-    exit;
-}
-
-$input = json_decode( file_get_contents( 'php://input' ), true );
-
-if ( empty( $input['razorpay_order_id'] ) || empty( $input['razorpay_payment_id'] ) || empty( $input['razorpay_signature'] ) ) {
-    http_response_code( 400 );
-    echo json_encode( [ 'error' => 'Missing payment parameters' ] );
-    exit;
-}
-
-$razorpayOrderId  = $input['razorpay_order_id'];
-$razorpayPaymentId = $input['razorpay_payment_id'];
-$razorpaySignature = $input['razorpay_signature'];
-
-$keyId     = getenv( 'RAZORPAY_KEY_ID' ) ?: 'rzp_test_demo';
-$keySecret = getenv( 'RAZORPAY_KEY_SECRET' ) ?: 'demo_secret';
-
-// Demo mode: skip real verification
-if ( 'rzp_test_demo' === $keyId || 'demo_secret' === $keySecret ) {
-    // In demo mode, just verify the signature format exists
-    if ( empty( $razorpaySignature ) ) {
-        http_response_code( 400 );
-        echo json_encode( [ 'error' => 'Invalid payment signature' ] );
-        exit;
+/**
+ * Report a failed verification.
+ *
+ * The HTTP status is chosen for the caller, not for the browser: a 4xx is a
+ * request the checkout script should surface, while a 5xx is our problem and is
+ * logged rather than detailed to the customer.
+ *
+ * @param int    $status  HTTP status.
+ * @param string $message Customer-facing message.
+ * @param string $detail  Server-side reason, for the log.
+ */
+function booking_verify_fail( $status, $message, $detail = '' ) {
+    if ( $detail !== '' && ! IS_PRODUCTION ) {
+        error_log( '[razorpay-verify] ' . $detail );
     }
 
-    // Mark session booking as paid
-    if ( isset( $_SESSION['pending_booking'] ) ) {
-        $booking     = $_SESSION['pending_booking'];
-        $bookingType = $_SESSION['pending_booking_type'] ?? 'standard';
-
-        $booking['payment_status']  = 'Paid';
-        $booking['payment_id']      = $razorpayPaymentId;
-        $booking['razorpay_order']  = $razorpayOrderId;
-        $booking['status']          = 'Confirmed';
-        $booking['paid_at']         = date( 'Y-m-d H:i:s' );
-
-        $dataDir = dirname( __DIR__ ) . '/data';
-        if ( ! is_dir( $dataDir ) ) {
-            mkdir( $dataDir, 0755, true );
-        }
-
-        if ( 'audio_video' === $bookingType ) {
-            // Handle audio-video booking
-            $bookingsPath = $dataDir . '/audio_video_bookings.json';
-            $bookings     = [];
-            if ( file_exists( $bookingsPath ) ) {
-                $bookings = json_decode( file_get_contents( $bookingsPath ), true ) ?: [];
-            }
-
-            // Retrieve uploaded files from session
-            $booking['files'] = $_SESSION['pending_upload_files'] ?? [];
-            unset( $_SESSION['pending_upload_files'], $_SESSION['pending_upload_dir'] );
-
-            $bookings[] = $booking;
-            file_put_contents( $bookingsPath, json_encode( $bookings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-        } else {
-            // Handle standard booking from booking.php
-            $bookingsPath = $dataDir . '/bookings.json';
-            $bookings     = [];
-            if ( file_exists( $bookingsPath ) ) {
-                $bookings = json_decode( file_get_contents( $bookingsPath ), true ) ?: [];
-            }
-
-            $bookings[] = $booking;
-            file_put_contents( $bookingsPath, json_encode( $bookings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-
-            // Auto-create customer account for guest bookings
-            if ( ! empty( $booking['auto_create_account'] ) ) {
-                $customersPath = $dataDir . '/customers.json';
-                $customers     = [];
-                if ( file_exists( $customersPath ) ) {
-                    $customers = json_decode( file_get_contents( $customersPath ), true ) ?: [];
-                }
-
-                $normalizedEmail = strtolower( trim( $booking['customer_email'] ) );
-                $accountExists   = false;
-
-                foreach ( $customers as $customer ) {
-                    if ( $normalizedEmail === ( $customer['email'] ?? '' ) ) {
-                        $accountExists = true;
-                        break;
-                    }
-                }
-
-                if ( ! $accountExists ) {
-                    $autoPassword = substr( md5( $booking['customer_email'] . time() ), 0, 12 );
-                    $newCustomer  = [
-                        'id'            => 'CUST-' . strtoupper( substr( md5( $normalizedEmail . time() ), 0, 8 ) ),
-                        'name'          => $booking['customer_name'],
-                        'email'         => $normalizedEmail,
-                        'mobile'        => $booking['customer_mobile'],
-                        'password_hash' => password_hash( $autoPassword, PASSWORD_BCRYPT ),
-                        'created_at'    => date( 'Y-m-d H:i:s' ),
-                        'source'        => 'guest_booking',
-                    ];
-
-                    $customers[] = $newCustomer;
-                    file_put_contents( $customersPath, json_encode( $customers, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-
-                    $booking['auto_password'] = $autoPassword;
-                }
-            }
-
-            // Send notification email
-            $ownerEmail = getenv( 'BOOKING_OWNER_EMAIL' ) ?: 'bdcmusic37@gmail.com';
-            $subject    = 'New BDC Music booking confirmed';
-            $emailMsg   = '<h3>Booking Confirmed</h3>'
-                . '<p><strong>Customer:</strong> ' . htmlspecialchars( $booking['customer_name'] ) . '</p>'
-                . '<p><strong>Email:</strong> ' . htmlspecialchars( $booking['customer_email'] ) . '</p>'
-                . '<p><strong>Service:</strong> ' . htmlspecialchars( $booking['service'] ) . '</p>'
-                . '<p><strong>Booking ID:</strong> ' . htmlspecialchars( $booking['booking_id'] ) . '</p>'
-                . '<p><strong>Amount:</strong> Rs.' . number_format( $booking['price'] ) . '</p>'
-                . '<p><strong>Payment ID:</strong> ' . htmlspecialchars( $razorpayPaymentId ) . '</p>';
-
-            @mail( $ownerEmail, $subject, $emailMsg );
-        }
-
-        unset( $_SESSION['pending_booking'] );
-        unset( $_SESSION['pending_booking_type'] );
-
-        echo json_encode( [
-            'success'    => true,
-            'booking_id' => $booking['booking_id'] ?? generate_booking_id(),
-            'message'    => 'Payment verified and booking confirmed.',
-        ] );
-        exit;
-    }
-
-    http_response_code( 400 );
-    echo json_encode( [ 'error' => 'No pending booking found' ] );
+    http_response_code( $status );
+    echo json_encode( array( 'success' => false, 'message' => $message ) );
     exit;
 }
 
-// Production mode: verify signature
-$expectedSignature = hash_hmac( 'sha256', $razorpayOrderId . '|' . $razorpayPaymentId, $keySecret );
-
-if ( hash_equals( $expectedSignature, $razorpaySignature ) ) {
-    // Payment verified — confirm booking
-    if ( isset( $_SESSION['pending_booking'] ) ) {
-        $booking     = $_SESSION['pending_booking'];
-        $bookingType = $_SESSION['pending_booking_type'] ?? 'standard';
-
-        $booking['payment_status']  = 'Paid';
-        $booking['payment_id']      = $razorpayPaymentId;
-        $booking['razorpay_order']  = $razorpayOrderId;
-        $booking['status']          = 'Confirmed';
-        $booking['paid_at']         = date( 'Y-m-d H:i:s' );
-
-        $dataDir = dirname( __DIR__ ) . '/data';
-        if ( ! is_dir( $dataDir ) ) {
-            mkdir( $dataDir, 0755, true );
-        }
-
-        if ( 'audio_video' === $bookingType ) {
-            $bookingsPath = $dataDir . '/audio_video_bookings.json';
-            $bookings     = [];
-            if ( file_exists( $bookingsPath ) ) {
-                $bookings = json_decode( file_get_contents( $bookingsPath ), true ) ?: [];
-            }
-
-            // Retrieve uploaded files from session
-            $booking['files'] = $_SESSION['pending_upload_files'] ?? [];
-            unset( $_SESSION['pending_upload_files'], $_SESSION['pending_upload_dir'] );
-
-            $bookings[] = $booking;
-            file_put_contents( $bookingsPath, json_encode( $bookings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-        } else {
-            $bookingsPath = $dataDir . '/bookings.json';
-            $bookings     = [];
-            if ( file_exists( $bookingsPath ) ) {
-                $bookings = json_decode( file_get_contents( $bookingsPath ), true ) ?: [];
-            }
-            $bookings[] = $booking;
-            file_put_contents( $bookingsPath, json_encode( $bookings, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-
-            // Auto-create customer account for guest bookings
-            if ( ! empty( $booking['auto_create_account'] ) ) {
-                $customersPath = $dataDir . '/customers.json';
-                $customers     = [];
-                if ( file_exists( $customersPath ) ) {
-                    $customers = json_decode( file_get_contents( $customersPath ), true ) ?: [];
-                }
-
-                $normalizedEmail = strtolower( trim( $booking['customer_email'] ) );
-                $accountExists   = false;
-
-                foreach ( $customers as $customer ) {
-                    if ( $normalizedEmail === ( $customer['email'] ?? '' ) ) {
-                        $accountExists = true;
-                        break;
-                    }
-                }
-
-                if ( ! $accountExists ) {
-                    $autoPassword = substr( md5( $booking['customer_email'] . time() ), 0, 12 );
-                    $newCustomer  = [
-                        'id'            => 'CUST-' . strtoupper( substr( md5( $normalizedEmail . time() ), 0, 8 ) ),
-                        'name'          => $booking['customer_name'],
-                        'email'         => $normalizedEmail,
-                        'mobile'        => $booking['customer_mobile'],
-                        'password_hash' => password_hash( $autoPassword, PASSWORD_BCRYPT ),
-                        'created_at'    => date( 'Y-m-d H:i:s' ),
-                        'source'        => 'guest_booking',
-                    ];
-
-                    $customers[] = $newCustomer;
-                    file_put_contents( $customersPath, json_encode( $customers, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
-
-                    $booking['auto_password'] = $autoPassword;
-                }
-            }
-        }
-
-        unset( $_SESSION['pending_booking'] );
-        unset( $_SESSION['pending_booking_type'] );
-
-        echo json_encode( [
-            'success'    => true,
-            'booking_id' => $booking['booking_id'] ?? generate_booking_id(),
-            'message'    => 'Payment verified and booking confirmed.',
-        ] );
-        exit;
-    }
-
-    http_response_code( 400 );
-    echo json_encode( [ 'error' => 'No pending booking found' ] );
-    exit;
+// 1 ── Method and body ────────────────────────────────────────────────
+if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
+    booking_verify_fail( 405, 'This endpoint only accepts POST.' );
 }
 
-http_response_code( 400 );
-echo json_encode( [ 'error' => 'Payment verification failed' ] );
+$input = $_POST;
+
+if ( ! $input ) {
+    // The checkout script sends FormData, but Razorpay's own handler posts JSON,
+    // so both are accepted rather than one silently reading as empty.
+    $raw = file_get_contents( 'php://input' );
+
+    if ( $raw ) {
+        $decoded = json_decode( $raw, true );
+        if ( is_array( $decoded ) ) {
+            $input = $decoded;
+        }
+    }
+}
+
+if ( ! $input ) {
+    booking_verify_fail( 400, 'We did not receive any payment details.' );
+}
+
+// 2 ── Required fields ────────────────────────────────────────────────
+$token     = isset( $input['csrf_token'] ) ? (string) $input['csrf_token'] : '';
+$bookingId = isset( $input['booking_id'] ) ? clean_text( $input['booking_id'] ) : '';
+$orderId   = isset( $input['razorpay_order_id'] ) ? clean_text( $input['razorpay_order_id'] ) : '';
+$paymentId = isset( $input['razorpay_payment_id'] ) ? clean_text( $input['razorpay_payment_id'] ) : '';
+$signature = isset( $input['razorpay_signature'] ) ? (string) $input['razorpay_signature'] : '';
+
+if ( ! verify_csrf_token( $token ) ) {
+    booking_verify_fail( 419, 'Your session has expired. Please try paying again.' );
+}
+
+if ( $bookingId === '' || $orderId === '' || $paymentId === '' || $signature === '' ) {
+    booking_verify_fail( 400, 'The payment response was incomplete. Please try again.' );
+}
+
+// 3 ── This session must have created the booking ─────────────────────
+$pending = isset( $_SESSION['booking_pending_payment'] ) ? (string) $_SESSION['booking_pending_payment'] : '';
+
+if ( ! hash_equals( $pending, $bookingId ) ) {
+    booking_verify_fail(
+        403,
+        'We could not match this payment to your booking. If you were charged, our team will confirm it by email.',
+        'session marker ' . ( $pending === '' ? 'missing' : 'did not match' ) . ' for ' . $bookingId
+    );
+}
+
+$pdb = db_connect();
+
+// 4 ── The order must be one we created, and still unpaid ────────────
+$stmt = $pdb->prepare( 'SELECT b.id AS booking_row_id, b.booking_id, b.payment_status, b.status,
+                               b.customer_email, b.service_name, b.plan_name, b.price, b.currency,
+                               p.id AS payment_row_id, p.status AS payment_status_attempt,
+                               p.amount AS payment_amount, p.currency AS payment_currency
+                        FROM booking_payments p
+                        JOIN bookings b ON b.booking_id = p.booking_id
+                        WHERE p.razorpay_order_id = :order_id
+                        LIMIT 1' );
+$stmt->execute( array( ':order_id' => $orderId ) );
+$row = $stmt->fetch( PDO::FETCH_ASSOC );
+
+if ( ! $row ) {
+    booking_verify_fail(
+        404,
+        'We do not recognise this payment. If you were charged, please contact us with your order reference.',
+        'no booking_payments row for order ' . $orderId
+    );
+}
+
+if ( ! hash_equals( (string) $row['booking_id'], $bookingId ) ) {
+    booking_verify_fail(
+        403,
+        'This payment does not match your booking.',
+        'order ' . $orderId . ' belongs to ' . $row['booking_id'] . ', not ' . $bookingId
+    );
+}
+
+// 5 ── Not already settled, and the booking still awaiting payment ───
+if ( (string) $row['payment_status_attempt'] !== 'created' ) {
+    booking_verify_fail(
+        409,
+        'This payment has already been processed. Refresh the page to see your booking.',
+        'attempt already ' . $row['payment_status_attempt']
+    );
+}
+
+if ( (string) $row['payment_status'] !== 'awaiting' ) {
+    booking_verify_fail(
+        409,
+        'This booking is not awaiting payment. Please contact us if you believe this is wrong.',
+        'booking payment_status ' . $row['payment_status']
+    );
+}
+
+$expectedAmount = (float) $row['payment_amount'];
+$method         = 'razorpay';
+
+// 6 and 7 ── Signature and captured amount ───────────────────────────
+$demo = BOOKING_DEMO && strpos( $orderId, 'order_demo_' ) === 0;
+
+if ( $demo ) {
+    // No gateway was involved, so there is nothing to verify against. Checks 1-5
+    // have already run, so this can only settle a booking this session created
+    // for a price this server recorded.
+    $method = 'demo';
+} else {
+    $keySecret = (string) RAZORPAY_KEY_SECRET;
+
+    if ( $keySecret === '' ) {
+        booking_verify_fail(
+            503,
+            'Online payment is not configured yet. Please contact us and we will take your booking directly.',
+            'RAZORPAY_KEY_SECRET is empty while APP_ENV=' . APP_ENV
+        );
+    }
+
+    $expected = hash_hmac( 'sha256', $orderId . '|' . $paymentId, $keySecret );
+
+    if ( ! hash_equals( $expected, $signature ) ) {
+        $pdb->prepare( 'UPDATE booking_payments
+                         SET status = :status, failure_reason = :reason
+                       WHERE id = :id' )->execute( array(
+            ':status' => 'failed',
+            ':reason' => 'Signature mismatch',
+            ':id'     => (int) $row['payment_row_id'],
+        ) );
+
+        booking_verify_fail( 400, 'The payment could not be verified. Please contact us.', 'signature mismatch' );
+    }
+
+    // The signature only proves Razorpay signed these two ids. It says nothing
+    // about how much was taken, so the captured amount is fetched and compared.
+    if ( ! class_exists( 'Razorpay\Api\Api' ) ) {
+        booking_verify_fail( 503, 'Payment verification is unavailable. Please contact us.' );
+    }
+
+    try {
+        $api      = new Razorpay\Api\Api( (string) RAZORPAY_KEY_ID, $keySecret );
+        $payment  = $api->payment->fetch( $paymentId );
+    } catch ( Throwable $e ) {
+        booking_verify_fail( 502, 'We could not reach the payment gateway. Please try again.', $e->getMessage() );
+    }
+
+    // Razorpay reports money in the smallest unit, so `amount` is paise, while
+    // booking_payments.amount is rupees. Comparing them as-is would reject every
+    // real payment, so the expected figure is converted before it is compared.
+    $capturedPaise = isset( $payment['amount'] ) ? (int) $payment['amount'] : 0;
+    $expectedPaise = (int) round( $expectedAmount * 100 );
+
+    if ( $capturedPaise !== $expectedPaise ) {
+        $pdb->prepare( 'UPDATE booking_payments
+                         SET status = :status, failure_reason = :reason
+                       WHERE id = :id' )->execute( array(
+            ':status' => 'failed',
+            ':reason' => 'Amount mismatch',
+            ':id'     => (int) $row['payment_row_id'],
+        ) );
+
+        booking_verify_fail(
+            400,
+            'The amount paid does not match your booking. Our team will contact you to resolve it.',
+            'captured ' . $capturedPaise . 'p vs expected ' . $expectedPaise . 'p'
+        );
+    }
+
+    // A valid signature can exist for a payment that was attempted but never
+    // captured, so the state is checked rather than assumed.
+    $paymentState = (string) ( $payment['status'] ?? '' );
+
+    if ( $paymentState !== 'captured' && $paymentState !== 'paid' ) {
+        $pdb->prepare( 'UPDATE booking_payments
+                         SET status = :status, failure_reason = :reason
+                       WHERE id = :id' )->execute( array(
+            ':status' => 'failed',
+            ':reason' => 'Payment not captured',
+            ':id'     => (int) $row['payment_row_id'],
+        ) );
+
+        booking_verify_fail(
+            400,
+            'The payment did not go through. Please try again or contact us.',
+            'gateway state ' . ( $paymentState === '' ? '(none)' : $paymentState )
+        );
+    }
+
+    // The signature ties the order to the payment, but confirming the payment
+    // really belongs to the order we created costs nothing and closes the gap
+    // if the gateway ever reports a payment against a different one.
+    if ( ! empty( $payment['order_id'] ) && (string) $payment['order_id'] !== $orderId ) {
+        $pdb->prepare( 'UPDATE booking_payments
+                         SET status = :status, failure_reason = :reason
+                       WHERE id = :id' )->execute( array(
+            ':status' => 'failed',
+            ':reason' => 'Payment belongs to another order',
+            ':id'     => (int) $row['payment_row_id'],
+        ) );
+
+        booking_verify_fail( 400, 'The payment could not be verified. Please contact us.', 'order_id mismatch' );
+    }
+
+    if ( ! empty( $payment['method'] ) ) {
+        $method = (string) $payment['method'];
+    }
+}
+
+// 8 ── Settle, in one transaction ────────────────────────────────────
+$pdb->beginTransaction();
+
+try {
+    $paidAt = date( 'Y-m-d H:i:s' );
+
+    $pdb->prepare( 'UPDATE booking_payments
+                     SET status = :status, razorpay_payment_id = :payment_id,
+                         razorpay_signature = :signature, method = :method,
+                         amount = :amount, paid_at = :paid_at
+                     WHERE id = :id AND status = :created' )->execute( array(
+        ':status'    => 'paid',
+        ':payment_id' => $paymentId,
+        ':signature' => $signature,
+        ':method'    => $method,
+        ':amount'    => $expectedAmount,
+        ':paid_at'   => $paidAt,
+        ':id'        => (int) $row['payment_row_id'],
+        ':created'   => 'created',
+    ) );
+
+    $pdb->prepare( 'UPDATE bookings
+                     SET payment_status = :payment_status, payment_id = :payment_id,
+                         razorpay_signature = :signature, payment_method = :method,
+                         paid_at = :paid_at
+                     WHERE id = :id AND payment_status = :awaiting' )->execute( array(
+        ':payment_status' => 'paid',
+        ':payment_id'     => $paymentId,
+        ':signature'      => $signature,
+        ':method'         => $method,
+        ':paid_at'        => $paidAt,
+        ':id'             => (int) $row['booking_row_id'],
+        ':awaiting'       => 'awaiting',
+    ) );
+
+    // Both UPDATEs are guarded on the status they expect, so a second concurrent
+    // confirmation changes nothing and the commit is still correct.
+    $pdb->commit();
+} catch ( Throwable $e ) {
+    $pdb->rollBack();
+    booking_verify_fail( 500, 'We could not record your payment. Our team will email you shortly.', $e->getMessage() );
+}
+
+// The marker is single-use, so the same payment cannot be replayed through this
+// session even if the gateway is asked twice.
+unset( $_SESSION['booking_pending_payment'] );
+
+// The confirmation page still needs proof this booking is the caller's, and a
+// guest has no account to check against.
+$_SESSION['booking_confirmed'] = (string) $row['booking_id'];
+
+echo json_encode( array(
+    'success'    => true,
+    'booking_id' => (string) $row['booking_id'],
+    'amount'     => $expectedAmount,
+    'currency'   => (string) $row['currency'],
+    'method'     => $method,
+) );

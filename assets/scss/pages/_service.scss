@@ -99,6 +99,11 @@ SERVICE CARDS
 	border: 1px solid var(--border);
 	border-radius: 24px;
 	box-shadow: var(--shadow);
+	// A grid item defaults to `min-width: auto`, which resolves to its
+	// min-content width. The rate card table inside is much wider than a phone,
+	// so without this the block stayed table-wide and dragged the page into a
+	// horizontal scroll. The table scrolls inside `.table-scroll` instead.
+	min-width: 0;
 
 	>h3 {
 		margin-bottom: 10px;
@@ -170,6 +175,7 @@ PLANS
 .plan-card,
 .detail-card {
 	padding: 22px;
+	padding-top: 40px !important;
 	background: var(--card);
 	border: 1px solid var(--border);
 	border-radius: 18px;
@@ -183,28 +189,24 @@ PLANS
 
 	h3 {
 		margin-bottom: 10px;
-		font-size: clamp(1.6rem, 2vw, 2.25rem);
+		font-size: clamp(1.6rem, 1vw, 2.25rem);
 	}
 
 	p {
-		color: var(--muted);
-		line-height: 1.7;
+		padding: 12px 15px;
+		background: #dddddd;
+		margin-top: 20px;
+		color: #161616;
+		border-radius: 12px;
+	}
+	.price {
+		display: block;
+		color: var(--primary);
+		font-size: 1.55rem;
+		font-weight: 800;
 	}
 }
-.plan-card p{
-	padding: 12px 15px;
-    background: #ffc3c3;
-    margin-top: 20px;
-    color: #702525;
-	border-radius: 12px;
-}
-.price {
-	display: block;
-	margin: 12px 0;
-	color: var(--primary);
-	font-size: 1.55rem;
-	font-weight: 800;
-}
+
 
 /*==================================================
 PLAN FEATURES
@@ -212,6 +214,11 @@ PLAN FEATURES
 
 .feature-list {
 	display: grid;
+	// `minmax(0, 1fr)`, not the implicit `auto`. Each `li` carries 34px of left
+	// padding for the tick, so an `auto` track sized to the longest feature's
+	// min-content could exceed a narrow card and push the grid -- and the page --
+	// sideways. Letting the track reach 0 lets the text wrap instead.
+	grid-template-columns: minmax(0, 1fr);
 	gap: 12px;
 	margin-top: 20px;
 	padding: 0;
@@ -222,6 +229,7 @@ PLAN FEATURES
 		position: relative;
 		padding-left: 34px;
 		line-height: 1.6;
+		overflow-wrap: break-word;
 
 		&::before {
 			position: absolute;
@@ -248,7 +256,6 @@ BOOKING
 
 .booking-shell {
 	display: grid;
-	grid-template-columns: 300px 1fr;
 	gap: 24px;
 	align-items: start;
 }
@@ -260,11 +267,21 @@ BOOKING
 
 /* ...continue the remaining booking styles here... */
 
-.booking-page { padding: 120px 0 80px; }
 .booking-body { padding: 40px; }
 .thanks-box { background: #f7fff9; border: 1px solid #ccefd0; border-radius: 18px; padding: 24px; margin-top: 20px; }
 .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
-.detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px; }
+.detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px;}
+.detail-card .price{margin:0;}
+
+
+
+.iprs-package .plans-grid{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 800px;
+    margin: 0 auto;
+}
 
 /*==================================================
 RESPONSIVE
@@ -322,6 +339,13 @@ RESPONSIVE
 	.upload-grid,
 	.field-grid,
 	.contact-methods {
+		grid-template-columns: 1fr;
+	}
+
+	// Repeated here on purpose. `.iprs-package .plans-grid` is a two-class
+	// selector, so it outranked the `.plans-grid` override above and kept IPRS on
+	// two columns down to the narrowest phones, squeezing each card to ~136px.
+	.iprs-package .plans-grid {
 		grid-template-columns: 1fr;
 	}
 
@@ -623,4 +647,497 @@ RESPONSIVE
 
 .card .read-more span {
 	transition: transform 0.3s ease;
+}
+
+
+.marketplace-process {
+    padding-top: 80px;
+    padding-bottom: 80px;
+	background: linear-gradient(135deg, rgba(228, 0, 43, .08), rgba(255, 255, 255, .95));
+    .marketplace-process-header {
+        text-align: center;
+        max-width: 850px;
+        margin: 0 auto 65px;
+
+        .marketplace-eyebrow {
+            display: inline-block;
+            margin-bottom: 12px;
+
+            color: #ed1738;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            margin: 0 0 14px;
+        }
+
+    }
+
+    .marketplace-timeline {
+        position: relative;
+
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+
+        max-width: 1200px;
+        margin: 0 auto;
+
+        /* Horizontal connecting line */
+        &::before {
+            content: "";
+
+            position: absolute;
+            top: 24px;
+            left: 36px;
+            right: 36px;
+
+            height: 2px;
+
+            background: #ed1738;
+
+            z-index: 0;
+        }
+    }
+
+    .marketplace-step {
+        position: relative;
+
+        min-width: 0;
+        padding: 0 25px;
+
+        &:not(:last-child) {
+            border-right: 1px solid #f8f8f8;
+        }
+    }
+
+    .marketplace-step-number {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 48px;
+        height: 48px;
+
+        margin: 0 auto 30px;
+
+        border-radius: 50%;
+
+        background: #ed1738;
+        color: #fff;
+
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+
+        box-shadow: 0 0 0 5px #ffcdd4;
+    }
+
+    .marketplace-step-content {
+        text-align: center;
+
+        h3 {
+            margin: 0 0 13px;
+
+            color: #172333;
+
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        p {
+            line-height: 1.65;
+        }
+    }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .marketplace-process {
+        padding-top: 65px;
+        padding-bottom: 65px;
+
+        .marketplace-process-header {
+            margin-bottom: 50px;
+
+            h2 {
+                font-size: 38px;
+            }
+        }
+
+        .marketplace-timeline {
+            grid-template-columns: repeat(3, 1fr);
+            row-gap: 50px;
+
+            &::before {
+                display: none;
+            }
+        }
+
+        .marketplace-step {
+            padding: 0 25px;
+
+            &:nth-child(3),
+            &:nth-child(6) {
+                border-right: 0;
+            }
+
+            &:nth-child(-n + 3) {
+                border-bottom: 1px solid #e7e7e7;
+                padding-bottom: 40px;
+            }
+        }
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .marketplace-process {
+        padding-top: 50px;
+        padding-bottom: 50px;
+
+        .marketplace-process-header {
+            margin-bottom: 40px;
+
+            .marketplace-eyebrow {
+                font-size: 12px;
+                letter-spacing: 1.5px;
+            }
+
+            h2 {
+                font-size: 32px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+
+        .marketplace-timeline {
+            display: block;
+        }
+
+        .marketplace-step {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            column-gap: 20px;
+
+            padding: 0 0 35px;
+            margin-bottom: 35px;
+
+            border-right: 0 !important;
+            border-bottom: 1px solid #e7e7e7;
+
+            &:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: 0;
+            }
+        }
+
+        .marketplace-step-number {
+            margin: 0;
+
+            width: 48px;
+            height: 48px;
+        }
+
+        .marketplace-step-content {
+            padding-top: 2px;
+
+            h3 {
+                font-size: 17px;
+                margin-bottom: 8px;
+            }
+
+            p {
+                font-size: 15px;
+                line-height: 1.55;
+            }
+        }
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .marketplace-process {
+
+        .marketplace-process-header {
+
+            h2 {
+                font-size: 28px;
+            }
+        }
+
+        .marketplace-step {
+            grid-template-columns: 42px 1fr;
+            column-gap: 15px;
+        }
+
+        .marketplace-step-number {
+            width: 42px;
+            height: 42px;
+
+            font-size: 12px;
+        }
+    }
+}
+
+
+.section-block .container h2 {
+    font-size: 2.3rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+.section-block .section-intro {
+    color: var(--muted);
+    line-height: 1.8;
+    margin: 0 auto 20px;
+    max-width: 760px;
+    text-align: center;
+}
+
+
+// ============================================================
+// Creative Categories
+// ============================================================
+
+.creative-categories-section {
+    position: relative;
+
+    // --------------------------------------------------------
+    // Grid
+    // --------------------------------------------------------
+
+    .creative-categories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+
+        max-width: 900px;
+        margin: 28px auto 0;
+    }
+
+    // --------------------------------------------------------
+    // Card
+    // --------------------------------------------------------
+
+    .creative-category-card {
+        position: relative;
+
+        min-height: 110px;
+        padding: 20px 18px;
+
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        background: #fff;
+        border: 1px solid #eeeeee;
+        border-radius: 12px;
+
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.035);
+
+        transition:
+            transform 0.25s ease,
+            border-color 0.25s ease,
+            box-shadow 0.25s ease;
+
+        &:hover {
+            border-color: rgba(228, 0, 43, 0.18);
+
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+
+            .creative-category-icon {
+                background: #e4002b;
+                color: #fff;
+                border-color: #e4002b;
+                transform: scale(1.04);
+            }
+        }
+    }
+
+    // --------------------------------------------------------
+    // Icon
+    // --------------------------------------------------------
+
+    .creative-category-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #fff0f3;
+        border: 1px solid #ffd5dd;
+
+        color: #e4002b;
+
+        font-size: 20px;
+
+        transition:
+            background 0.25s ease,
+            color 0.25s ease,
+            border-color 0.25s ease,
+            transform 0.25s ease;
+    }
+
+    // --------------------------------------------------------
+    // Content
+    // --------------------------------------------------------
+
+    .creative-category-content {
+        min-width: 0;
+
+        h3 {
+            margin: 0 0 7px;
+
+            color: #111;
+
+            font-size: 16px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0;
+
+            color: #666;
+
+            font-size: 11.5px;
+            line-height: 1.55;
+        }
+    }
+
+    // --------------------------------------------------------
+    // Category variations
+    // --------------------------------------------------------
+
+    .creative-category-singer,
+    .creative-category-producer,
+    .creative-category-composer,
+    .creative-category-actor,
+    .creative-category-director,
+    .creative-category-musician,
+    .creative-category-dancer,
+    .creative-category-writer {
+
+        .creative-category-icon {
+            background: #fff0f3;
+            color: #e4002b;
+            border-color: #ffd5dd;
+        }
+    }
+
+    // --------------------------------------------------------
+    // Last two cards
+    // 3 cards
+    // 3 cards
+    // 2 cards centered
+    // --------------------------------------------------------
+
+    .creative-category-dancer {
+        grid-column: 1;
+        transform: translateX(50%);
+    }
+
+    .creative-category-writer {
+        grid-column: 3;
+        transform: translateX(-50%);
+    }
+
+    // --------------------------------------------------------
+    // Tablet
+    // --------------------------------------------------------
+
+    @media (max-width: 991px) {
+
+        .creative-categories-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            max-width: 700px;
+        }
+
+        .creative-category-dancer,
+        .creative-category-writer {
+            grid-column: auto;
+            transform: none;
+        }
+    }
+
+    // --------------------------------------------------------
+    // Mobile
+    // --------------------------------------------------------
+
+    @media (max-width: 767px) {
+
+        .creative-categories-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+
+            margin-top: 22px;
+        }
+
+        .creative-category-card {
+            min-height: 92px;
+            padding: 15px;
+
+            gap: 13px;
+
+            border-radius: 12px;
+        }
+
+        .creative-category-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+
+            font-size: 17px;
+        }
+
+        .creative-category-content {
+
+            h3 {
+                font-size: 15px;
+                margin-bottom: 5px;
+            }
+
+            p {
+                font-size: 11px;
+                line-height: 1.5;
+            }
+        }
+
+        .creative-category-dancer,
+        .creative-category-writer {
+            grid-column: auto;
+            transform: none;
+        }
+    }
 }

@@ -138,3 +138,68 @@ Mobile
     justify-content: center;
   }
 }
+
+/*==================================================
+BACK TO TOP
+==================================================*/
+
+// Rendered by footer.php and revealed by app.js once the page is scrolled. It is
+// position:fixed and pinned to the bottom-right, and it carries its own opaque
+// backdrop because it floats over the pale footer as often as over dark content.
+.back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(228, 0, 43, .35);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s ease,
+    background-color .2s ease;
+
+  &:hover {
+    background: var(--primary);
+    filter: brightness(.92);
+  }
+
+  // A visible focus ring, because this is reachable by keyboard.
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+}
+
+@include respond(sm) {
+  .back-to-top {
+    right: 16px;
+    bottom: 16px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+// No motion for anyone who has asked for none, including the scroll itself.
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top {
+    transition: none;
+  }
+}

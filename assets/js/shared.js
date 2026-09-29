@@ -1,35 +1,167 @@
 /*=========================================================
   SHARED UI UTILITIES
-  Reusable sidebar toggle, status badge, table row
-  and accordion behavior.
+  Reusable escaping, sidebar toggle, status badge,
+  table row and accordion behavior.
   =========================================================*/
 
 
 /**
- * Initialize the mobile sidebar toggle for a dashboard panel.
- * Section switching is handled by real page navigation, so this only
- * opens/closes the off-canvas sidebar.
- * @param {string} sidebarSelector - sidebar selector (e.g. '.adm-sidebar')
- * @param {string} menuBtnSelector - mobile menu button selector
+ * Escape a value for interpolation into HTML.
+ * Every value that reaches innerHTML must pass through this, otherwise a
+ * stored value such as an enquiry name becomes stored XSS in the panel.
+ * @param {*} value
+ * @returns {string}
  */
-function initSidebarToggle(sidebarSelector, menuBtnSelector) {
-    var sidebar = document.querySelector(sidebarSelector);
-    var menuBtn = document.querySelector(menuBtnSelector);
-
-    if (!sidebar || !menuBtn) return;
-
-    menuBtn.addEventListener('click', function () {
-        sidebar.classList.toggle('open');
-    });
+function esc(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 /**
- * Render a status badge HTML string.
+ * Restrict a value to characters that are safe inside a class attribute.
+ * @param {*} value
+ * @param {string} fallback
+ * @returns {string}
+ */
+function cssToken(value, fallback) {
+    var token = String(value === null || value === undefined ? '' : value)
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return token === '' ? fallback : token;
+}
+
+
+/**
+ * Initialize the admin sidebar.
+ *
+ * On a desktop the sidebar is a fixed left rail and there is nothing to toggle.
+ * Under 992px it becomes an off-canvas drawer, and this wires up every way in and
+ * out of it: the burger (which doubles as the X), the X inside the drawer, the
+ * shaded backdrop, the Escape key, and a body scroll lock so the page cannot
+ * slide around under the drawer's thumb.
+ *
+ * Section switching is real page navigation, so nothing here intercepts a link
+ * click; the drawer is simply closed again on the next page load.
+ *
+ * @param {string} sidebarSelector - sidebar selector (e.g. '.adm-sidebar')
+ * @param {string} menuBtnSelector - burger selector (e.g. '#admin-menu-toggle')
+ */
+function initSidebarToggle(sidebarSelector, menuBtnSelector) {
+    var sidebar  = document.querySelector(sidebarSelector);
+    var menuBtn  = document.querySelector(menuBtnSelector);
+    var backdrop = document.getElementById('adm-sidebar-backdrop');
+    var closeBtn = document.getElementById('adm-sidebar-close');
+
+    if (!sidebar || !menuBtn) return;
+
+    // The breakpoint has to match the one in pages/_admin.scss. Above it the
+    // sidebar is a static rail, so none of this should run at all.
+    var mq = window.matchMedia('(max-width: 992px)');
+
+    function setOpen(open) {
+        sidebar.classList.toggle('is-open', open);
+        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        menuBtn.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+        if (backdrop) backdrop.classList.toggle('is-open', open);
+        document.body.classList.toggle('adm-drawer-open', open);
+    }
+
+    function isOpen() {
+        return sidebar.classList.contains('is-open');
+    }
+
+    menuBtn.addEventListener('click', function () {
+        setOpen(!isOpen());
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+            setOpen(false);
+            menuBtn.focus();
+        });
+    }
+
+    if (backdrop) {
+        backdrop.addEventListener('click', function () {
+            setOpen(false);
+            menuBtn.focus();
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen()) {
+            setOpen(false);
+            menuBtn.focus();
+        }
+    });
+
+    // Rotating or resizing past the breakpoint has to leave the page clean: a
+    // drawer left open would come back as an open, full-height rail, and a locked
+    // body scroll would survive on a desktop.
+    function onBreakpointChange() {
+        if (mq.matches) return;
+        setOpen(false);
+    }
+
+    if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', onBreakpointChange);
+    } else if (typeof mq.addListener === 'function') {
+        mq.addListener(onBreakpointChange);
+    }
+
+    // Starts closed no matter how the page was rendered.
+    setOpen(false);
+}
+
+/**
+ * Render a status badge HTML string. The status is escaped for display and
+ * reduced to a safe CSS token, because it is used both as text and as part of
+ * a class name.
  * @param {string} status
  * @returns {string}
  */
 function statusBadgeHtml(status) {
-    return '<span class="panel-status-badge status-' + status.toLowerCase() + '">' + status + '</span>';
+    var text = String(status === null || status === undefined ? '' : status);
+    return '<span class="panel-status-badge status-' + cssToken(text, 'pending') + '">' + esc(text) + '</span>';
+}
+
+/**
+ * Render a payment-status badge. Kept separate from statusBadgeHtml because
+ * bookings.payment_status is a different enum to bookings.status and has its
+ * own colour set (the pay-* classes). The status is whitelisted because it
+ * becomes part of a class name.
+ * @param {string} value
+ * @param {string} [label] - human label; falls back to the raw status
+ * @returns {string}
+ */
+function paymentBadgeHtml(value, label) {
+    var known = { awaiting: 1, paid: 1, refunded: 1, failed: 1, cancelled: 1, created: 1 };
+    var status = String(value == null ? '' : value).toLowerCase();
+    var key    = known[status] ? status : 'awaiting';
+    var text   = String(label == null || label === '' ? status : label);
+
+    return '<span class="panel-status-badge pay-' + key + '">' + esc(text) + '</span>';
+}
+
+/**
+ * Format a rupee amount for display. Whole amounts are shown without
+ * decimals and with Indian digit grouping; part amounts keep two decimals.
+ * @param {number} value
+ * @returns {string}
+ */
+function money(value) {
+    var amount = Number(value || 0);
+    if (!isFinite(amount)) amount = 0;
+
+    return '₹' + (amount % 1 === 0
+        ? amount.toLocaleString('en-IN')
+        : amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 }
 
 /**

@@ -1,6 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/helpers.php';
 
 // Redirect if already logged in
 if ( isset( $_SESSION['user_id'] ) && isset( $_SESSION['user_role'] ) ) {
@@ -105,7 +106,8 @@ include_once __DIR__ . '/header.php';
 <script>
 var loginPageConfig = {
     authUrl: '<?php echo $basePath; ?>includes/auth.php',
-    basePath: '<?php echo $basePath; ?>'
+    basePath: '<?php echo $basePath; ?>',
+    passwordMinLength: <?php echo json_encode( PASSWORD_MIN_LENGTH ); ?>
 };
 </script>
 <script src="<?php echo $assetPath; ?>js/login.js"></script>

@@ -1,5 +1,12 @@
 RewriteEngine On
 
+# Deny the database dump and the uploads directory. This is a mod_rewrite [F]
+# rather than a <DirectoryMatch> block (DirectoryMatch is not valid in .htaccess
+# and makes every request return 500) or a RedirectMatch (does not match in
+# per-directory context here). In .htaccess the path is relative to this file,
+# so the leading slash is optional. [F] returns 403 and stops all later rules.
+RewriteRule ^/?(?:database|data)(?:/|$) - [F]
+
 # Artist listing page: /bdcmusic/artists/ -> /bdcmusic/artists/index.php
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -20,3 +27,15 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.+?)/?$ $1.php [L]
+
+# Deny sensitive dotfiles (.env, .env.production, .htaccess, ...) and the
+# audit brief. FilesMatch applies to the file name only, so it works in
+# .htaccess; a <DirectoryMatch> block here would 500 the whole site.
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+<FilesMatch "^prompt\.txt$">
+  Require all denied
+</FilesMatch>
+

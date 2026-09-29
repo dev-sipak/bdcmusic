@@ -79,7 +79,7 @@ Bootstrap-like utility framework.
   .pl-#{$size} { padding-left: $value; }
   .pr-#{$size} { padding-right: $value; }
 }
-
+.mb-0{ margin-bottom: 0 !important; }
 // Auto margins
 .mx-auto { margin-left: auto; margin-right: auto; }
 .ms-auto { margin-left: auto; }

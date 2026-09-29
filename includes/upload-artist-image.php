@@ -1,8 +1,8 @@
 <?php
-session_start();
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../database.php';
-require_once __DIR__ . '/../helpers.php';
+require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/helpers.php';
 
 header( 'Content-Type: application/json' );
 
@@ -17,6 +17,9 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     echo json_encode( [ 'success' => false, 'message' => 'Method not allowed' ] );
     exit;
 }
+
+// Enforce CSRF: the session cookie alone must not be able to trigger this.
+require_csrf();
 
 if ( ! isset( $_FILES['artist_image'] ) || $_FILES['artist_image']['error'] !== UPLOAD_ERR_OK ) {
     echo json_encode( [ 'success' => false, 'message' => 'No file uploaded or upload error.' ] );

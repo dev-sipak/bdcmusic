@@ -67,6 +67,19 @@ BUTTONS
   opacity: 1;
 }
 
+.btn-dark {
+  background: var(--text);
+  border: 2px solid var(--text);
+  color: #fff;
+}
+
+.btn-dark:hover {
+	background: #2a2a2a;
+	border-color: #2a2a2a;
+	color: #fff;
+}
+
+
 // ─── Button Sizes ───────────────────────────────
 
 .btn-sm {

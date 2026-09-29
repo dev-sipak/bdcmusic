@@ -9,6 +9,8 @@
  *     delivered)
  *   - the per-service labels used to render the admin-managed arrangement
  *   - that service's orders, each with:
+ *       * the package and add-ons it was placed for, at the snapshotted
+ *         prices that order was charged
  *       * the fields the customer filled in at order time, decoded from
  *         bookings.meta and mapped to human labels
  *       * the files the customer uploaded against that order
@@ -17,7 +19,7 @@
  * A service the customer never booked is rejected, so this endpoint cannot be
  * used to discover other customers' services.
  */
-session_start();
+require_once __DIR__ . '/../session.php';
 require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -25,13 +27,11 @@ require_once __DIR__ . '/../../includes/service-fields.php';
 
 header( 'Content-Type: application/json' );
 
-if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'customer' ) {
-    http_response_code( 403 );
-    echo json_encode( [ 'success' => false, 'message' => 'Unauthorized' ] );
-    exit;
-}
+// Role and password-fingerprint are both enforced in one place, so a
+// session left over from before a password change cannot call this endpoint.
+$pdo = require_api_role( 'customer' );
 
-$slug   = isset( $_GET['service'] ) ? sanitize_input( $_GET['service'] ) : '';
+$slug   = isset( $_GET['service'] ) ? clean_text( $_GET['service'] ) : '';
 $def    = service_definition( $slug );
 
 if ( $slug === '' || $def === null ) {
@@ -40,8 +40,6 @@ if ( $slug === '' || $def === null ) {
 }
 
 try {
-    $pdo = db_connect();
-
     // Resolve the service, then confirm this customer actually bought it.
     $svcStmt = $pdo->prepare( 'SELECT id, slug, name FROM services WHERE slug = :slug AND is_active = 1 LIMIT 1' );
     $svcStmt->execute( [ ':slug' => $slug ] );
@@ -53,7 +51,9 @@ try {
     }
 
     $orderStmt = $pdo->prepare(
-        'SELECT b.booking_id, b.status, b.payment_status, b.price, b.message, b.meta,
+        'SELECT b.booking_id, b.invoice_no, b.status, b.payment_status, b.price, b.message, b.meta,
+                b.plan_id, b.plan_name, b.plan_group, b.plan_group_label,
+                b.subtotal, b.addons_total, b.currency,
                 DATE_FORMAT(b.created_at, "%Y-%m-%d") AS created_at,
                 DATE_FORMAT(b.paid_at, "%Y-%m-%d") AS paid_at
          FROM bookings b
@@ -100,6 +100,12 @@ try {
         $fileMap[ $file['booking_id'] ][] = $file;
     }
 
+    // Add-on lines, grouped by booking, at the prices each order was charged.
+    $addonMap = booking_order_addons( $pdo, $bookingIds );
+
+    // Package lines, grouped by booking: one order can carry several.
+    $itemMap = booking_order_items( $pdo, $bookingIds );
+
     foreach ( $orders as &$order ) {
         if ( service_status_unlocks( $order['status'] ) ) {
             $unlocked = true;
@@ -110,7 +116,12 @@ try {
         $order['metaFields']   = service_meta_pairs( $slug, $meta );
         $order['message']      = (string) $order['message'];
         $order['statusLabel']  = service_status_label( $order['status'] );
+        $order['paymentLabel'] = booking_payment_status_label( $order['payment_status'] );
+        $order['amounts']      = booking_order_amounts( $order );
         $order['amount']       = (float) $order['price'];
+        $order['plan']         = booking_order_plan( $order );
+        $order['items']        = $itemMap[ $order['booking_id'] ] ?? array();
+        $order['addons']       = $addonMap[ $order['booking_id'] ] ?? array();
         $order['files']        = $fileMap[ $order['booking_id'] ] ?? array();
         $order['arrangement']  = $recordMap[ $order['booking_id'] ] ?? null;
     }
@@ -130,6 +141,8 @@ try {
         ),
         'orders'  => $orders,
     ] );
-} catch ( Exception $e ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Database error.' ] );
+} catch ( Throwable $e ) {
+    app_log( 'customer-service-overview', 'request failed', $e );
+    http_response_code( 500 );
+    echo json_encode( [ 'success' => false, 'message' => 'This service could not be loaded. Please try again.' ] );
 }

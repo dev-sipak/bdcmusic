@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var orders = adminDashboardConfig.orders;
-    var basePath = adminDashboardConfig.basePath;
+  var overview = adminDashboardConfig.overview || { stats: {}, recent: [] };
+  var basePath = adminDashboardConfig.basePath;
 
     function esc(value) {
         if (value === null || value === undefined) return '';
@@ -19,29 +19,27 @@ document.addEventListener('DOMContentLoaded', function () {
     var recentOrdersTbody = document.getElementById('recent-orders-tbody');
 
     function updateOverviewStats() {
-        var total      = orders.length;
-        var pending    = orders.filter(function (o) { return o.status === 'pending'; }).length;
-        var processing = orders.filter(function (o) { return o.status === 'processing'; }).length;
-        var delivered  = orders.filter(function (o) { return o.status === 'delivered'; }).length;
-        var customers  = {};
-        orders.forEach(function (o) { customers[o.email] = true; });
+        // The counts arrive pre-aggregated from the server, and `recent` holds
+        // only the ten rows the table shows, so neither is derived from a full
+        // list of orders in the browser.
+        var stats = overview.stats || {};
+        var recent = overview.recent || [];
 
-        document.getElementById('stat-total').textContent      = total;
-        document.getElementById('stat-pending').textContent     = pending;
-        document.getElementById('stat-processing').textContent  = processing;
-        document.getElementById('stat-delivered').textContent   = delivered;
-        document.getElementById('stat-customers').textContent   = Object.keys(customers).length;
+        document.getElementById('stat-total').textContent      = stats.total || 0;
+        document.getElementById('stat-pending').textContent     = stats.pending || 0;
+        document.getElementById('stat-processing').textContent  = stats.processing || 0;
+        document.getElementById('stat-delivered').textContent   = stats.delivered || 0;
+        document.getElementById('stat-customers').textContent   = stats.customers || 0;
 
         if (!recentOrdersTbody) return;
 
-        var recent = orders.slice(0, 10);
         recentOrdersTbody.innerHTML = recent.map(function (o) {
             return '<tr>' +
-                '<td><strong>' + o.id + '</strong></td>' +
-                '<td>' + o.customer + '</td>' +
-                '<td>' + (o.phone || 'N/A') + '</td>' +
-                '<td>' + o.service + '</td>' +
-                '<td>₹' + o.amount + '</td>' +
+                '<td><strong>' + esc(o.id) + '</strong></td>' +
+                '<td>' + esc(o.customer) + '</td>' +
+                '<td>' + esc(o.phone || 'N/A') + '</td>' +
+                '<td>' + esc(o.service) + '</td>' +
+                '<td>' + money(o.amount) + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
             '</tr>';
         }).join('');
@@ -54,13 +52,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* ----- Orders Management (Paginated) ----- */
     var ordersPagination = { currentPage: 1, totalPages: 1 };
-    var ordersFilters = { status: 'all', service: 'all', search: '' };
+    var ordersFilters = { status: 'all', service: 'all', payment: 'all', search: '' };
 
     function loadOrders(page) {
         page = page || 1;
         var params = 'page=' + page + '&per_page=10';
         if (ordersFilters.status !== 'all') params += '&status=' + encodeURIComponent(ordersFilters.status);
         if (ordersFilters.service !== 'all') params += '&service=' + encodeURIComponent(ordersFilters.service);
+        if (ordersFilters.payment !== 'all') params += '&payment=' + encodeURIComponent(ordersFilters.payment);
         if (ordersFilters.search) params += '&search=' + encodeURIComponent(ordersFilters.search);
 
         fetch(basePath + 'includes/admin/orders-list.php?' + params)
@@ -87,15 +86,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
         emptyMsg.classList.add('d-none');
         tbody.innerHTML = ordersList.map(function (o) {
+            var plan      = o.plan || {};
+            var items     = o.items || [];
+            var amounts   = o.amounts || {};
+            var addonsNote = o.addonsCount > 0 ? ' +' + o.addonsCount + ' add-on' + (o.addonsCount === 1 ? '' : 's') : '';
+
+            // Several packages on one order are listed together; the plan
+            // snapshot only names the first of them.
+            var planName = items.length > 1
+                ? items.map(function (it) { return it.name; }).join(', ')
+                : (plan.name || (items.length === 1 ? items[0].name : '—'));
+
             return '<tr>' +
-                '<td><strong>' + o.id + '</strong></td>' +
-                '<td>' + o.customer + '</td>' +
-                '<td>' + (o.phone || 'N/A') + '</td>' +
-                '<td>' + o.service + '</td>' +
-                '<td>' + o.date + '</td>' +
-                '<td>\u20B9' + o.amount + '</td>' +
+                '<td><strong>' + esc(o.id) + '</strong></td>' +
+                '<td>' + esc(o.customer) +
+                    (o.customerType === 'guest' ? ' <span class="adm-table-note">Guest</span>' : '') + '</td>' +
+                '<td>' + esc(o.phone || 'N/A') + '</td>' +
+                '<td>' + esc(o.service) + '</td>' +
+                '<td>' + esc(planName) +
+                    (addonsNote ? '<span class="adm-table-note">' + esc(addonsNote) + '</span>' : '') + '</td>' +
+                '<td>' + esc(o.date) + '</td>' +
+                '<td>' + money(amounts.total !== undefined ? amounts.total : o.amount) + '</td>' +
                 '<td>' + statusBadgeHtml(o.status) + '</td>' +
-                '<td><button class="adm-view-btn" data-order-id="' + o.id + '"><i class="fa-solid fa-eye"></i></button></td>' +
+                '<td>' + paymentBadgeHtml(o.paymentStatus, o.paymentLabel) + '</td>' +
+                '<td><button class="adm-view-btn" data-order-id="' + esc(o.id) + '"><i class="fa-solid fa-eye"></i></button></td>' +
             '</tr>';
         }).join('');
 
@@ -114,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var orderStatusFilter = document.getElementById('admin-order-status');
     var orderServiceFilter = document.getElementById('admin-order-service');
+    var orderPaymentFilter = document.getElementById('admin-order-payment');
     var orderSearchInput = document.getElementById('admin-order-search');
 
     if (orderStatusFilter) {
@@ -125,6 +140,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (orderServiceFilter) {
         orderServiceFilter.addEventListener('change', function () {
             ordersFilters.service = this.value;
+            loadOrders(1);
+        });
+    }
+    if (orderPaymentFilter) {
+        orderPaymentFilter.addEventListener('change', function () {
+            ordersFilters.payment = this.value;
             loadOrders(1);
         });
     }
@@ -173,12 +194,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tbody.innerHTML = customersList.map(function (c) {
             return '<tr>' +
-                '<td><strong>' + c.name + '</strong></td>' +
-                '<td>' + c.email + '</td>' +
-                '<td>' + (c.phone || 'N/A') + '</td>' +
-                '<td>' + c.total_orders + '</td>' +
-                '<td>\u20B9' + c.total_spent + '</td>' +
-                '<td>' + (c.last_order || 'N/A') + '</td>' +
+                '<td><strong>' + esc(c.name) + '</strong></td>' +
+                '<td>' + esc(c.email) + '</td>' +
+                '<td>' + esc(c.phone || 'N/A') + '</td>' +
+                '<td>' + esc(c.total_orders) + '</td>' +
+                '<td>\u20B9' + esc(c.total_spent) + '</td>' +
+                '<td>' + esc(c.last_order || 'N/A') + '</td>' +
             '</tr>';
         }).join('');
 
@@ -274,10 +295,147 @@ document.addEventListener('DOMContentLoaded', function () {
         return record;
     }
 
+    /**
+     * Build one label/value pair for the detail grids in the order modal.
+     * @param {string} label
+     * @param {string} value
+     * @returns {string}
+     */
+    function detailItem(label, value) {
+        return '<div class="detail-item">' +
+            '<span class="panel-label">' + esc(label) + '</span>' +
+            '<span class="panel-value">' + esc(value) + '</span>' +
+        '</div>';
+    }
+
+    /**
+     * Render the package, money breakdown and add-on lines.
+     * @param {object} order
+     */
+    function renderOrderPackage(order) {
+        var plan    = order.plan || {};
+        var items   = order.items || [];
+        var amounts = order.amounts || {};
+        var addons  = order.addons || [];
+
+        var pairs = [];
+
+        if (items.length > 1) {
+            // Several packages on one order: one line each, because
+            // bookings.plan_id only names the first and service_records holds
+            // a single arrangement row per booking.
+            pairs.push(detailItem('Packages', String(items.length)));
+            items.forEach(function (it) {
+                var label = it.groupLabel || it.group || 'Package';
+                pairs.push(detailItem(label, it.name + ' \u2014 ' + money(it.lineTotal)));
+            });
+        } else if (plan.hasPlan) {
+            pairs.push(detailItem('Package', plan.name || '—'));
+            if (plan.groupLabel || plan.group) {
+                pairs.push(detailItem('Package Type', plan.groupLabel || plan.group));
+            }
+        } else {
+            // Pre-package order: no plan was ever recorded, so say that instead
+            // of showing a placeholder as though it were something purchased.
+            pairs.push(detailItem('Package', 'No package recorded (legacy order)'));
+        }
+
+        if (addons.length) {
+            pairs.push(detailItem('Add-ons', String(addons.length)));
+        }
+
+        pairs.push(detailItem('Package Price', money(amounts.subtotal)));
+        if (addons.length) {
+            pairs.push(detailItem('Add-ons Total', money(amounts.addonsTotal)));
+        }
+        pairs.push(detailItem('Total Charged', money(amounts.total)));
+        pairs.push(detailItem('Currency', amounts.currency || 'INR'));
+
+        var planEl = document.getElementById('modal-plan-fields');
+        if (planEl) planEl.innerHTML = pairs.join('');
+
+        var addonsEl     = document.getElementById('modal-addons-fields');
+        var addonsSection = document.getElementById('modal-addons-section');
+        if (addonsEl && addonsSection) {
+            if (addons.length) {
+                addonsEl.innerHTML = addons.map(function (a) {
+                    var qty = a.qty > 1 ? a.name + ' × ' + a.qty : a.name;
+                    return detailItem(qty, money(a.lineTotal));
+                }).join('');
+                addonsSection.classList.remove('d-none');
+            } else {
+                addonsEl.innerHTML = '';
+                addonsSection.classList.add('d-none');
+            }
+        }
+    }
+
+    /**
+     * Render the payment summary and the per-attempt trail.
+     * @param {object} order
+     */
+    function renderOrderPayment(order) {
+        var payment = order.payment || {};
+
+        var pairs = [
+            detailItem('Status', payment.statusLabel || payment.status || '—'),
+            detailItem('Provider', payment.provider || '—')
+        ];
+
+        if (payment.method) pairs.push(detailItem('Method', payment.method));
+        if (payment.paidAt)  pairs.push(detailItem('Paid On', payment.paidAt));
+        if (payment.razorpayOrderId) pairs.push(detailItem('Gateway Order ID', payment.razorpayOrderId));
+        if (payment.paymentId)       pairs.push(detailItem('Gateway Payment ID', payment.paymentId));
+
+        // The signature value is never sent to the browser; only whether one
+        // was captured, which is what an admin needs to audit a payment.
+        pairs.push(detailItem('Signature On File', payment.hasSignature ? 'Yes' : 'No'));
+
+        if (payment.failureReason) {
+            pairs.push(detailItem('Failure Reason', payment.failureReason));
+        }
+
+        var payEl = document.getElementById('modal-payment-fields');
+        if (payEl) payEl.innerHTML = pairs.join('');
+
+        var attempts = payment.attempts || [];
+        var attEl     = document.getElementById('modal-payment-attempts');
+        var attSection = document.getElementById('modal-payment-attempts-section');
+
+        if (attEl && attSection) {
+            if (attempts.length) {
+                attEl.innerHTML = attempts.map(function (a) {
+                    var ref = a.razorpayPaymentId || a.razorpayOrderId || ('Attempt #' + a.id);
+                    var note = a.method || a.statusLabel;
+                    if (a.failureReason) note += ' — ' + a.failureReason;
+                    return '<div class="modal-file-item">' +
+                        '<i class="fa-solid fa-receipt modal-file-icon"></i>' +
+                        '<span class="modal-file-name">' + esc(ref) + '</span>' +
+                        '<span class="modal-file-size">' + esc(money(a.amount) + ' · ' + note) + '</span>' +
+                    '</div>';
+                }).join('');
+                attSection.classList.remove('d-none');
+            } else {
+                attEl.innerHTML = '';
+                attSection.classList.add('d-none');
+            }
+        }
+    }
+
     function openOrderModal(orderId) {
         currentOrderId = orderId;
         document.getElementById('modal-customer').textContent = '';
         document.getElementById('modal-status-select').value = 'pending';
+        // Hide the async sections up front so a previous order's package and
+        // payment details cannot linger while the next one loads.
+        ['modal-plan-fields', 'modal-payment-fields'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.innerHTML = '';
+        });
+        ['modal-addons-section', 'modal-payment-attempts-section'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.add('d-none');
+        });
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
 
@@ -299,8 +457,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('modal-service').textContent   = order.service;
                 document.getElementById('modal-item').textContent      = order.service;
                 document.getElementById('modal-date').textContent      = order.date;
-                document.getElementById('modal-amount').textContent    = '\u20B9' + order.amount;
+                document.getElementById('modal-amount').textContent    = money(order.amount);
                 document.getElementById('modal-status-select').value   = order.status;
+
+                renderOrderPackage(order);
+                renderOrderPayment(order);
 
                 var metaEl     = document.getElementById('modal-meta-fields');
                 var metaSection = document.getElementById('modal-meta-section');
@@ -373,6 +534,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var originalHtml = button.innerHTML;
         button.disabled = true;
         button.textContent = busyLabel;
+
+        // The CSRF token is added here so every caller of saveOrder is covered.
+        payload.csrf_token = adminDashboardConfig.csrfToken;
 
         return fetch(basePath + 'includes/admin/order-update.php', {
             method: 'POST',

@@ -41,6 +41,21 @@
                 <div id="pm-status"></div>
             </div>
 
+            <!--
+                What was ordered and charged. These are the package and add-on
+                prices snapshotted when the order was placed, so they always
+                match the amount shown above even if our prices change later.
+            -->
+            <div class="modal-files-section" id="pm-plan-section">
+                <label class="panel-label">What You Ordered</label>
+                <div class="detail-grid" id="pm-plan-fields"></div>
+            </div>
+
+            <div class="modal-files-section d-none" id="pm-addons-section">
+                <label class="panel-label">Add-ons</label>
+                <div class="detail-grid" id="pm-addons-fields"></div>
+            </div>
+
             <div class="modal-files-section" id="pm-order-fields-section">
                 <label class="panel-label">Details You Submitted</label>
                 <div class="detail-grid" id="pm-order-fields"></div>

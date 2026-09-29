@@ -451,6 +451,32 @@ STATUS BADGES
     color: #991b1b;
 }
 
+/* bookings.payment_status is enum('awaiting','paid','refunded','failed','cancelled') */
+.pay-awaiting {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.pay-paid {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.pay-refunded {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.pay-failed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.pay-cancelled {
+    background: #f1f5f9;
+    color: #475569;
+}
+
 /*==================================================
 TRACKING
 ==================================================*/

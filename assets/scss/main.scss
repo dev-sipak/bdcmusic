@@ -45,6 +45,8 @@ MAIN STYLESHEET
 @import 'pages/login';
 @import 'pages/dashboard';
 @import 'pages/admin';
+  @import 'pages/booking';
+  @import 'pages/booking-marketing';
 
 // Utilities (loaded last so they can override)
 @import 'base/utilities';
