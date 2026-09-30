@@ -3,7 +3,7 @@ UTILITY CLASSES
 Bootstrap-like utility framework.
 ==================================================*/
 
-// ─── Display ────────────────────────────────────
+// Display
 
 .d-none { display: none !important; }
 .d-block { display: block !important; }
@@ -14,7 +14,7 @@ Bootstrap-like utility framework.
 .d-grid { display: grid !important; }
 .d-inline-grid { display: inline-grid !important; }
 
-// ─── Flexbox ────────────────────────────────────
+// Flexbox
 
 .flex-row { flex-direction: row; }
 .flex-column { flex-direction: column; }
@@ -54,7 +54,7 @@ Bootstrap-like utility framework.
 .order-last { order: 1; }
 .order-0 { order: 0; }
 
-// ─── Spacing ────────────────────────────────────
+// Spacing
 
 @each $size, $value in $spacing {
   // Margin (all sides)
@@ -90,24 +90,24 @@ Bootstrap-like utility framework.
 // Special spacing (existing patterns)
 .mbs-8 { margin-block-start: 8vw; }
 
-// ─── Text Alignment ─────────────────────────────
+// Text Alignment
 
 .text-start { text-align: left; }
 .text-center { text-align: center; }
 .text-end { text-align: right; }
 
-// ─── Text Transformation ────────────────────────
+// Text Transformation
 
 .text-uppercase { text-transform: uppercase; }
 .text-lowercase { text-transform: lowercase; }
 .text-capitalize { text-transform: capitalize; }
 
-// ─── Text Decoration ────────────────────────────
+// Text Decoration
 
 .text-decoration-none { text-decoration: none; }
 .text-decoration-underline { text-decoration: underline; }
 
-// ─── Text Overflow ──────────────────────────────
+// Text Overflow
 
 .text-truncate {
   overflow: hidden;
@@ -118,7 +118,7 @@ Bootstrap-like utility framework.
 .text-nowrap { white-space: nowrap; }
 .text-wrap { white-space: normal; }
 
-// ─── Text Colors ────────────────────────────────
+// Text Colors
 
 .text-primary { color: var(--primary); }
 .text-secondary { color: var(--secondary); }
@@ -130,7 +130,7 @@ Bootstrap-like utility framework.
 .text-info { color: var(--info); }
 .text-white { color: #fff; }
 
-// ─── Font Size ──────────────────────────────────
+// Font Size
 
 .fs-xs { font-size: 0.75rem; }
 .fs-sm { font-size: 0.875rem; }
@@ -140,7 +140,7 @@ Bootstrap-like utility framework.
 .fs-2xl { font-size: 1.5rem; }
 .fs-3xl { font-size: 2rem; }
 
-// ─── Font Weight ────────────────────────────────
+// Font Weight
 
 .fw-light { font-weight: $font-weight-light; }
 .fw-normal { font-weight: $font-weight-normal; }
@@ -148,7 +148,7 @@ Bootstrap-like utility framework.
 .fw-semibold { font-weight: $font-weight-semibold; }
 .fw-bold { font-weight: $font-weight-bold; }
 
-// ─── Line Height ────────────────────────────────
+// Line Height
 
 .lh-tight { line-height: 1.2; }
 .lh-snug { line-height: 1.375; }
@@ -156,7 +156,7 @@ Bootstrap-like utility framework.
 .lh-relaxed { line-height: 1.625; }
 .lh-loose { line-height: 2; }
 
-// ─── Width ──────────────────────────────────────
+// Width
 
 .w-25 { width: 25%; }
 .w-50 { width: 50%; }
@@ -167,7 +167,7 @@ Bootstrap-like utility framework.
 .w-min { width: min-content; }
 .w-max { width: max-content; }
 
-// ─── Height ─────────────────────────────────────
+// Height
 
 .h-25 { height: 25%; }
 .h-50 { height: 50%; }
@@ -178,13 +178,13 @@ Bootstrap-like utility framework.
 .h-screen { height: 100vh; }
 .h-dvh { height: 100dvh; }
 
-// ─── Min/Max Width ──────────────────────────────
+// Min/Max Width
 
 .min-w-0 { min-width: 0; }
 .max-w-none { max-width: none; }
 .max-w-full { max-width: 100%; }
 
-// ─── Position ───────────────────────────────────
+// Position
 
 .position-static { position: static; }
 .position-relative { position: relative; }
@@ -198,7 +198,7 @@ Bootstrap-like utility framework.
 .left-0 { left: 0; }
 .inset-0 { inset: 0; }
 
-// ─── Overflow ───────────────────────────────────
+// Overflow
 
 .overflow-auto { overflow: auto; }
 .overflow-hidden { overflow: hidden; }
@@ -209,7 +209,7 @@ Bootstrap-like utility framework.
 .overflow-x-hidden { overflow-x: hidden; }
 .overflow-y-hidden { overflow-y: hidden; }
 
-// ─── Z-Index ────────────────────────────────────
+// Z-Index
 
 .z-0 { z-index: 0; }
 .z-1 { z-index: 1; }
@@ -220,17 +220,17 @@ Bootstrap-like utility framework.
 .z-50 { z-index: 50; }
 .z-auto { z-index: auto; }
 
-// ─── Visibility ─────────────────────────────────
+// Visibility
 
 .visible { visibility: visible; }
 .invisible { visibility: hidden; }
 
-// ─── Pointer Events ─────────────────────────────
+// Pointer Events
 
 .pointer-events-none { pointer-events: none; }
 .pointer-events-auto { pointer-events: auto; }
 
-// ─── Opacity ────────────────────────────────────
+// Opacity
 
 .opacity-0 { opacity: 0; }
 .opacity-25 { opacity: 0.25; }
@@ -238,7 +238,7 @@ Bootstrap-like utility framework.
 .opacity-75 { opacity: 0.75; }
 .opacity-100 { opacity: 1; }
 
-// ─── Border ─────────────────────────────────────
+// Border
 
 .border { border: 1px solid var(--border); }
 .border-0 { border: 0; }
@@ -247,7 +247,7 @@ Bootstrap-like utility framework.
 .border-start { border-left: 1px solid var(--border); }
 .border-end { border-right: 1px solid var(--border); }
 
-// ─── Border Radius ──────────────────────────────
+// Border Radius
 
 .rounded { border-radius: var(--radius); }
 .rounded-sm { border-radius: var(--radius-sm); }
@@ -258,7 +258,7 @@ Bootstrap-like utility framework.
 .rounded-pill { border-radius: var(--radius-pill); }
 .rounded-0 { border-radius: 0; }
 
-// ─── Shadow ─────────────────────────────────────
+// Shadow
 
 .shadow { box-shadow: var(--shadow); }
 .shadow-sm { box-shadow: var(--shadow-sm); }
@@ -267,7 +267,7 @@ Bootstrap-like utility framework.
 .shadow-xl { box-shadow: var(--shadow-xl); }
 .shadow-none { box-shadow: none; }
 
-// ─── Background ─────────────────────────────────
+// Background
 
 .bg-primary { background-color: var(--primary); }
 .bg-secondary { background-color: var(--secondary); }
@@ -276,32 +276,32 @@ Bootstrap-like utility framework.
 .bg-transparent { background-color: transparent; }
 .bg-white { background-color: #fff; }
 
-// ─── Cursor ─────────────────────────────────────
+// Cursor
 
 .cursor-pointer { cursor: pointer; }
 .cursor-default { cursor: default; }
 .cursor-not-allowed { cursor: not-allowed; }
 
-// ─── User Select ────────────────────────────────
+// User Select
 
 .user-select-none { user-select: none; }
 .user-select-all { user-select: all; }
 .user-select-auto { user-select: auto; }
 
-// ─── Transitions ────────────────────────────────
+// Transitions
 
 .transition { transition: var(--transition); }
 .transition-fast { transition: var(--transition-fast); }
 .transition-slow { transition: transition-slow; }
 .transition-none { transition: none; }
 
-// ─── Float ──────────────────────────────────────
+// Float
 
 .float-start { float: left; }
 .float-end { float: right; }
 .float-none { float: none; }
 
-// ─── Clearfix ───────────────────────────────────
+// Clearfix
 
 .clearfix::after {
   display: block;
@@ -309,7 +309,7 @@ Bootstrap-like utility framework.
   content: "";
 }
 
-// ─── Screen Reader Only ─────────────────────────
+// Screen Reader Only
 
 .sr-only {
   position: absolute;
@@ -323,7 +323,7 @@ Bootstrap-like utility framework.
   border-width: 0;
 }
 
-// ─── Container Utilities ────────────────────────
+// Container Utilities
 
 .container-narrow {
   max-width: 960px;
@@ -335,18 +335,18 @@ Bootstrap-like utility framework.
   margin-inline: auto;
 }
 
-// ─── Scrollbar Hide ─────────────────────────────
+// Scrollbar Hide
 
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
-    display: none;
+	display: none;
   }
 }
 
-// ─── Glass Panel ────────────────────────────────
+// Glass Panel
 
 .glass {
   background: rgba(255, 255, 255, .7);
@@ -355,7 +355,7 @@ Bootstrap-like utility framework.
   border: 1px solid rgba(17, 17, 17, .06);
 }
 
-// ─── Animation Helpers ──────────────────────────
+// Animation Helpers
 
 .fade-up { animation: fadeUp .8s ease both; }
 .fade-left { animation: fadeLeft .8s ease both; }
@@ -365,7 +365,7 @@ Bootstrap-like utility framework.
 .float { animation: floatImage 5s ease-in-out infinite; }
 .rotate { animation: rotateGlow 12s linear infinite; }
 
-// ─── Hover Effects ──────────────────────────────
+// Hover Effects
 
 .shadow-hover:hover {
   box-shadow: 0 25px 60px rgba(0, 0, 0, .45);
@@ -375,7 +375,7 @@ Bootstrap-like utility framework.
   transition: transform .35s ease;
 }
 
-// ─── Reveal (scroll animation) ──────────────────
+// Reveal (scroll animation)
 
 .reveal {
   opacity: 0;
@@ -388,6 +388,6 @@ Bootstrap-like utility framework.
   transform: translateY(0);
 }
 
-// ─── Highlight (alias) ──────────────────────────
+// Highlight (alias)
 
 .highlight-text { color: var(--primary); }

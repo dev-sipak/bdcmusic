@@ -19,49 +19,49 @@
  */
 
 $panelNavItems = array(
-    'profile' => array( 'label' => 'Profile',    'icon' => 'fa-user',           'url' => $panelBase . 'customer-dashboard' ),
+	'profile' => array( 'label' => 'Profile',    'icon' => 'user',           'url' => $panelBase . 'customer-dashboard' ),
 );
 
 foreach ( $purchasedServices as $purchasedSlug => $purchasedService ) {
-    $panelNavItems[ 'service:' . $purchasedSlug ] = array(
-        'label' => $purchasedService['nav'],
-        'icon'  => $purchasedService['icon'],
-        // A locked service is still listed, because the customer did buy it,
-        // but it is flagged so the sidebar can show a padlock and the section
-        // itself can explain it is waiting on the team.
-        'locked' => ! $purchasedService['unlocked'],
-        'url'   => $purchasedSlug === 'digital-distribution'
-            ? $panelBase . 'releases'
-            : $panelBase . 'service?service=' . rawurlencode( $purchasedSlug ),
-    );
+	$panelNavItems[ 'service:' . $purchasedSlug ] = array(
+		'label' => $purchasedService['nav'],
+		'icon'  => $purchasedService['icon'],
+		// A locked service is still listed, because the customer did buy it,
+		// but it is flagged so the sidebar can show a padlock and the section
+		// itself can explain it is waiting on the team.
+		'locked' => ! $purchasedService['unlocked'],
+		'url'   => $purchasedSlug === 'digital-distribution'
+			? $panelBase . 'releases'
+			: $panelBase . 'service?service=' . rawurlencode( $purchasedSlug ),
+	);
 }
 
-$panelNavItems['orders'] = array( 'label' => 'My Orders', 'icon' => 'fa-box', 'url' => $panelBase . 'orders' );
+$panelNavItems['orders'] = array( 'label' => 'My Orders', 'icon' => 'box', 'url' => $panelBase . 'orders' );
 ?>
 <aside class="panel-sidebar">
-    <div class="panel-user">
-        <div class="panel-avatar">
-            <i class="fa-solid fa-user"></i>
-        </div>
-        <div class="panel-user-info">
-            <strong><?php echo htmlspecialchars( $userName ); ?></strong>
-            <span><?php echo htmlspecialchars( $userEmail ); ?></span>
-        </div>
-    </div>
-    <nav class="panel-nav">
-        <?php foreach ( $panelNavItems as $panelNavKey => $panelNavItem ) : ?>
-            <a class="panel-nav-btn<?php echo $panelPage === $panelNavKey ? ' active' : ''; ?><?php
-                echo ! empty( $panelNavItem['locked'] ) ? ' is-locked' : ''; ?>"
-                href="<?php echo htmlspecialchars( $panelNavItem['url'] ); ?>">
-                <i class="fa-solid <?php echo htmlspecialchars( $panelNavItem['icon'] ); ?>"></i>
-                <?php echo htmlspecialchars( $panelNavItem['label'] ); ?>
-                <?php if ( ! empty( $panelNavItem['locked'] ) ) : ?>
-                    <i class="fa-solid fa-lock panel-nav-lock" title="Waiting for the team to confirm this service"></i>
-                <?php endif; ?>
-            </a>
-        <?php endforeach; ?>
-        <a class="panel-nav-btn panel-nav-logout" id="logout-btn" href="#">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </a>
-    </nav>
+	<div class="panel-user">
+		<div class="panel-avatar">
+			<i data-lucide="user"></i>
+		</div>
+		<div class="panel-user-info">
+			<strong><?php echo htmlspecialchars( $userName ); ?></strong>
+			<span><?php echo htmlspecialchars( $userEmail ); ?></span>
+		</div>
+	</div>
+	<nav class="panel-nav">
+		<?php foreach ( $panelNavItems as $panelNavKey => $panelNavItem ) : ?>
+			<a class="panel-nav-btn<?php echo $panelPage === $panelNavKey ? ' active' : ''; ?><?php
+				echo ! empty( $panelNavItem['locked'] ) ? ' is-locked' : ''; ?>"
+				href="<?php echo htmlspecialchars( $panelNavItem['url'] ); ?>">
+				<i data-lucide="<?php echo htmlspecialchars( $panelNavItem['icon'] ); ?>"></i>
+				<?php echo htmlspecialchars( $panelNavItem['label'] ); ?>
+				<?php if ( ! empty( $panelNavItem['locked'] ) ) : ?>
+					<i data-lucide="lock" class="panel-nav-lock" title="Waiting for the team to confirm this service"></i>
+				<?php endif; ?>
+			</a>
+		<?php endforeach; ?>
+		<a class="panel-nav-btn panel-nav-logout" id="logout-btn" href="#">
+			<i data-lucide="log-out"></i> Logout
+		</a>
+	</nav>
 </aside>

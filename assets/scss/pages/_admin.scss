@@ -3,16 +3,16 @@ ADMIN DASHBOARD
 ==================================================*/
 
 .adm-page {
-    padding: 40px 0 20px;
-    min-height: 100vh;
-    background: var(--dark);
+	padding: 40px 0 20px;
+	min-height: 100vh;
+	background: var(--dark);
 }
 
 .adm-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    align-items: start;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 28px;
+	align-items: start;
 }
 
 /*==================================================
@@ -28,104 +28,104 @@ ADMIN SIDEBAR
 // is a left padding on .adm-page; on mobile the sidebar is a drawer and the page
 // is full width (see the RESPONSIVE block at the foot of this file).
 .adm-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 260px;
-    height: 100vh;
-    background: var(--card);
-    border-right: 1px solid var(--border);
-    padding: 24px 16px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    z-index: 300;
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 260px;
+	height: 100vh;
+	background: var(--card);
+	border-right: 1px solid var(--border);
+	padding: 24px 16px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	z-index: 300;
 }
 
 .adm-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding-bottom: 20px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid var(--border);
 }
 
 .adm-logo {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    background: var(--primary);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	background: var(--primary);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+	flex-shrink: 0;
 }
 
 .adm-brand-text strong {
-    display: block;
-    font-size: 0.95rem;
-    color: var(--text);
+	display: block;
+	font-size: 0.95rem;
+	color: var(--text);
 }
 
 .adm-brand-text span {
-    font-size: 0.78rem;
-    color: var(--muted);
+	font-size: 0.78rem;
+	color: var(--muted);
 }
 
 .adm-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .adm-nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
-    color: var(--muted);
-    font: inherit;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: left;
-    transition: var(--transition);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 12px 16px;
+	border: none;
+	border-radius: 12px;
+	background: transparent;
+	color: var(--muted);
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	text-align: left;
+	transition: var(--transition);
 }
 
 .adm-nav-btn:hover {
-    background: rgba(228, 0, 43, .05);
-    color: var(--text);
+	background: rgba(228, 0, 43, .05);
+	color: var(--text);
 }
 
 .adm-nav-btn.active {
-    background: rgba(228, 0, 43, .08);
-    color: var(--primary);
-    font-weight: 600;
+	background: rgba(228, 0, 43, .08);
+	color: var(--primary);
+	font-weight: 600;
 }
 
 .adm-nav-btn i {
-    width: 20px;
-    text-align: center;
-    font-size: 0.95rem;
+	width: 20px;
+	text-align: center;
+	font-size: 0.95rem;
 }
 
 .adm-nav-logout {
-    margin-top: 12px;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    border-radius: 12px;
+	margin-top: 12px;
+	border-top: 1px solid var(--border);
+	padding-top: 16px;
+	border-radius: 12px;
 }
 
 .adm-nav-logout:hover {
-    color: #ef4444;
-    background: rgba(239, 68, 68, .05);
+	color: #ef4444;
+	background: rgba(239, 68, 68, .05);
 }
 
 /*==================================================
@@ -136,152 +136,154 @@ ADMIN MOBILE TOGGLE
 // outside .adm-layout. Kept only so the old in-flow button cannot reappear if a
 // page still renders it.
 .adm-mobile-toggle {
-    display: none;
-    margin-bottom: 16px;
+	display: none;
+	margin-bottom: 16px;
 }
 
 .adm-menu-btn {
-    font-size: 0.9rem;
+	font-size: 0.9rem;
 }
 
 // The top bar shown instead of the sidebar on a phone. Sits above the page
 // content and below the drawer, so the brand stays reachable while the drawer
 // is closed and the drawer covers it cleanly while open.
 .adm-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 150;
-    display: none;
-    align-items: center;
-    gap: 12px;
-    height: 60px;
-    padding: 0 16px;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 150;
+	display: none;
+	align-items: center;
+	gap: 12px;
+	height: 60px;
+	padding: 0 16px;
+	background: var(--card);
+	border-bottom: 1px solid var(--border);
 }
 
 .adm-topbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-    font-weight: 600;
-    color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+	font-weight: 600;
+	color: var(--text);
 }
 
 .adm-topbar-brand .adm-logo {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    font-size: .95rem;
+	width: 34px;
+	height: 34px;
+	border-radius: 10px;
+	font-size: .95rem;
 }
 
 .adm-topbar-brand span {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .adm-burger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--text);
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: var(--transition);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	background: transparent;
+	color: var(--text);
+	font-size: 1.05rem;
+	cursor: pointer;
+	transition: var(--transition);
 
-    &:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-    }
+	&:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
 }
 
-// The burger becomes the close control while the drawer is open.
-.adm-burger .fa-bars,
-.adm-burger .fa-xmark {
-    transition: transform .25s ease, opacity .2s ease;
+// The burger becomes the close control while the drawer is open. The two icons
+// are told apart by class rather than by their icon name, so swapping the name
+// for a different glyph never silently breaks the toggle.
+.adm-burger-bars,
+.adm-burger-close {
+	transition: transform .25s ease, opacity .2s ease;
 }
 
-.adm-burger .fa-xmark {
-    position: absolute;
-    opacity: 0;
-    transform: rotate(-45deg) scale(.6);
+.adm-burger-close {
+	position: absolute;
+	opacity: 0;
+	transform: rotate(-45deg) scale(.6);
 }
 
-.adm-burger[aria-expanded="true"] .fa-bars {
-    opacity: 0;
-    transform: rotate(45deg) scale(.6);
+.adm-burger[aria-expanded="true"] .adm-burger-bars {
+	opacity: 0;
+	transform: rotate(45deg) scale(.6);
 }
 
-.adm-burger[aria-expanded="true"] .fa-xmark {
-    opacity: 1;
-    transform: rotate(0) scale(1);
+.adm-burger[aria-expanded="true"] .adm-burger-close {
+	opacity: 1;
+	transform: rotate(0) scale(1);
 }
 
 // Tapping the shaded area behind the drawer closes it. Without this the only way
 // out on a phone is the X, which most people do not look for first.
 .adm-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 250;
-    background: rgba(0, 0, 0, .45);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .25s ease, visibility .25s ease;
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 250;
+	background: rgba(0, 0, 0, .45);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .25s ease, visibility .25s ease;
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
 }
 
 .adm-backdrop.is-open {
-    display: block;
-    opacity: 1;
-    visibility: visible;
+	display: block;
+	opacity: 1;
+	visibility: visible;
 }
 
 // Only offered where there is a drawer to close.
 .adm-sidebar-close {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    margin-left: auto;
-    padding: 0;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: var(--transition);
+	display: none;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 44px;
+	height: 44px;
+	margin-left: auto;
+	padding: 0;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background: transparent;
+	color: var(--muted);
+	cursor: pointer;
+	transition: var(--transition);
 
-    &:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-    }
+	&:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
 }
 
 // Stops the page behind the drawer from scrolling under the visitor's thumb.
 body.adm-drawer-open {
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .adm-page .btn {
-    padding: 8px 16px;
-    font-size: 0.82rem;
-    border-radius: 10px;
-    min-height: unset;
+	padding: 8px 16px;
+	font-size: 0.82rem;
+	border-radius: 10px;
+	min-height: unset;
 }
 
 /*==================================================
@@ -293,32 +295,32 @@ ADMIN MAIN
 // whole page wider than the phone. min-width:0 lets .adm-table-wrap do the
 // sideways scrolling inside its own box instead.
 .adm-main {
-    min-width: 0;
-    min-height: 400px;
+	min-width: 0;
+	min-height: 400px;
 }
 
 .adm-tab {
-    display: none;
+	display: none;
 }
 
 .adm-tab.active {
-    display: block;
+	display: block;
 }
 
 .adm-tab-header {
-    margin-bottom: 28px;
+	margin-bottom: 28px;
 }
 
 .adm-tab-header h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
+	font-size: 1.6rem;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 6px;
 }
 
 .adm-tab-header p {
-    color: var(--muted);
-    font-size: 0.92rem;
+	color: var(--muted);
+	font-size: 0.92rem;
 }
 
 /*==================================================
@@ -326,75 +328,75 @@ STATS GRID
 ==================================================*/
 
 .adm-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 32px;
 }
 
 .adm-stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: var(--transition);
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow: var(--shadow);
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	transition: var(--transition);
 }
 
 .adm-stat-card:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
 }
 
 .stat-icon {
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
+	border-radius: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+	flex-shrink: 0;
 	background: transparent !important;
 }
 
 .stat-icon-total {
-    background: rgba(59, 130, 246, .1);
-    color: #3b82f6;
+	background: rgba(59, 130, 246, .1);
+	color: #3b82f6;
 }
 
 .stat-icon-pending {
-    background: rgba(245, 158, 11, .1);
-    color: #f59e0b;
+	background: rgba(245, 158, 11, .1);
+	color: #f59e0b;
 }
 
 .stat-icon-processing {
-    background: rgba(139, 92, 246, .1);
-    color: #8b5cf6;
+	background: rgba(139, 92, 246, .1);
+	color: #8b5cf6;
 }
 
 .stat-icon-delivered {
-    background: rgba(16, 185, 129, .1);
-    color: #10b981;
+	background: rgba(16, 185, 129, .1);
+	color: #10b981;
 }
 
 .stat-icon-customers {
-    background: rgba(228, 0, 43, .1);
-    color: var(--primary);
+	background: rgba(228, 0, 43, .1);
+	color: var(--primary);
 }
 
 .stat-number {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1;
+	display: block;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--text);
+	line-height: 1;
 }
 
 .stat-label {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 2px;
+	font-size: 0.78rem;
+	color: var(--muted);
+	margin-top: 2px;
 }
 
 /*==================================================
@@ -402,14 +404,14 @@ ADMIN SECTION
 ==================================================*/
 
 .adm-section {
-    margin-bottom: 28px;
+	margin-bottom: 28px;
 }
 
 .adm-section h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 16px;
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--text);
+	margin-bottom: 16px;
 }
 
 /*==================================================
@@ -417,76 +419,77 @@ ADMIN TABLE
 ==================================================*/
 
 .adm-table-wrap {
-    overflow-x: auto;
-    max-width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
+	overflow-x: auto;
+	max-width: 100%;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	box-shadow: var(--shadow);
 }
 
 .adm-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.86rem;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.86rem;
 }
 
 .adm-table thead {
-    background: var(--secondary);
+	background: var(--secondary);
 }
 
 .adm-table th {
-    padding: 14px 16px;
-    text-align: left;
-    font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
+	padding: 14px 16px;
+	text-align: left;
+	font-weight: 600;
+	color: var(--text);
+	white-space: nowrap;
 }
 
 .adm-table td {
-    padding: 14px 16px;
-    border-top: 1px solid var(--border);
-    color: var(--text);
+	padding: 6px 13px;
+	border-top: 1px solid var(--border);
+	color: var(--text);
+	font-size: 0.76rem;
 }
 
 .adm-table tbody tr:hover {
-    background: rgba(228, 0, 43, .02);
+	background: rgba(228, 0, 43, .02);
 }
 
 /* Secondary note under a table cell value (add-on count, guest marker). */
 .adm-table-note {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--muted);
+	display: block;
+	font-size: 0.72rem;
+	font-weight: 500;
+	color: var(--muted);
 }
 
 .adm-empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-    font-size: 0.92rem;
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--muted);
+	font-size: 0.92rem;
 }
 
 .adm-view-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--primary);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    transition: var(--transition);
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	border: 1px solid var(--border);
+	background: #fff;
+	color: var(--primary);
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.85rem;
+	transition: var(--transition);
 }
 
 .adm-view-btn:hover {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
+	background: var(--primary);
+	color: #fff;
+	border-color: var(--primary);
 }
 
 /*==================================================
@@ -494,60 +497,60 @@ ADMIN FILTER BAR
 ==================================================*/
 
 .adm-filter-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    align-items: center;
+	display: flex;
+	gap: 12px;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+	align-items: center;
 }
 
 .adm-filter-select {
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: #fff;
-    color: var(--text);
-    font: inherit;
-    font-size: 0.88rem;
-    cursor: pointer;
-    transition: var(--transition);
+	padding: 10px 14px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--text);
+	font: inherit;
+	font-size: 0.88rem;
+	cursor: pointer;
+	transition: var(--transition);
 }
 
 .adm-filter-select:focus {
-    border-color: var(--primary);
-    outline: none;
+	border-color: var(--primary);
+	outline: none;
 }
 
 .adm-search-wrap {
-    position: relative;
-    flex: 1;
-    min-width: 200px;
+	position: relative;
+	flex: 1;
+	min-width: 200px;
 }
 
 .adm-search-wrap i {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    font-size: 0.85rem;
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--muted);
+	font-size: 0.85rem;
 }
 
 .adm-search-wrap input {
-    width: 100%;
-    padding: 10px 14px 10px 38px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: #fff;
-    color: var(--text);
-    font: inherit;
-    font-size: 0.88rem;
-    transition: var(--transition);
+	width: 100%;
+	padding: 10px 14px 10px 38px;
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--text);
+	font: inherit;
+	font-size: 0.88rem;
+	transition: var(--transition);
 }
 
 .adm-search-wrap input:focus {
-    border-color: var(--primary);
-    outline: none;
+	border-color: var(--primary);
+	outline: none;
 }
 
 /*==================================================
@@ -555,139 +558,139 @@ ADMIN MODAL
 ==================================================*/
 
 .adm-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
+	position: fixed;
+	inset: 0;
+	z-index: 300;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .25s ease;
 }
 
 .adm-modal.open {
-    opacity: 1;
-    pointer-events: auto;
+	opacity: 1;
+	pointer-events: auto;
 }
 
 .adm-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, .5);
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, .5);
 }
 
 .adm-modal-content {
-    position: relative;
-    width: 90%;
-    max-width: 560px;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, .15);
-    transform: translateY(20px);
-    transition: transform .25s ease;
+	position: relative;
+	width: 90%;
+	max-width: 560px;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	box-shadow: 0 30px 80px rgba(0, 0, 0, .15);
+	transform: translateY(20px);
+	transition: transform .25s ease;
 }
 
 .adm-modal.open .adm-modal-content {
-    transform: translateY(0);
+	transform: translateY(0);
 }
 
 .adm-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 28px 16px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 24px 28px 16px;
+	border-bottom: 1px solid var(--border);
+	flex-shrink: 0;
 }
 
 .adm-modal-header h3 {
-    font-size: 1.15rem;
-    color: var(--text);
+	font-size: 1.15rem;
+	color: var(--text);
 }
 
 .modal-close-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #fff;
-    color: var(--muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	border: 1px solid var(--border);
+	background: #fff;
+	color: var(--muted);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: var(--transition);
 }
 
 .modal-close-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #fca5a5;
+	background: #fee2e2;
+	color: #ef4444;
+	border-color: #fca5a5;
 }
 
 .adm-modal-body {
-    padding: 24px 28px 28px;
-    flex: 1;
-    overflow-y: auto;
+	padding: 24px 28px 28px;
+	flex: 1;
+	overflow-y: auto;
 
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
 
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
 
-    &::-webkit-scrollbar-thumb {
-        background: var(--primary);
-        border-radius: 50px;
-    }
+	&::-webkit-scrollbar-thumb {
+		background: var(--primary);
+		border-radius: 50px;
+	}
 
-    &::-webkit-scrollbar-thumb:hover {
-        background: #c20025;
-    }
+	&::-webkit-scrollbar-thumb:hover {
+		background: #c20025;
+	}
 }
 
 .modal-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 24px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	margin-bottom: 24px;
 }
 
 .modal-detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .modal-status-control {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding-top: 18px;
+	border-top: 1px solid var(--border);
 }
 
 .modal-status-control .panel-label {
-    width: 100%;
-    min-width: unset;
+	width: 100%;
+	min-width: unset;
 }
 
 .modal-status-control .adm-filter-select {
-    flex: 1;
+	flex: 1;
 }
 
 .modal-update-btn {
-    font-size: 0.88rem;
-    padding: 10px 12px;
-    min-height: unset;
+	font-size: 0.88rem;
+	padding: 10px 12px;
+	min-height: unset;
 }
 
 /*==================================================
@@ -695,71 +698,71 @@ ADMIN MODAL FILES
 ==================================================*/
 
 .modal-files-section {
-    margin-bottom: 20px;
-    padding-top: 18px;
-    border-top: 1px solid var(--border);
+	margin-bottom: 20px;
+	padding-top: 18px;
+	border-top: 1px solid var(--border);
 }
 
 .modal-files-section .panel-label {
-    display: block;
-    margin-bottom: 12px;
+	display: block;
+	margin-bottom: 12px;
 }
 
 .modal-files-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .modal-file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 0.85rem;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	background: var(--secondary);
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	font-size: 0.85rem;
 }
 
 .modal-file-item i {
-    color: var(--white);
-    font-size: 1rem;
-    flex-shrink: 0;
+	color: var(--white);
+	font-size: 1rem;
+	flex-shrink: 0;
 }
 
 .modal-file-name {
-    flex: 1;
-    color: var(--text);
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+	flex: 1;
+	color: var(--text);
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .modal-file-size {
-    color: var(--muted);
-    font-size: 0.78rem;
-    flex-shrink: 0;
+	color: var(--muted);
+	font-size: 0.78rem;
+	flex-shrink: 0;
 }
 
 .modal-file-download {
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    background: var(--primary);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-    transition: var(--transition);
+	width: 30px;
+	height: 30px;
+	border-radius: 6px;
+	background: var(--primary);
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	font-size: 0.75rem;
+	flex-shrink: 0;
+	transition: var(--transition);
 }
 
 .modal-file-download:hover {
-    background: #c20025;
+	background: #c20025;
 }
 
 /*==================================================
@@ -769,29 +772,29 @@ to lay the generic six fields out.
 ==================================================*/
 
 .modal-arrangement-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 16px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	margin-bottom: 16px;
 }
 
 .modal-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .modal-field-wide {
-    grid-column: 1 / -1;
+	grid-column: 1 / -1;
 }
 
 .modal-field .panel-label {
-    display: block;
+	display: block;
 }
 
 .modal-field textarea {
-    resize: vertical;
-    min-height: 70px;
+	resize: vertical;
+	min-height: 70px;
 }
 
 /*==================================================
@@ -800,87 +803,93 @@ Track rows and platform-link rows are both built by admin-releases.js.
 ==================================================*/
 
 .release-editor-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 12px;
 }
 
 .release-editor-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .release-track-row {
-    .re-track-no {
-        flex: 0 0 64px;
-    }
+	// An <input> is a flex item, and a flex item's `min-width` defaults to
+	// `auto`, which floors it at its intrinsic content width — about 197px for a
+	// default-sized text input. That floor overrides the flex basis, so the row
+	// overflows its modal and all four fields render at the same 197px whatever
+	// the basis says. `min-width: 0` is what makes the declared width real; the
+	// title and ISRC need it too, or they cannot absorb the space this frees up.
+	.re-track-no,
+	.re-track-duration {
+		flex: 0 0 100px;
+		min-width: 0;
+	}
 
-    .re-track-title {
-        flex: 2 1 0;
-    }
+	.re-track-title {
+		flex: 2 1 0;
+		min-width: 0;
+	}
 
-    .re-track-isrc {
-        flex: 1 1 0;
-    }
-
-    .re-track-duration {
-        flex: 0 0 100px;
-    }
+	.re-track-isrc {
+		flex: 1 1 0;
+		min-width: 0;
+	}
 }
 
 .release-link-row {
-    .re-link-platform {
-        flex: 0 0 180px;
-    }
+	.re-link-platform {
+		flex: 0 0 180px;
+	}
 
-    .re-link-url {
-        flex: 1 1 0;
-        min-width: 0;
-    }
+	.re-link-url {
+		flex: 1 1 0;
+		min-width: 0;
+	}
 }
 
 .release-link-active {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    flex: 0 0 auto;
-    font-size: 0.8rem;
-    color: var(--muted);
-    white-space: nowrap;
-    cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	flex: 0 0 auto;
+	font-size: 0.8rem;
+	color: var(--muted);
+	white-space: nowrap;
+	cursor: pointer;
 }
 
 .release-add-row-btn {
-    font-size: 0.84rem;
-    padding: 8px 14px;
-    min-height: unset;
+	font-size: 0.84rem;
+	padding: 8px 14px;
+	min-height: unset;
 }
 
 .release-platform-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--border);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 14px;
+	padding-top: 14px;
+	border-top: 1px dashed var(--border);
 }
 
 .release-preset-btn {
-    padding: 5px 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-pill);
-    background: var(--secondary);
-    color: var(--text);
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: var(--transition-fast);
+	padding: 5px 12px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-pill);
+	background: var(--secondary);
+	color: var(--text);
+	font-size: 0.78rem;
+	cursor: pointer;
+	transition: var(--transition-fast);
 }
 
 .release-preset-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+	border-color: var(--primary);
+	color: var(--primary);
 }
 
 /*==================================================
@@ -889,90 +898,90 @@ RESPONSIVE
 
 // Desktop: the sidebar is a fixed rail, so the page reserves its width here.
 @media (min-width: 993px) {
-    .adm-page {
-        padding-left: 260px;
-    }
+	.adm-page {
+		padding-left: 260px;
+	}
 }
 
 @media (max-width: 1200px) {
-    .adm-stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+	.adm-stats-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
 }
 
 @media (max-width: 992px) {
-    .adm-page {
-        padding-top: 76px;
-    }
+	.adm-page {
+		padding-top: 76px;
+	}
 
-    .adm-topbar {
-        display: flex;
-    }
+	.adm-topbar {
+		display: flex;
+	}
 
-    // The rail becomes a drawer. Transform rather than `left`, so opening it
-    // animates on the compositor and does not reflow the page. It is
-    // `visibility: hidden` when closed so its links stay out of the tab order and
-    // off the accessibility tree instead of hiding behind the top bar.
-    .adm-sidebar {
-        width: 272px;
-        box-shadow: 12px 0 40px rgba(0, 0, 0, .28);
-        transform: translateX(-100%);
-        visibility: hidden;
-        transition: transform .28s ease, visibility .28s ease;
-    }
+	// The rail becomes a drawer. Transform rather than `left`, so opening it
+	// animates on the compositor and does not reflow the page. It is
+	// `visibility: hidden` when closed so its links stay out of the tab order and
+	// off the accessibility tree instead of hiding behind the top bar.
+	.adm-sidebar {
+		width: 272px;
+		box-shadow: 12px 0 40px rgba(0, 0, 0, .28);
+		transform: translateX(-100%);
+		visibility: hidden;
+		transition: transform .28s ease, visibility .28s ease;
+	}
 
-    .adm-sidebar.is-open {
-        transform: none;
-        visibility: visible;
-    }
+	.adm-sidebar.is-open {
+		transform: none;
+		visibility: visible;
+	}
 
-    .adm-sidebar-close {
-        display: inline-flex;
-    }
+	.adm-sidebar-close {
+		display: inline-flex;
+	}
 }
 
 @media (max-width: 768px) {
-    .adm-stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+	.adm-stats-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 
-    .modal-detail-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
+	.modal-detail-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 
-    .modal-arrangement-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
+	.modal-arrangement-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 
-    .release-editor-row {
-        flex-wrap: wrap;
-    }
+	.release-editor-row {
+		flex-wrap: wrap;
+	}
 
-    .release-track-row .re-track-no,
-    .release-track-row .re-track-duration,
-    .release-link-row .re-link-platform {
-        flex: 1 1 100%;
-    }
+	.release-track-row .re-track-no,
+	.release-track-row .re-track-duration,
+	.release-link-row .re-link-platform {
+		flex: 1 1 100%;
+	}
 }
 
 @media (max-width: 600px) {
   
 
-    .adm-stats-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
+	.adm-stats-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 
-    .adm-filter-bar {
-        flex-direction: column;
-    }
+	.adm-filter-bar {
+		flex-direction: column;
+	}
 
-    .adm-table th,
-    .adm-table td {
-        padding: 10px 12px;
-        font-size: 0.8rem;
-    }
+	.adm-table th,
+	.adm-table td {
+		padding: 10px 12px;
+		font-size: 0.8rem;
+	}
 
-    .adm-modal-content {
-        width: 95%;
-    }
+	.adm-modal-content {
+		width: 95%;
+	}
 }

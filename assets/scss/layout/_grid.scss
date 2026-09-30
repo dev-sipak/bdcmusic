@@ -4,7 +4,7 @@ Bootstrap-like 12-column responsive grid.
 Uses CSS Grid for modern browser support.
 ==================================================*/
 
-// ─── Row ────────────────────────────────────────
+// Row
 
 .row {
   display: grid;
@@ -40,17 +40,17 @@ Uses CSS Grid for modern browser support.
   gap: 0;
 }
 
-// ─── Column Base ────────────────────────────────
+// Column Base
 
 [class*="col-"] {
   min-width: 0;
 }
 
-// ─── 12-Column Grid ─────────────────────────────
+// 12-Column Grid
 
 @for $i from 1 through 12 {
   .col-#{$i} {
-    grid-column: span $i;
+	grid-column: span $i;
   }
 }
 
@@ -63,97 +63,97 @@ Uses CSS Grid for modern browser support.
   grid-column: span auto;
 }
 
-// ─── Offset ─────────────────────────────────────
+// Offset
 
 @for $i from 0 through 11 {
   .offset-#{$i} {
-    grid-column-start: $i + 1;
+	grid-column-start: $i + 1;
   }
 }
 
-// ─── Responsive Columns (max-width based) ───────
+// Responsive Columns (max-width based)
 
 @each $name, $width in $breakpoints {
   @media (max-width: $width) {
-    // Hide at breakpoint
-    .d-none-#{$name} {
-      display: none !important;
-    }
+	// Hide at breakpoint
+	.d-none-#{$name} {
+	  display: none !important;
+	}
 
-    // Show at breakpoint
-    .d-block-#{$name} {
-      display: block !important;
-    }
+	// Show at breakpoint
+	.d-block-#{$name} {
+	  display: block !important;
+	}
 
-    // Flex at breakpoint
-    .d-flex-#{$name} {
-      display: flex !important;
-    }
+	// Flex at breakpoint
+	.d-flex-#{$name} {
+	  display: flex !important;
+	}
 
-    // Grid at breakpoint
-    .d-grid-#{$name} {
-      display: grid !important;
-    }
+	// Grid at breakpoint
+	.d-grid-#{$name} {
+	  display: grid !important;
+	}
 
-    // Inline-flex at breakpoint
-    .d-inline-flex-#{$name} {
-      display: inline-flex !important;
-    }
+	// Inline-flex at breakpoint
+	.d-inline-flex-#{$name} {
+	  display: inline-flex !important;
+	}
 
-    // Column spans
-    @for $i from 1 through 12 {
-      .col-#{$name}-#{$i} {
-        grid-column: span $i;
-      }
-    }
+	// Column spans
+	@for $i from 1 through 12 {
+	  .col-#{$name}-#{$i} {
+		grid-column: span $i;
+	  }
+	}
 
-    // Full width at breakpoint
-    .col-#{$name} {
-      grid-column: span 12;
-    }
+	// Full width at breakpoint
+	.col-#{$name} {
+	  grid-column: span 12;
+	}
 
-    // Auto columns at breakpoint
-    .col-#{$name}-auto {
-      grid-column: span auto;
-    }
+	// Auto columns at breakpoint
+	.col-#{$name}-auto {
+	  grid-column: span auto;
+	}
 
-    // Offsets at breakpoint
-    @for $i from 0 through 11 {
-      .offset-#{$name}-#{$i} {
-        grid-column-start: $i + 1;
-      }
-    }
+	// Offsets at breakpoint
+	@for $i from 0 through 11 {
+	  .offset-#{$name}-#{$i} {
+		grid-column-start: $i + 1;
+	  }
+	}
 
-    // Row becomes single column
-    .row-#{$name} {
-      grid-template-columns: 1fr;
-    }
+	// Row becomes single column
+	.row-#{$name} {
+	  grid-template-columns: 1fr;
+	}
 
-    // Gap utilities at breakpoint
-    .gap-#{$name}-0 { gap: 0; }
-    .gap-#{$name}-1 { gap: 0.25rem; }
-    .gap-#{$name}-2 { gap: 0.5rem; }
-    .gap-#{$name}-3 { gap: 1rem; }
-    .gap-#{$name}-4 { gap: 1.5rem; }
-    .gap-#{$name}-5 { gap: 2rem; }
+	// Gap utilities at breakpoint
+	.gap-#{$name}-0 { gap: 0; }
+	.gap-#{$name}-1 { gap: 0.25rem; }
+	.gap-#{$name}-2 { gap: 0.5rem; }
+	.gap-#{$name}-3 { gap: 1rem; }
+	.gap-#{$name}-4 { gap: 1.5rem; }
+	.gap-#{$name}-5 { gap: 2rem; }
   }
 }
 
-// ─── Responsive Columns (min-width based) ───────
+// Responsive Columns (min-width based)
 
 @each $name, $width in $breakpoints {
   @media (min-width: ($width + 1px)) {
-    .d-none-up-#{$name} {
-      display: none !important;
-    }
+	.d-none-up-#{$name} {
+	  display: none !important;
+	}
 
-    .d-block-up-#{$name} {
-      display: block !important;
-    }
+	.d-block-up-#{$name} {
+	  display: block !important;
+	}
   }
 }
 
-// ─── Gutter Utilities ───────────────────────────
+// Gutter Utilities
 
 .gap-0 { gap: 0; }
 .gap-1 { gap: 0.25rem; }
@@ -165,10 +165,10 @@ Uses CSS Grid for modern browser support.
 .gap-7 { gap: 3rem; }
 .gap-8 { gap: 4rem; }
 
-// ─── Responsive Gutter Override ─────────────────
+// Responsive Gutter Override
 
 @include respond(sm) {
   .row {
-    gap: var(--gutter-mobile, #{$gutter-mobile});
+	gap: var(--gutter-mobile, #{$gutter-mobile});
   }
 }

@@ -12,20 +12,20 @@
   // ================================================
 
   > .testimonial-label {
-    display: block;
+	display: block;
 
-    width: 100%;
-    margin: 0 0 12px;
+	width: 100%;
+	margin: 0 0 12px;
 
-    color: #fff;
+	color: #fff;
 
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
 
-    letter-spacing: 0.12em;
-    text-align: center;
-    text-transform: uppercase;
+	letter-spacing: 0.12em;
+	text-align: center;
+	text-transform: uppercase;
   }
 
 
@@ -34,23 +34,23 @@
   // ================================================
 
   .testimonial-slider {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
 
-    overflow: hidden;
+	overflow: hidden;
 
-    .swiper-wrapper {
-      align-items: stretch;
-    }
+	.swiper-wrapper {
+	  align-items: stretch;
+	}
 
-    .swiper-slide {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+	.swiper-slide {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
 
-      height: auto;
-    }
+	  height: auto;
+	}
   }
 
 
@@ -59,12 +59,12 @@
   // ================================================
 
   .testimonial-content {
-    width: 100%;
-    max-width: 1100px;
+	width: 100%;
+	max-width: 1100px;
 
-    margin: 0 auto;
+	margin: 0 auto;
 
-    text-align: center;
+	text-align: center;
   }
 
 
@@ -73,21 +73,21 @@
   // ================================================
 
   .testimonial-quote {
-    width: 100%;
-    max-width: 1000px;
+	width: 100%;
+	max-width: 1000px;
 
-    margin: 0 auto;
+	margin: 0 auto;
 
-    color: #fff;
+	color: #fff;
 
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(42px, 5.2vw, 70px);
-    font-weight: 400;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: clamp(42px, 5.2vw, 70px);
+	font-weight: 400;
 
-    line-height: 0.98;
-    letter-spacing: -0.045em;
+	line-height: 0.98;
+	letter-spacing: -0.045em;
 
-    text-align: center;
+	text-align: center;
   }
 
 
@@ -96,47 +96,47 @@
   // ================================================
 
   .testimonial-user {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-    gap: 14px;
+	gap: 14px;
 
-    margin-top: 42px;
+	margin-top: 42px;
 
-    text-align: left;
+	text-align: left;
 
-    img {
-      width: 48px;
-      height: 48px;
+	img {
+	  width: 48px;
+	  height: 48px;
 
-      flex-shrink: 0;
+	  flex-shrink: 0;
 
-      border-radius: 50%;
-      object-fit: cover;
-    }
+	  border-radius: 50%;
+	  object-fit: cover;
+	}
   }
 
   .testimonial-user-info {
 
-    h4 {
-      margin: 0 0 4px;
+	h4 {
+	  margin: 0 0 4px;
 
-      color: #fff;
+	  color: #fff;
 
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.2;
-    }
+	  font-size: 14px;
+	  font-weight: 700;
+	  line-height: 1.2;
+	}
 
-    span {
-      display: block;
+	span {
+	  display: block;
 
-      color: rgba(255, 255, 255, 0.75);
+	  color: rgba(255, 255, 255, 0.75);
 
-      font-size: 12px;
-      line-height: 1.3;
-    }
+	  font-size: 12px;
+	  line-height: 1.3;
+	}
   }
 
 
@@ -145,27 +145,27 @@
   // ================================================
 
   .swiper-pagination {
-    position: relative;
+	position: relative;
 
-    left: auto;
-    right: auto;
-    bottom: auto;
+	left: auto;
+	right: auto;
+	bottom: auto;
 
 
-    .swiper-pagination-bullet {
-      width: 7px;
-      height: 7px;
+	.swiper-pagination-bullet {
+	  width: 7px;
+	  height: 7px;
 
-      margin: 0 5px;
+	  margin: 0 5px;
 
-      background: rgba(255, 255, 255, 0.4);
+	  background: rgba(255, 255, 255, 0.4);
 
-      opacity: 1;
-    }
+	  opacity: 1;
+	}
 
-    .swiper-pagination-bullet-active {
-      background: #fff;
-    }
+	.swiper-pagination-bullet-active {
+	  background: #fff;
+	}
   }
 
 
@@ -174,11 +174,11 @@
   // ================================================
 
   @media (max-width: 991px) {
-    padding: 90px 20px 65px;
+	padding: 90px 20px 65px;
 
-    .testimonial-quote {
-      max-width: 850px;
-    }
+	.testimonial-quote {
+	  max-width: 850px;
+	}
   }
 
 
@@ -187,28 +187,28 @@
   // ================================================
 
   @media (max-width: 768px) {
-    padding: 75px 20px 55px;
+	padding: 75px 20px 55px;
 
-    > .testimonial-label {
-      font-size: 11px;
-    }
+	> .testimonial-label {
+	  font-size: 11px;
+	}
 
-    .testimonial-quote {
-      max-width: 650px;
+	.testimonial-quote {
+	  max-width: 650px;
 
-      font-size: clamp(34px, 9vw, 50px);
-      line-height: 1;
+	  font-size: clamp(34px, 9vw, 50px);
+	  line-height: 1;
 
-      letter-spacing: -0.035em;
-    }
+	  letter-spacing: -0.035em;
+	}
 
-    .testimonial-user {
-      margin-top: 30px;
-    }
+	.testimonial-user {
+	  margin-top: 30px;
+	}
 
-    .swiper-pagination {
-      margin-top: 35px;
-    }
+	.swiper-pagination {
+	  margin-top: 35px;
+	}
   }
 
 
@@ -217,29 +217,29 @@
   // ================================================
 
   @media (max-width: 480px) {
-    padding: 65px 18px 50px;
+	padding: 65px 18px 50px;
 
-    .testimonial-quote {
-      font-size: 34px;
-    }
+	.testimonial-quote {
+	  font-size: 34px;
+	}
 
-    .testimonial-user {
+	.testimonial-user {
 
-      img {
-        width: 44px;
-        height: 44px;
-      }
-    }
+	  img {
+		width: 44px;
+		height: 44px;
+	  }
+	}
 
-    .testimonial-user-info {
+	.testimonial-user-info {
 
-      h4 {
-        font-size: 13px;
-      }
+	  h4 {
+		font-size: 13px;
+	  }
 
-      span {
-        font-size: 11px;
-      }
-    }
+	  span {
+		font-size: 11px;
+	  }
+	}
   }
 }

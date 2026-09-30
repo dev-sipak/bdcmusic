@@ -18,19 +18,18 @@
  */
 
 if ( ! defined( 'SERVICE_FIELDS_LOADED' ) ) {
-    define( 'SERVICE_FIELDS_LOADED', true );
+	define( 'SERVICE_FIELDS_LOADED', true );
 }
 
-// ─── Unlock rule ──────────────────────────────────────────────────
+// Unlock rule
 //
-// A purchased service only unlocks its customer-facing section once at least
-// one of its bookings reaches a "required / completed" status. This reuses the
-// existing bookings.status enum, so no schema change is involved: 'processing'
-// (work under way) and 'delivered' (work finished) both unlock the section,
-// while 'pending', 'hold' and 'cancelled' keep it locked.
+// A purchased service unlocks its customer-facing section once one of its
+// bookings reaches a "required / completed" status. This reuses the existing
+// bookings.status enum, so no schema change is involved: 'processing' and
+// 'delivered' unlock the section, while 'pending', 'hold' and 'cancelled' do not.
 
 if ( ! defined( 'SERVICE_UNLOCK_STATUSES' ) ) {
-    define( 'SERVICE_UNLOCK_STATUSES', array( 'processing', 'delivered' ) );
+	define( 'SERVICE_UNLOCK_STATUSES', array( 'processing', 'delivered' ) );
 }
 
 /**
@@ -40,7 +39,7 @@ if ( ! defined( 'SERVICE_UNLOCK_STATUSES' ) ) {
  * @return bool
  */
 function service_status_unlocks( $status ) {
-    return in_array( strtolower( (string) $status ), SERVICE_UNLOCK_STATUSES, true );
+	return in_array( strtolower( (string) $status ), SERVICE_UNLOCK_STATUSES, true );
 }
 
 /**
@@ -49,165 +48,165 @@ function service_status_unlocks( $status ) {
  * @return array
  */
 function service_definitions() {
-    static $defs = null;
+	static $defs = null;
 
-    if ( $defs !== null ) {
-        return $defs;
-    }
+	if ( $defs !== null ) {
+		return $defs;
+	}
 
-    $defs = array(
+	$defs = array(
 
-        // ── BDC Artists Marketplace ──────────────────────────────
-        'artists-marketplace' => array(
-            'nav'   => 'Artists Marketplace',
-            'icon'  => 'fa-star',
-            'blurb' => 'Your artist booking, the artist assigned to you, and the event arrangements for the date.',
-            // bookings.meta keys, in display order.
-            'meta'  => array(
-                array( 'key' => 'artist_goal', 'label' => 'Artist Goal', 'type' => 'text' ),
-                array( 'key' => 'artist_category', 'label' => 'Category', 'type' => 'text' ),
-                array( 'key' => 'event_type', 'label' => 'Event Type', 'type' => 'text' ),
-                array( 'key' => 'event_date', 'label' => 'Event Date', 'type' => 'date' ),
-                array( 'key' => 'event_location', 'label' => 'Event Location', 'type' => 'text' ),
-                array( 'key' => 'budget', 'label' => 'Budget', 'type' => 'text' ),
-            ),
-            // Meaning of the service_records columns for this service.
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Assigned Artist',      'icon' => 'fa-user' ),
-                'sub_headline' => array( 'label' => 'Role / Package',       'icon' => 'fa-tag' ),
-                'location'     => array( 'label' => 'Event Venue / City',   'icon' => 'fa-location-dot' ),
-                'starts_on'    => array( 'label' => 'Event Date',           'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Booking Close Date',   'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Confirmed', 'Shortlisting', 'Profile Shared', 'Booking Confirmed', 'Completed' ),
-        ),
+		// BDC Artists Marketplace
+		'artists-marketplace' => array(
+			'nav'   => 'Artists Marketplace',
+			'icon'  => 'star',
+			'blurb' => 'Your artist booking, the artist assigned to you, and the event arrangements for the date.',
+			// bookings.meta keys, in display order.
+			'meta'  => array(
+				array( 'key' => 'artist_goal', 'label' => 'Artist Goal', 'type' => 'text' ),
+				array( 'key' => 'artist_category', 'label' => 'Category', 'type' => 'text' ),
+				array( 'key' => 'event_type', 'label' => 'Event Type', 'type' => 'text' ),
+				array( 'key' => 'event_date', 'label' => 'Event Date', 'type' => 'date' ),
+				array( 'key' => 'event_location', 'label' => 'Event Location', 'type' => 'text' ),
+				array( 'key' => 'budget', 'label' => 'Budget', 'type' => 'text' ),
+			),
+			// Meaning of the service_records columns for this service.
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Assigned Artist',      'icon' => 'user' ),
+				'sub_headline' => array( 'label' => 'Role / Package',       'icon' => 'tag' ),
+				'location'     => array( 'label' => 'Event Venue / City',   'icon' => 'map-pin' ),
+				'starts_on'    => array( 'label' => 'Event Date',           'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Booking Close Date',   'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Confirmed', 'Shortlisting', 'Profile Shared', 'Booking Confirmed', 'Completed' ),
+		),
 
-        // ── Audio & Video Services ────────────────────────────────
-        'audio-video' => array(
-            'nav'   => 'Audio & Video',
-            'icon'  => 'fa-film',
-            'blurb' => 'Your project scope, the production schedule, and the delivery link for the finished files.',
-            'meta'  => array(
-                array( 'key' => 'service_category', 'label' => 'Category',         'type' => 'text' ),
-                array( 'key' => 'service_type',      'label' => 'Service Type',     'type' => 'text' ),
-                array( 'key' => 'budget',            'label' => 'Budget',           'type' => 'text' ),
-                array( 'key' => 'deadline',          'label' => 'Deadline',         'type' => 'text' ),
-                array( 'key' => 'delivery_formats',  'label' => 'Delivery Formats', 'type' => 'list' ),
-            ),
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Deliverable',        'icon' => 'fa-box-open' ),
-                'sub_headline' => array( 'label' => 'Package',            'icon' => 'fa-tag' ),
-                'location'     => array( 'label' => 'Delivery Link',      'icon' => 'fa-cloud-arrow-down' ),
-                'starts_on'    => array( 'label' => 'Expected Start',     'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Expected Delivery',  'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Confirmed', 'Scheduled', 'In Production', 'Editing', 'Delivered' ),
-        ),
+		// Audio & Video Services
+		'audio-video' => array(
+			'nav'   => 'Audio & Video',
+			'icon'  => 'film',
+			'blurb' => 'Your project scope, the production schedule, and the delivery link for the finished files.',
+			'meta'  => array(
+				array( 'key' => 'service_category', 'label' => 'Category',         'type' => 'text' ),
+				array( 'key' => 'service_type',      'label' => 'Service Type',     'type' => 'text' ),
+				array( 'key' => 'budget',            'label' => 'Budget',           'type' => 'text' ),
+				array( 'key' => 'deadline',          'label' => 'Deadline',         'type' => 'text' ),
+				array( 'key' => 'delivery_formats',  'label' => 'Delivery Formats', 'type' => 'list' ),
+			),
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Deliverable',        'icon' => 'package-open' ),
+				'sub_headline' => array( 'label' => 'Package',            'icon' => 'tag' ),
+				'location'     => array( 'label' => 'Delivery Link',      'icon' => 'cloud-download' ),
+				'starts_on'    => array( 'label' => 'Expected Start',     'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Expected Delivery',  'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Confirmed', 'Scheduled', 'In Production', 'Editing', 'Delivered' ),
+		),
 
-        // ── Online/Offline Classes ────────────────────────────────
-        'online-offline-classes' => array(
-            'nav'   => 'Classes',
-            'icon'  => 'fa-graduation-cap',
-            'blurb' => 'Your batch, faculty, class schedule, and the join link for each mode of class.',
-            'meta'  => array(
-                array( 'key' => 'selected_course', 'label' => 'Course',      'type' => 'text' ),
-                array( 'key' => 'selected_plan',   'label' => 'Plan',        'type' => 'text' ),
-                array( 'key' => 'course',          'label' => 'Course',      'type' => 'text' ),
-                array( 'key' => 'level',           'label' => 'Level',       'type' => 'text' ),
-                array( 'key' => 'class_mode',      'label' => 'Class Mode',  'type' => 'text' ),
-                array( 'key' => 'age',             'label' => 'Age',         'type' => 'text' ),
-            ),
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Batch & Faculty',     'icon' => 'fa-chalkboard-user' ),
-                'sub_headline' => array( 'label' => 'Level',               'icon' => 'fa-signal' ),
-                'location'     => array( 'label' => 'Class Link / Venue',  'icon' => 'fa-video' ),
-                'starts_on'    => array( 'label' => 'Batch Start',         'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Batch End',           'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Enrolled', 'Scheduled', 'Ongoing', 'Completed' ),
-        ),
+		// Online/Offline Classes
+		'online-offline-classes' => array(
+			'nav'   => 'Classes',
+			'icon'  => 'graduation-cap',
+			'blurb' => 'Your batch, faculty, class schedule, and the join link for each mode of class.',
+			'meta'  => array(
+				array( 'key' => 'selected_course', 'label' => 'Course',      'type' => 'text' ),
+				array( 'key' => 'selected_plan',   'label' => 'Plan',        'type' => 'text' ),
+				array( 'key' => 'course',          'label' => 'Course',      'type' => 'text' ),
+				array( 'key' => 'level',           'label' => 'Level',       'type' => 'text' ),
+				array( 'key' => 'class_mode',      'label' => 'Class Mode',  'type' => 'text' ),
+				array( 'key' => 'age',             'label' => 'Age',         'type' => 'text' ),
+			),
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Batch & Faculty',     'icon' => 'presentation' ),
+				'sub_headline' => array( 'label' => 'Level',               'icon' => 'signal' ),
+				'location'     => array( 'label' => 'Class Link / Venue',  'icon' => 'video' ),
+				'starts_on'    => array( 'label' => 'Batch Start',         'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Batch End',           'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Enrolled', 'Scheduled', 'Ongoing', 'Completed' ),
+		),
 
-        // ── Digital Music Distribution ────────────────────────────
-        // This service has its own customer page (dashboard/releases.php) because
-        // it is release-centric rather than order-centric. The arrangement rows
-        // below are still available so admin can attach a distributor reference
-        // or delivery dashboard link to a distribution order.
-        'digital-distribution' => array(
-            'nav'   => 'My Releases',
-            'icon'  => 'fa-compact-disc',
-            'blurb' => 'Your albums, singles and EPs with their tracks and live platform links.',
-            'meta'  => array(
-                array( 'key' => 'release_title',  'label' => 'Release Title',   'type' => 'text' ),
-                array( 'key' => 'release_type',   'label' => 'Release Type',   'type' => 'text' ),
-                array( 'key' => 'artist_name',    'label' => 'Artist',         'type' => 'text' ),
-                array( 'key' => 'genre',          'label' => 'Genre',          'type' => 'text' ),
-                array( 'key' => 'language',       'label' => 'Language',       'type' => 'text' ),
-                array( 'key' => 'release_date',   'label' => 'Release Date',   'type' => 'date' ),
-                array( 'key' => 'isrc',           'label' => 'ISRC',           'type' => 'text' ),
-                array( 'key' => 'upc',            'label' => 'UPC',            'type' => 'text' ),
-                array( 'key' => 'copyright_help', 'label' => 'Copyright Help', 'type' => 'text' ),
-            ),
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Distributor Reference', 'icon' => 'fa-barcode' ),
-                'sub_headline' => array( 'label' => 'Label / Partner',        'icon' => 'fa-tag' ),
-                'location'     => array( 'label' => 'Delivery Dashboard',    'icon' => 'fa-chart-line' ),
-                'starts_on'    => array( 'label' => 'Submission Date',       'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Live Date',             'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Received', 'Metadata Review', 'Approved', 'Distributing', 'Delivered' ),
-        ),
+		// Digital Music Distribution
+// This service has its own customer page (dashboard/releases.php) because it is
+// release-centric rather than order-centric. The arrangement rows below are
+// still available so admin can attach a distributor reference or delivery
+// dashboard link to a distribution order.
+		'digital-distribution' => array(
+			'nav'   => 'My Releases',
+			'icon'  => 'disc',
+			'blurb' => 'Your albums, singles and EPs with their tracks and live platform links.',
+			'meta'  => array(
+				array( 'key' => 'release_title',  'label' => 'Release Title',   'type' => 'text' ),
+				array( 'key' => 'release_type',   'label' => 'Release Type',   'type' => 'text' ),
+				array( 'key' => 'artist_name',    'label' => 'Artist',         'type' => 'text' ),
+				array( 'key' => 'genre',          'label' => 'Genre',          'type' => 'text' ),
+				array( 'key' => 'language',       'label' => 'Language',       'type' => 'text' ),
+				array( 'key' => 'release_date',   'label' => 'Release Date',   'type' => 'date' ),
+				array( 'key' => 'isrc',           'label' => 'ISRC',           'type' => 'text' ),
+				array( 'key' => 'upc',            'label' => 'UPC',            'type' => 'text' ),
+				array( 'key' => 'copyright_help', 'label' => 'Copyright Help', 'type' => 'text' ),
+			),
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Distributor Reference', 'icon' => 'barcode' ),
+				'sub_headline' => array( 'label' => 'Label / Partner',        'icon' => 'tag' ),
+				'location'     => array( 'label' => 'Delivery Dashboard',    'icon' => 'chart-line' ),
+				'starts_on'    => array( 'label' => 'Submission Date',       'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Live Date',             'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Received', 'Metadata Review', 'Approved', 'Distributing', 'Delivered' ),
+		),
 
-        // ── Promotion Services ────────────────────────────────────
-        'promotion' => array(
-            'nav'   => 'Promotion',
-            'icon'  => 'fa-bullhorn',
-            'blurb' => 'Your campaign scope, campaign schedule, and the performance report link.',
-            'meta'  => array(
-                array( 'key' => 'campaign_type',    'label' => 'Campaign Type',    'type' => 'text' ),
-                array( 'key' => 'target_platform',  'label' => 'Target Platform',  'type' => 'text' ),
-                array( 'key' => 'budget',           'label' => 'Budget',           'type' => 'text' ),
-                array( 'key' => 'release_title',    'label' => 'Release / Content','type' => 'text' ),
-                array( 'key' => 'campaign_duration','label' => 'Duration',         'type' => 'text' ),
-            ),
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Campaign',             'icon' => 'fa-bullhorn' ),
-                'sub_headline' => array( 'label' => 'Campaign Type',        'icon' => 'fa-tag' ),
-                'location'     => array( 'label' => 'Report / Result Link', 'icon' => 'fa-file-lines' ),
-                'starts_on'    => array( 'label' => 'Campaign Start',       'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Campaign End',         'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Brief Received', 'Campaign Planning', 'Campaign Live', 'Reporting', 'Completed' ),
-        ),
+		// Promotion Services
+		'promotion' => array(
+			'nav'   => 'Promotion',
+			'icon'  => 'megaphone',
+			'blurb' => 'Your campaign scope, campaign schedule, and the performance report link.',
+			'meta'  => array(
+				array( 'key' => 'campaign_type',    'label' => 'Campaign Type',    'type' => 'text' ),
+				array( 'key' => 'target_platform',  'label' => 'Target Platform',  'type' => 'text' ),
+				array( 'key' => 'budget',           'label' => 'Budget',           'type' => 'text' ),
+				array( 'key' => 'release_title',    'label' => 'Release / Content','type' => 'text' ),
+				array( 'key' => 'campaign_duration','label' => 'Duration',         'type' => 'text' ),
+			),
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Campaign',             'icon' => 'megaphone' ),
+				'sub_headline' => array( 'label' => 'Campaign Type',        'icon' => 'tag' ),
+				'location'     => array( 'label' => 'Report / Result Link', 'icon' => 'file-text' ),
+				'starts_on'    => array( 'label' => 'Campaign Start',       'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Campaign End',         'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Brief Received', 'Campaign Planning', 'Campaign Live', 'Reporting', 'Completed' ),
+		),
 
-        // ── IPRS Services ─────────────────────────────────────────
-        'iprs' => array(
-            'nav'   => 'IPRS',
-            'icon'  => 'fa-copyright',
-            'blurb' => 'Your IPRS application, membership type, and the registration number once issued.',
-            'meta'  => array(
-                array( 'key' => 'applicant_type',  'label' => 'Applicant Type',  'type' => 'text' ),
-                array( 'key' => 'membership_type', 'label' => 'Membership Type', 'type' => 'text' ),
-                array( 'key' => 'song_title',      'label' => 'Song / Work Title','type' => 'text' ),
-                array( 'key' => 'artist_name',     'label' => 'Artist / Author',  'type' => 'text' ),
-                array( 'key' => 'song_released',   'label' => 'Already Released', 'type' => 'text' ),
-                array( 'key' => 'song_links',      'label' => 'Song Links',       'type' => 'text' ),
-                array( 'key' => 'account_holder',  'label' => 'Account Holder',   'type' => 'text' ),
-                array( 'key' => 'account_number',  'label' => 'Account Number',   'type' => 'text' ),
-                array( 'key' => 'bank_name',       'label' => 'Bank Name',        'type' => 'text' ),
-                array( 'key' => 'ifsc',            'label' => 'IFSC',             'type' => 'text' ),
-            ),
-            'arrangement' => array(
-                'headline'     => array( 'label' => 'Registration Number',   'icon' => 'fa-hashtag' ),
-                'sub_headline' => array( 'label' => 'Membership Type',      'icon' => 'fa-id-card' ),
-                'location'     => array( 'label' => 'Registered Work / Link','icon' => 'fa-link' ),
-                'starts_on'    => array( 'label' => 'Applied On',           'icon' => 'fa-calendar' ),
-                'ends_on'      => array( 'label' => 'Registered On',        'icon' => 'fa-calendar' ),
-            ),
-            'progress' => array( 'Application Received', 'Under Review', 'Submitted to IPRS', 'Registered', 'Completed' ),
-        ),
-    );
+		// IPRS Services
+		'iprs' => array(
+			'nav'   => 'IPRS',
+			'icon'  => 'copyright',
+			'blurb' => 'Your IPRS application, membership type, and the registration number once issued.',
+			'meta'  => array(
+				array( 'key' => 'applicant_type',  'label' => 'Applicant Type',  'type' => 'text' ),
+				array( 'key' => 'membership_type', 'label' => 'Membership Type', 'type' => 'text' ),
+				array( 'key' => 'song_title',      'label' => 'Song / Work Title','type' => 'text' ),
+				array( 'key' => 'artist_name',     'label' => 'Artist / Author',  'type' => 'text' ),
+				array( 'key' => 'song_released',   'label' => 'Already Released', 'type' => 'text' ),
+				array( 'key' => 'song_links',      'label' => 'Song Links',       'type' => 'text' ),
+				array( 'key' => 'account_holder',  'label' => 'Account Holder',   'type' => 'text' ),
+				array( 'key' => 'account_number',  'label' => 'Account Number',   'type' => 'text' ),
+				array( 'key' => 'bank_name',       'label' => 'Bank Name',        'type' => 'text' ),
+				array( 'key' => 'ifsc',            'label' => 'IFSC',             'type' => 'text' ),
+			),
+			'arrangement' => array(
+				'headline'     => array( 'label' => 'Registration Number',   'icon' => 'hash' ),
+				'sub_headline' => array( 'label' => 'Membership Type',      'icon' => 'contact' ),
+				'location'     => array( 'label' => 'Registered Work / Link','icon' => 'link' ),
+				'starts_on'    => array( 'label' => 'Applied On',           'icon' => 'calendar' ),
+				'ends_on'      => array( 'label' => 'Registered On',        'icon' => 'calendar' ),
+			),
+			'progress' => array( 'Application Received', 'Under Review', 'Submitted to IPRS', 'Registered', 'Completed' ),
+		),
+	);
 
-    return $defs;
+	return $defs;
 }
 
 /**
@@ -217,8 +216,8 @@ function service_definitions() {
  * @return array|null Null when the slug is not a known service.
  */
 function service_definition( $slug ) {
-    $defs = service_definitions();
-    return $defs[ $slug ] ?? null;
+	$defs = service_definitions();
+	return $defs[ $slug ] ?? null;
 }
 
 /**
@@ -228,8 +227,8 @@ function service_definition( $slug ) {
  * @return string Falls back to the slug itself for unknown services.
  */
 function service_nav_label( $slug ) {
-    $def = service_definition( $slug );
-    return $def['nav'] ?? $slug;
+	$def = service_definition( $slug );
+	return $def['nav'] ?? $slug;
 }
 
 /**
@@ -239,8 +238,8 @@ function service_nav_label( $slug ) {
  * @return string
  */
 function service_nav_icon( $slug ) {
-    $def = service_definition( $slug );
-    return $def['icon'] ?? 'fa-circle';
+	$def = service_definition( $slug );
+	return $def['icon'] ?? 'circle';
 }
 
 /**
@@ -250,8 +249,8 @@ function service_nav_icon( $slug ) {
  * @return array List of array( 'key', 'label', 'type' ).
  */
 function service_meta_fields( $slug ) {
-    $def = service_definition( $slug );
-    return $def['meta'] ?? array();
+	$def = service_definition( $slug );
+	return $def['meta'] ?? array();
 }
 
 /**
@@ -261,8 +260,8 @@ function service_meta_fields( $slug ) {
  * @return array Map of column => array( 'label', 'icon' ).
  */
 function service_arrangement_fields( $slug ) {
-    $def = service_definition( $slug );
-    return $def['arrangement'] ?? array();
+	$def = service_definition( $slug );
+	return $def['arrangement'] ?? array();
 }
 
 /**
@@ -272,8 +271,8 @@ function service_arrangement_fields( $slug ) {
  * @return array
  */
 function service_progress_options( $slug ) {
-    $def = service_definition( $slug );
-    return $def['progress'] ?? array( 'Confirmed', 'In Progress', 'Completed' );
+	$def = service_definition( $slug );
+	return $def['progress'] ?? array( 'Confirmed', 'In Progress', 'Completed' );
 }
 
 /**
@@ -283,8 +282,8 @@ function service_progress_options( $slug ) {
  * @return string
  */
 function service_blurb( $slug ) {
-    $def = service_definition( $slug );
-    return $def['blurb'] ?? '';
+	$def = service_definition( $slug );
+	return $def['blurb'] ?? '';
 }
 
 /**
@@ -297,21 +296,21 @@ function service_blurb( $slug ) {
  * @return string Empty string when there is nothing to show.
  */
 function service_meta_display( $value ) {
-    if ( is_array( $value ) ) {
-        $parts = array();
-        foreach ( $value as $item ) {
-            if ( is_array( $item ) ) {
-                $item = implode( ', ', array_filter( $item, 'is_scalar' ) );
-            }
-            $item = trim( (string) $item );
-            if ( $item !== '' ) {
-                $parts[] = $item;
-            }
-        }
-        return implode( ', ', $parts );
-    }
+	if ( is_array( $value ) ) {
+		$parts = array();
+		foreach ( $value as $item ) {
+			if ( is_array( $item ) ) {
+				$item = implode( ', ', array_filter( $item, 'is_scalar' ) );
+			}
+			$item = trim( (string) $item );
+			if ( $item !== '' ) {
+				$parts[] = $item;
+			}
+		}
+		return implode( ', ', $parts );
+	}
 
-    return trim( (string) $value );
+	return trim( (string) $value );
 }
 
 /**
@@ -321,7 +320,7 @@ function service_meta_display( $value ) {
  * @return string
  */
 function service_status_label( $status ) {
-    return ucfirst( (string) $status );
+	return ucfirst( (string) $status );
 }
 
 /**
@@ -340,37 +339,37 @@ function service_status_label( $status ) {
  * @return array List of array( 'label', 'value', 'type' ).
  */
 function service_meta_pairs( $slug, $meta ) {
-    $meta = is_array( $meta ) ? $meta : array();
-    $pairs = array();
-    $known = array();
+	$meta = is_array( $meta ) ? $meta : array();
+	$pairs = array();
+	$known = array();
 
-    foreach ( service_meta_fields( $slug ) as $field ) {
-        $known[] = $field['key'];
-        $value   = service_meta_display( $meta[ $field['key'] ] ?? '' );
-        if ( $value === '' ) {
-            continue;
-        }
-        $pairs[] = array(
-            'label' => $field['label'],
-            'value' => $value,
-            'type'  => $field['type'] ?? 'text',
-        );
-    }
+	foreach ( service_meta_fields( $slug ) as $field ) {
+		$known[] = $field['key'];
+		$value   = service_meta_display( $meta[ $field['key'] ] ?? '' );
+		if ( $value === '' ) {
+			continue;
+		}
+		$pairs[] = array(
+			'label' => $field['label'],
+			'value' => $value,
+			'type'  => $field['type'] ?? 'text',
+		);
+	}
 
-    foreach ( $meta as $key => $value ) {
-        if ( in_array( $key, $known, true ) ) {
-            continue;
-        }
-        $value = service_meta_display( $value );
-        if ( $value === '' ) {
-            continue;
-        }
-        $pairs[] = array(
-            'label' => ucwords( str_replace( '_', ' ', (string) $key ) ),
-            'value' => $value,
-            'type'  => 'text',
-        );
-    }
+	foreach ( $meta as $key => $value ) {
+		if ( in_array( $key, $known, true ) ) {
+			continue;
+		}
+		$value = service_meta_display( $value );
+		if ( $value === '' ) {
+			continue;
+		}
+		$pairs[] = array(
+			'label' => ucwords( str_replace( '_', ' ', (string) $key ) ),
+			'value' => $value,
+			'type'  => 'text',
+		);
+	}
 
-    return $pairs;
+	return $pairs;
 }

@@ -25,7 +25,7 @@
  */
 
 if ( ! defined( 'BOOKING_CATALOG_LOADED' ) ) {
-    define( 'BOOKING_CATALOG_LOADED', true );
+	define( 'BOOKING_CATALOG_LOADED', true );
 }
 
 require_once __DIR__ . '/database.php';
@@ -38,16 +38,16 @@ require_once __DIR__ . '/helpers.php';
  * @return array List of service rows: id, slug, name, booking_mode, price_note.
  */
 function booking_services( $pdb = null ) {
-    $pdb = $pdb ? $pdb : db_connect();
+	$pdb = $pdb ? $pdb : db_connect();
 
-    $stmt = $pdb->query(
-        'SELECT id, slug, name, booking_mode, price_note
+	$stmt = $pdb->query(
+		'SELECT id, slug, name, booking_mode, price_note
          FROM services
          WHERE is_active = 1
          ORDER BY id'
-    );
+	);
 
-    return $stmt->fetchAll();
+	return $stmt->fetchAll();
 }
 
 /**
@@ -59,19 +59,19 @@ function booking_services( $pdb = null ) {
  * @return array|null
  */
 function booking_service( $pdb, $slug, $activeOnly = true ) {
-    $sql = 'SELECT id, slug, name, booking_mode, price_note
+	$sql = 'SELECT id, slug, name, booking_mode, price_note
             FROM services
             WHERE slug = :slug';
-    if ( $activeOnly ) {
-        $sql .= ' AND is_active = 1';
-    }
-    $sql .= ' LIMIT 1';
+	if ( $activeOnly ) {
+		$sql .= ' AND is_active = 1';
+	}
+	$sql .= ' LIMIT 1';
 
-    $stmt = $pdb->prepare( $sql );
-    $stmt->execute( array( ':slug' => (string) $slug ) );
-    $row = $stmt->fetch();
+	$stmt = $pdb->prepare( $sql );
+	$stmt->execute( array( ':slug' => (string) $slug ) );
+	$row = $stmt->fetch();
 
-    return $row ? $row : null;
+	return $row ? $row : null;
 }
 
 /**
@@ -81,7 +81,7 @@ function booking_service( $pdb, $slug, $activeOnly = true ) {
  * @return bool
  */
 function booking_is_quote_mode( $service ) {
-    return isset( $service['booking_mode'] ) && $service['booking_mode'] === 'quote';
+	return isset( $service['booking_mode'] ) && $service['booking_mode'] === 'quote';
 }
 
 /**
@@ -97,19 +97,19 @@ function booking_is_quote_mode( $service ) {
  * @return array|null
  */
 function booking_service_by_id( $pdb, $serviceId, $activeOnly = true ) {
-    $sql = 'SELECT id, slug, name, booking_mode, price_note
+	$sql = 'SELECT id, slug, name, booking_mode, price_note
             FROM services
             WHERE id = :id';
-    if ( $activeOnly ) {
-        $sql .= ' AND is_active = 1';
-    }
-    $sql .= ' LIMIT 1';
+	if ( $activeOnly ) {
+		$sql .= ' AND is_active = 1';
+	}
+	$sql .= ' LIMIT 1';
 
-    $stmt = $pdb->prepare( $sql );
-    $stmt->execute( array( ':id' => (int) $serviceId ) );
-    $row = $stmt->fetch();
+	$stmt = $pdb->prepare( $sql );
+	$stmt->execute( array( ':id' => (int) $serviceId ) );
+	$row = $stmt->fetch();
 
-    return $row ? $row : null;
+	return $row ? $row : null;
 }
 
 /**
@@ -127,11 +127,11 @@ function booking_service_by_id( $pdb, $serviceId, $activeOnly = true ) {
  * @return bool
  */
 function booking_service_allows_multi_plan( $service ) {
-    if ( ! $service || booking_is_quote_mode( $service ) ) {
-        return false;
-    }
+	if ( ! $service || booking_is_quote_mode( $service ) ) {
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 /**
@@ -147,9 +147,9 @@ function booking_service_allows_multi_plan( $service ) {
  * @return string 'Audio' or 'Video'.
  */
 function booking_av_group_category( $groupKey ) {
-    static $audio = array( 'recording', 'music-production', 'mixing', 'mastering' );
+	static $audio = array( 'recording', 'music-production', 'mixing', 'mastering' );
 
-    return in_array( (string) $groupKey, $audio, true ) ? 'Audio' : 'Video';
+	return in_array( (string) $groupKey, $audio, true ) ? 'Audio' : 'Video';
 }
 
 /**
@@ -164,31 +164,30 @@ function booking_av_group_category( $groupKey ) {
  * @return array List of array( 'key' => string, 'label' => string ).
  */
 function booking_plan_groups( $pdb, $serviceId ) {
-    // GROUP BY, not DISTINCT: the groups are ordered by the sort_order of their
-    // first plan, and an aggregate in ORDER BY over a DISTINCT result is an
-    // error under ONLY_FULL_GROUP_BY (ER_WRONG_FIELD_WITH_GROUP, 3029).
-    // group_label is identical for every plan in a group, so MIN() just picks
-    // that shared value back out.
-    $stmt = $pdb->prepare(
-        'SELECT group_key, MIN(group_label) AS group_label, MIN(sort_order) AS first_sort
+	// GROUP BY, not DISTINCT: the groups are ordered by the sort_order of their
+	// first plan, and an aggregate in ORDER BY over a DISTINCT result is an error
+	// under ONLY_FULL_GROUP_BY (ER_WRONG_FIELD_WITH_GROUP, 3029). group_label is
+	// identical for every plan in a group, so MIN() just picks it back out.
+	$stmt = $pdb->prepare(
+		'SELECT group_key, MIN(group_label) AS group_label, MIN(sort_order) AS first_sort
          FROM service_plans
          WHERE service_id = :sid AND is_active = 1
          GROUP BY group_key
          ORDER BY first_sort, group_key'
-    );
-    $stmt->execute( array( ':sid' => (int) $serviceId ) );
+	);
+	$stmt->execute( array( ':sid' => (int) $serviceId ) );
 
-    $groups = array();
-    foreach ( $stmt->fetchAll() as $row ) {
-        $groups[] = array(
-            'key'   => (string) $row['group_key'],
-            'label' => (string) ( $row['group_label'] !== null && $row['group_label'] !== ''
-                ? $row['group_label']
-                : $row['group_key'] ),
-        );
-    }
+	$groups = array();
+	foreach ( $stmt->fetchAll() as $row ) {
+		$groups[] = array(
+			'key'   => (string) $row['group_key'],
+			'label' => (string) ( $row['group_label'] !== null && $row['group_label'] !== ''
+				? $row['group_label']
+				: $row['group_key'] ),
+		);
+	}
 
-    return $groups;
+	return $groups;
 }
 
 /**
@@ -200,7 +199,7 @@ function booking_plan_groups( $pdb, $serviceId ) {
  * @return bool
  */
 function booking_has_plan_groups( $pdb, $serviceId ) {
-    return count( booking_plan_groups( $pdb, $serviceId ) ) > 1;
+	return count( booking_plan_groups( $pdb, $serviceId ) ) > 1;
 }
 
 /**
@@ -213,31 +212,31 @@ function booking_has_plan_groups( $pdb, $serviceId ) {
  * @return array List of plan rows with a decoded `features_list`.
  */
 function booking_plans( $pdb, $serviceId, $groupKey = '', $orderableOnly = false ) {
-    $sql = 'SELECT id, service_id, group_key, group_label, name, price, price_note,
+	$sql = 'SELECT id, service_id, group_key, group_label, name, price, price_note,
                    description, features, best_for, is_default, is_enquiry, is_orderable
             FROM service_plans
             WHERE service_id = :sid AND group_key = :grp AND is_active = 1';
 
-    if ( $orderableOnly ) {
-        $sql .= ' AND is_orderable = 1';
-    }
+	if ( $orderableOnly ) {
+		$sql .= ' AND is_orderable = 1';
+	}
 
-    $sql .= ' ORDER BY sort_order, id';
+	$sql .= ' ORDER BY sort_order, id';
 
-    $stmt = $pdb->prepare( $sql );
-    $stmt->execute( array(
-        ':sid' => (int) $serviceId,
-        ':grp' => (string) $groupKey,
-    ) );
+	$stmt = $pdb->prepare( $sql );
+	$stmt->execute( array(
+		':sid' => (int) $serviceId,
+		':grp' => (string) $groupKey,
+	) );
 
-    return booking_decode_plan_features( $stmt->fetchAll() );
+	return booking_decode_plan_features( $stmt->fetchAll() );
 }
 
 /**
  * Every active package a service publishes, across all of its groups.
  *
- * The related-packages block under the booking form needs one flat list, so
- * this is booking_plans() without the group filter.
+ * Used by the rate card, which needs one flat list: this is
+ * booking_plans() without the group filter.
  *
  * @param PDO  $pdb       Connection.
  * @param int  $serviceId services.id.
@@ -245,21 +244,21 @@ function booking_plans( $pdb, $serviceId, $groupKey = '', $orderableOnly = false
  * @return array List of plan rows with a decoded `features_list`.
  */
 function booking_service_plans( $pdb, $serviceId, $orderableOnly = false ) {
-    $sql = 'SELECT id, service_id, group_key, group_label, name, price, price_note,
+	$sql = 'SELECT id, service_id, group_key, group_label, name, price, price_note,
                    description, features, best_for, is_default, is_enquiry, is_orderable
             FROM service_plans
             WHERE service_id = :sid AND is_active = 1';
 
-    if ( $orderableOnly ) {
-        $sql .= ' AND is_orderable = 1';
-    }
+	if ( $orderableOnly ) {
+		$sql .= ' AND is_orderable = 1';
+	}
 
-    $sql .= ' ORDER BY sort_order, id';
+	$sql .= ' ORDER BY sort_order, id';
 
-    $stmt = $pdb->prepare( $sql );
-    $stmt->execute( array( ':sid' => (int) $serviceId ) );
+	$stmt = $pdb->prepare( $sql );
+	$stmt->execute( array( ':sid' => (int) $serviceId ) );
 
-    return booking_decode_plan_features( $stmt->fetchAll() );
+	return booking_decode_plan_features( $stmt->fetchAll() );
 }
 
 /**
@@ -276,23 +275,23 @@ function booking_service_plans( $pdb, $serviceId, $orderableOnly = false ) {
  * @return array|null A plan row, or null when nothing is on sale.
  */
 function booking_default_plan( $pdb, $serviceId ) {
-    $stmt = $pdb->prepare(
-        'SELECT id, service_id, group_key, group_label, name, price, price_note,
+	$stmt = $pdb->prepare(
+		'SELECT id, service_id, group_key, group_label, name, price, price_note,
                 description, features, best_for, is_default, is_enquiry, is_orderable
          FROM service_plans
          WHERE service_id = :sid AND is_active = 1
            AND is_enquiry = 0 AND is_orderable = 1
          ORDER BY is_default DESC, sort_order, id
          LIMIT 1'
-    );
-    $stmt->execute( array( ':sid' => (int) $serviceId ) );
-    $row = $stmt->fetch();
+	);
+	$stmt->execute( array( ':sid' => (int) $serviceId ) );
+	$row = $stmt->fetch();
 
-    if ( ! $row ) {
-        return null;
-    }
+	if ( ! $row ) {
+		return null;
+	}
 
-    return booking_decode_plan_features( array( $row ) )[0];
+	return booking_decode_plan_features( array( $row ) )[0];
 }
 
 /**
@@ -302,19 +301,19 @@ function booking_default_plan( $pdb, $serviceId ) {
  * @return array
  */
 function booking_decode_plan_features( $plans ) {
-    foreach ( $plans as $i => $plan ) {
-        $features = json_decode( (string) ( $plan['features'] ?? '' ), true );
-        $plans[ $i ]['features_list'] = is_array( $features )
-            ? array_values( array_filter( array_map( 'strval', $features ), 'strlen' ) )
-            : array();
-        $plans[ $i ]['price']      = (float) $plan['price'];
-        $plans[ $i ]['group_key']  = (string) $plan['group_key'];
-        $plans[ $i ]['price_note'] = (string) ( $plan['price_note'] ?? '' );
-        $plans[ $i ]['is_enquiry'] = ! empty( $plan['is_enquiry'] );
-        $plans[ $i ]['is_orderable'] = ! empty( $plan['is_orderable'] );
-    }
+	foreach ( $plans as $i => $plan ) {
+		$features = json_decode( (string) ( $plan['features'] ?? '' ), true );
+		$plans[ $i ]['features_list'] = is_array( $features )
+			? array_values( array_filter( array_map( 'strval', $features ), 'strlen' ) )
+			: array();
+		$plans[ $i ]['price']      = (float) $plan['price'];
+		$plans[ $i ]['group_key']  = (string) $plan['group_key'];
+		$plans[ $i ]['price_note'] = (string) ( $plan['price_note'] ?? '' );
+		$plans[ $i ]['is_enquiry'] = ! empty( $plan['is_enquiry'] );
+		$plans[ $i ]['is_orderable'] = ! empty( $plan['is_orderable'] );
+	}
 
-    return $plans;
+	return $plans;
 }
 
 /**
@@ -328,23 +327,23 @@ function booking_decode_plan_features( $plans ) {
  * @return array|null
  */
 function booking_plan( $pdb, $planId ) {
-    $stmt = $pdb->prepare(
-        'SELECT id, service_id, group_key, group_label, name, price, price_note,
+	$stmt = $pdb->prepare(
+		'SELECT id, service_id, group_key, group_label, name, price, price_note,
                 description, features, is_default, is_enquiry, is_orderable
          FROM service_plans
          WHERE id = :id AND is_active = 1
          LIMIT 1'
-    );
-    $stmt->execute( array( ':id' => (int) $planId ) );
-    $row = $stmt->fetch();
+	);
+	$stmt->execute( array( ':id' => (int) $planId ) );
+	$row = $stmt->fetch();
 
-    if ( ! $row ) {
-        return null;
-    }
+	if ( ! $row ) {
+		return null;
+	}
 
-    $decoded = booking_decode_plan_features( array( $row ) );
+	$decoded = booking_decode_plan_features( array( $row ) );
 
-    return $decoded[0];
+	return $decoded[0];
 }
 
 /**
@@ -378,106 +377,100 @@ function booking_plan( $pdb, $planId ) {
  *     @type array $service
  *     @type array|null $plan      The first line; kept for existing readers.
  *     @type array $plans          Every package line on the order.
- *     @type array $addons         Always empty; kept for existing readers.
  *     @type float $subtotal
- *     @type float $addons_total   Always 0; kept for existing readers.
+ *     @type float $addons_total   Always 0; the NOT NULL column, never a charge.
  *     @type float $total
  *     @type string $currency
  *     @type bool   $quote_mode
  * }
  */
 function booking_resolve_selection( $pdb, $slug, $groupKey, $planId, $addonIds = array(), $planIds = array() ) {
-    $service = booking_service( $pdb, $slug );
-    if ( ! $service ) {
-        return null;
-    }
+	$service = booking_service( $pdb, $slug );
+	if ( ! $service ) {
+		return null;
+	}
 
-    $serviceId = (int) $service['id'];
-    $groupKey  = (string) $groupKey;
-    $quoteMode = booking_is_quote_mode( $service );
+	$serviceId = (int) $service['id'];
+	$groupKey  = (string) $groupKey;
+	$quoteMode = booking_is_quote_mode( $service );
 
-    // The packages on this order. `plan_ids[]` is the multi-select form; a
-    // lone `plan_id` is the single-package form, which every existing caller
-    // still uses. Duplicates are dropped so one package can never be charged
-    // twice in the same order.
-    $requested = array();
-    foreach ( (array) $planIds as $id ) {
-        $requested[] = (int) $id;
-    }
-    if ( ! $requested && (int) $planId > 0 ) {
-        $requested[] = (int) $planId;
-    }
-    $requested = array_values( array_unique( array_filter( $requested ) ) );
+	// The packages on this order. `plan_ids[]` is the multi-select form; a lone
+	// `plan_id` is the single-package form every existing caller uses. Duplicates
+	// are dropped so one package can never be charged twice in the same order.
+	$requested = array();
+	foreach ( (array) $planIds as $id ) {
+		$requested[] = (int) $id;
+	}
+	if ( ! $requested && (int) $planId > 0 ) {
+		$requested[] = (int) $planId;
+	}
+	$requested = array_values( array_unique( array_filter( $requested ) ) );
 
-    $plans = array();
+	$plans = array();
 
-    if ( ! $quoteMode ) {
-        if ( ! $requested ) {
-            return null;
-        }
+	if ( ! $quoteMode ) {
+		if ( ! $requested ) {
+			return null;
+		}
 
-        foreach ( $requested as $id ) {
-            $plan = booking_plan( $pdb, $id );
-            if ( ! $plan ) {
-                return null;
-            }
+		foreach ( $requested as $id ) {
+			$plan = booking_plan( $pdb, $id );
+			if ( ! $plan ) {
+				return null;
+			}
 
-            // The package must belong to the service being booked ...
-            if ( (int) $plan['service_id'] !== $serviceId ) {
-                return null;
-            }
+			// The package must belong to the service being booked, and an enquiry tier
+			// is quoted, never sold, so it is refused rather than priced at its
+			// placeholder.
+			if ( (int) $plan['service_id'] !== $serviceId ) {
+				return null;
+			}
 
-            // ... an enquiry tier is quoted, never sold, so it is refused here
-            // rather than priced at its placeholder amount.
-            if ( ! empty( $plan['is_enquiry'] ) ) {
-                return null;
-            }
+			if ( ! empty( $plan['is_enquiry'] ) ) {
+				return null;
+			}
 
-            // ... and so is a plan published as a price list only. The A/V rate
-            // cards stay on the service page so the sub-service prices are
-            // visible, but nothing may buy one: hiding the button is the polite
-            // half, this is the half that stops a hand-crafted ?plan_id= or a
-            // posted plan_ids[] from pricing one anyway.
-            if ( empty( $plan['is_orderable'] ) ) {
-                return null;
-            }
+			// ... and so is a plan published as a price list only. The A/V rate cards
+			// stay on the service page for their prices, but nothing may buy one:
+			// hiding the button is the polite half, this stops a hand-crafted
+			// ?plan_id= or a posted plan_ids[] from pricing one anyway.
+			if ( empty( $plan['is_orderable'] ) ) {
+				return null;
+			}
 
-            // ... and, for a single-package order, to the group being booked,
-            // so a Classes customer cannot price a Singing package while the
-            // UI shows the Video Editing group. A multi-package order carries
-            // one group per line, so each line is checked against its own group
-            // by the service check above instead.
-            if ( count( $requested ) === 1 && (string) $plan['group_key'] !== $groupKey ) {
-                return null;
-            }
+			// ... and, for a single-package order, to the group being booked, so a
+			// Classes customer cannot price a Singing package while the UI shows the
+			// Video Editing group. A multi-package order carries one group per line,
+			// checked above.
+			if ( count( $requested ) === 1 && (string) $plan['group_key'] !== $groupKey ) {
+				return null;
+			}
 
-            $plans[] = $plan;
-        }
-    }
+			$plans[] = $plan;
+		}
+	}
 
-    // Every line is priced from the catalogue and summed in integer paise, so
-    // the order total is the sum of its lines with no float drift in between.
-    $subtotalPaise = 0;
-    foreach ( $plans as $selected ) {
-        $subtotalPaise += (int) round( (float) $selected['price'] * 100 );
-    }
+	// Every line is priced from the catalogue and summed in integer paise, so the
+	// order total is the sum of its lines with no float drift in between.
+	$subtotalPaise = 0;
+	foreach ( $plans as $selected ) {
+		$subtotalPaise += (int) round( (float) $selected['price'] * 100 );
+	}
 
-    // An order is a list of packages and nothing else, so there is no separate
-    // add-ons component. The keys stay because `bookings.addons_total` is a NOT
-    // NULL column and older orders still carry a non-zero figure in it; they are
-    // always 0 on anything created from here on.
-    return array(
-        'service'      => $service,
-        'plan'         => $plans ? $plans[0] : null,
-        'plans'        => $plans,
-        'addons'       => array(),
-        'subtotal'     => (float) ( $subtotalPaise / 100 ),
-        'addons_total' => 0.0,
-        'total'        => (float) ( $subtotalPaise / 100 ),
-        'total_paise'  => $subtotalPaise,
-        'currency'     => 'INR',
-        'quote_mode'   => $quoteMode,
-    );
+	// An order is a list of packages and nothing else. `addons_total` stays because
+	// `bookings.addons_total` is NOT NULL and older orders carry a figure in it; it
+	// is always 0 on anything created from here on.
+	return array(
+		'service'      => $service,
+		'plan'         => $plans ? $plans[0] : null,
+		'plans'        => $plans,
+		'subtotal'     => (float) ( $subtotalPaise / 100 ),
+		'addons_total' => 0.0,
+		'total'        => (float) ( $subtotalPaise / 100 ),
+		'total_paise'  => $subtotalPaise,
+		'currency'     => 'INR',
+		'quote_mode'   => $quoteMode,
+	);
 }
 
 /**
@@ -491,11 +484,11 @@ function booking_resolve_selection( $pdb, $slug, $groupKey, $planId, $addonIds =
  * @return string e.g. "Rs. 23,500" or "Rs. 199.50"
  */
 function booking_money( $amount ) {
-    $value = (float) $amount;
+	$value = (float) $amount;
 
-    return 'Rs. ' . ( fmod( $value, 1.0 ) === 0.0
-        ? number_format( $value, 0 )
-        : number_format( $value, 2 ) );
+	return 'Rs. ' . ( fmod( $value, 1.0 ) === 0.0
+		? number_format( $value, 0 )
+		: number_format( $value, 2 ) );
 }
 
 /**
@@ -505,7 +498,7 @@ function booking_money( $amount ) {
  * @return int
  */
 function booking_to_paise( $amount ) {
-    return (int) round( (float) $amount * 100 );
+	return (int) round( (float) $amount * 100 );
 }
 
 /**
@@ -515,7 +508,7 @@ function booking_to_paise( $amount ) {
  * @return float
  */
 function booking_from_paise( $paise ) {
-    // round() returns a float here because the divisor is a float literal, but
-    // the cast keeps the documented float contract even for whole amounts.
-    return (float) round( (int) $paise / 100, 2 );
+	// round() returns a float because the divisor is a float literal, but the cast
+	// keeps the documented float contract even for whole amounts.
+	return (float) round( (int) $paise / 100, 2 );
 }

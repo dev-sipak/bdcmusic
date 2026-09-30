@@ -16,58 +16,58 @@ include_once '../header.php';
 
 <section class="page-hero pb-0" id="creator-services">
 
-    <!-- Breadcrumb -->
-    <div class="container">
-        <div class="breadcrumb">
-            <a href="<?php echo $siteUrl; ?>">Home</a>
-            <span>/</span>
-            <a href="<?php echo $siteUrl; ?>all-services">Services</a>
-            <span>/</span>
-            <span>BDC Artist Marketplace</span>
-        </div>
-    </div>
+	<!-- Breadcrumb -->
+	<div class="container">
+		<div class="breadcrumb">
+			<a href="<?php echo $siteUrl; ?>">Home</a>
+			<span>/</span>
+			<a href="<?php echo $siteUrl; ?>all-services">Services</a>
+			<span>/</span>
+			<span>BDC Artist Marketplace</span>
+		</div>
+	</div>
 
-    <!-- Hero -->
-    <div class="container">
-        <div class="section-hero reveal creator-marketplace-bg">
-            <div class="section-hero-content">
-                <span class="heading-tag">
-                    CREATOR MARKETPLACE
-                </span>
-                <h1>
-                    BDC Artist Marketplace for Creative Professionals
-                </h1>
-                <p>
-                    Join India's growing creative marketplace where artists,
-                    musicians, actors, filmmakers and creators connect with
-                    clients, receive bookings and grow their careers.
-                </p>
-                <a href="#choose-package" class="btn">
-                    Join The Marketplace
-                </a>
-            </div>
-        </div>
-    </div>
+	<!-- Hero -->
+	<div class="container">
+		<div class="section-hero reveal creator-marketplace-bg">
+			<div class="section-hero-content">
+				<span class="heading-tag">
+					CREATOR MARKETPLACE
+				</span>
+				<h1>
+					BDC Artist Marketplace for Creative Professionals
+				</h1>
+				<p>
+					Join India's growing creative marketplace where artists,
+					musicians, actors, filmmakers and creators connect with
+					clients, receive bookings and grow their careers.
+				</p>
+				<a href="#choose-package" class="btn">
+					Join The Marketplace
+				</a>
+			</div>
+		</div>
+	</div>
 
-    <!-- About -->
-    <section class="section-block pb-0">
-        <div class="container">
-            <h2>
-                About BDC Artist Marketplace
-            </h2>
-            <p class="section-intro mb-0 reveal">
-                The BDC Artist Marketplace is a professional platform that
-                connects verified creative professionals with individuals,
-                brands, agencies and production companies looking for talent.
-                Whether you are a singer, producer, actor, musician, dancer,
-                or filmmaker, you can showcase your portfolio and receive
-                direct booking opportunities.
-            </p>
-        </div>
-    </section>
+	<!-- About -->
+	<section class="section-block pb-0">
+		<div class="container">
+			<h2>
+				About BDC Artist Marketplace
+			</h2>
+			<p class="section-intro mb-0 reveal">
+				The BDC Artist Marketplace is a professional platform that
+				connects verified creative professionals with individuals,
+				brands, agencies and production companies looking for talent.
+				Whether you are a singer, producer, actor, musician, dancer,
+				or filmmaker, you can showcase your portfolio and receive
+				direct booking opportunities.
+			</p>
+		</div>
+	</section>
 
-    <!-- ============================================================
-     Creative Categories
+	<!-- ============================================================
+	 Creative Categories
 	============================================================ -->
 
 	<section class="creative-categories-section section-block">
@@ -88,7 +88,7 @@ include_once '../header.php';
 				<!-- Singer -->
 				<article class="creative-category-card creative-category-singer">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-microphone-lines"></i>
+						<i data-lucide="mic-vocal"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -102,7 +102,7 @@ include_once '../header.php';
 				<!-- Producer -->
 				<article class="creative-category-card creative-category-producer">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-sliders"></i>
+						<i data-lucide="sliders-horizontal"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -116,7 +116,7 @@ include_once '../header.php';
 				<!-- Composer -->
 				<article class="creative-category-card creative-category-composer">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-guitar"></i>
+						<i data-lucide="guitar"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -130,7 +130,7 @@ include_once '../header.php';
 				<!-- Actor -->
 				<article class="creative-category-card creative-category-actor">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-clapperboard"></i>
+						<i data-lucide="clapperboard"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -144,7 +144,7 @@ include_once '../header.php';
 				<!-- Director -->
 				<article class="creative-category-card creative-category-director">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-video"></i>
+						<i data-lucide="video"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -158,7 +158,7 @@ include_once '../header.php';
 				<!-- Musician -->
 				<article class="creative-category-card creative-category-musician">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-drum"></i>
+						<i data-lucide="drum"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -172,7 +172,7 @@ include_once '../header.php';
 				<!-- Dancer -->
 				<article class="creative-category-card creative-category-dancer">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-shoe-prints"></i>
+						<i data-lucide="footprints"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -186,7 +186,7 @@ include_once '../header.php';
 				<!-- Writer -->
 				<article class="creative-category-card creative-category-writer">
 					<span class="creative-category-icon">
-						<i class="fa-solid fa-pen-nib"></i>
+						<i data-lucide="pen-tool"></i>
 					</span>
 
 					<div class="creative-category-content">
@@ -203,137 +203,137 @@ include_once '../header.php';
 
 
 
-    <!-- Marketplace Process -->
-    <section class="section-block marketplace-process">
-        <div class="container-fluid">
+	<!-- Marketplace Process -->
+	<section class="section-block marketplace-process">
+		<div class="container-fluid">
 
-            <div class="marketplace-process-header">
-                <span class="marketplace-eyebrow">YOUR JOURNEY</span>
+			<div class="marketplace-process-header">
+				<span class="marketplace-eyebrow">YOUR JOURNEY</span>
 
-                <h2>How the Marketplace Works</h2>
+				<h2>How the Marketplace Works</h2>
 
-                <p>
-                    From registration to career growth — here's how it all comes together.
-                </p>
-            </div>
+				<p>
+					From registration to career growth — here's how it all comes together.
+				</p>
+			</div>
 
-            <div class="marketplace-timeline">
+			<div class="marketplace-timeline">
 
-                <!-- Step 01 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        01
-                    </div>
+				<!-- Step 01 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						01
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Register</h3>
-                        <p>
-                            Create your account and set up your profile.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Register</h3>
+						<p>
+							Create your account and set up your profile.
+						</p>
+					</div>
+				</div>
 
-                <!-- Step 02 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        02
-                    </div>
+				<!-- Step 02 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						02
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Upload Portfolio</h3>
-                        <p>
-                            Showcase your work, skills and experience.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Upload Portfolio</h3>
+						<p>
+							Showcase your work, skills and experience.
+						</p>
+					</div>
+				</div>
 
-                <!-- Step 03 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        03
-                    </div>
+				<!-- Step 03 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						03
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Verification</h3>
-                        <p>
-                            Get verified for trust and credibility.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Verification</h3>
+						<p>
+							Get verified for trust and credibility.
+						</p>
+					</div>
+				</div>
 
-                <!-- Step 04 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        04
-                    </div>
+				<!-- Step 04 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						04
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Receive Bookings</h3>
-                        <p>
-                            Find projects and collaborate with clients.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Receive Bookings</h3>
+						<p>
+							Find projects and collaborate with clients.
+						</p>
+					</div>
+				</div>
 
-                <!-- Step 05 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        05
-                    </div>
+				<!-- Step 05 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						05
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Complete Projects</h3>
-                        <p>
-                            Deliver your work and get paid securely.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Complete Projects</h3>
+						<p>
+							Deliver your work and get paid securely.
+						</p>
+					</div>
+				</div>
 
-                <!-- Step 06 -->
-                <div class="marketplace-step">
-                    <div class="marketplace-step-number">
-                        06
-                    </div>
+				<!-- Step 06 -->
+				<div class="marketplace-step">
+					<div class="marketplace-step-number">
+						06
+					</div>
 
-                    <div class="marketplace-step-content">
-                        <h3>Grow Career</h3>
-                        <p>
-                            Build your reputation, get more opportunities and grow.
-                        </p>
-                    </div>
-                </div>
+					<div class="marketplace-step-content">
+						<h3>Grow Career</h3>
+						<p>
+							Build your reputation, get more opportunities and grow.
+						</p>
+					</div>
+				</div>
 
-            </div>
-        </div>
-    </section>
+			</div>
+		</div>
+	</section>
 
-    <!-- Membership Plans -->
-    <section class="section-block" id="choose-package">
-        <div class="container">
+	<!-- Membership Plans -->
+	<section class="section-block" id="choose-package">
+		<div class="container">
 
-            <h2>
-                Artist Membership Plans
-            </h2>
+			<h2>
+				Artist Membership Plans
+			</h2>
 
-            <p class="section-intro">
-                Choose the membership that best matches your creative journey.
-                Every plan includes a verified BDC Artist profile and access
-                to marketplace opportunities.
-            </p>
+			<p class="section-intro">
+				Choose the membership that best matches your creative journey.
+				Every plan includes a verified BDC Artist profile and access
+				to marketplace opportunities.
+			</p>
 
-            <?php
-            // The membership cards, rendered from service_plans.
-            //
-            // These cards used to read "/ Year" after the amount. The checkout
-            // takes a one-time payment, so that suffix promised recurring billing
-            // that does not exist. The displayed amount is now exactly the amount
-            // charged, and renewal can be added properly when recurring billing
-            // exists to back it.
-            echo booking_plan_grid('artists-marketplace');
-            ?>
+			<?php
+			// The membership cards, rendered from service_plans.
+			//
+			// These cards used to read "/ Year" after the amount. The checkout
+			// takes a one-time payment, so that suffix promised recurring billing
+			// that does not exist. The displayed amount is now exactly the amount
+			// charged, and renewal can be added properly when recurring billing
+			// exists to back it.
+			echo booking_plan_grid('artists-marketplace');
+			?>
 
-        </div>
-    </section>
+		</div>
+	</section>
 
 </section>
 

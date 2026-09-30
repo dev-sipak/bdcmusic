@@ -2,80 +2,67 @@
 /**
  * Booking draft state and step machine.
  *
- * The customer's in-progress booking lives in `$_SESSION['booking_draft']`
- * while they move through the checkout. This is deliberately NOT a cart of
- * separate bookings: one booking row is one service engagement carrying one or
- * more package lines (`booking_items`) plus that service's add-ons. Razorpay
- * takes one order per payment, so N bookings per payment would make a refund
- * ambiguous, and `bookings.service_id` keeps meaning what the dashboards read
- * it as.
+ * One draft is one service engagement, not a cart: a booking row carries its
+ * package lines in `booking_items`. Razorpay takes one order per payment, so
+ * several bookings under one payment would make a refund ambiguous.
  *
- * Draft shape:
+ * Draft keys: service (slug), group (service_plans.group_key), plan_id and
+ * plan_ids (selected service_plans.id values), details (registry field key =>
+ * value), contact (name, email, phone, whatsapp), uploads and upload_dir
+ * (staged file metadata, promoted to the booking on create).
  *
- *   service  string  services.slug
- *   group    string  service_plans.group_key ('' for a flat package list)
- *   plan_id  int     service_plans.id of the first selected package
- *   plan_ids array   every service_plans.id on the order; plan_id mirrors the
- *                    first one so any reader that expects a single package
- *                    still sees a real one
- *   details  array   registry field key => submitted value
- *   contact  array   name, email, phone, whatsapp
- *   uploads  array   staged file metadata, promoted to the booking on create
- *   upload_dir string staging directory for the staged uploads
- *
- * Requires: includes/booking-catalog.php
+ * Requires: includes/booking-catalog.php, includes/booking-registry.php
  */
 
 if ( ! defined( 'BOOKING_SESSION_LOADED' ) ) {
-    define( 'BOOKING_SESSION_LOADED', true );
+	define( 'BOOKING_SESSION_LOADED', true );
 }
 
 require_once __DIR__ . '/booking-catalog.php';
+require_once __DIR__ . '/booking-registry.php';
 require_once __DIR__ . '/session.php';
 
 /**
  * Step identifiers in journey order, with their indicator labels.
  *
- * Service, package and add-ons are deliberately absent. Service and package are
- * chosen on the service page or in the block below the form, and the former
- * "Extra Studio Hour" style extras are now ordinary packages in the catalogue,
- * so an order is a list of the things being bought and nothing else.
+ * `category` is per-service: only a service declaring a field on that step
+ * shows it. Service and package are named by the link that got the customer
+ * here, never chosen on a step.
  */
 function booking_step_labels() {
-    return array(
-        'details' => 'Details',
-        'contact' => 'Contact',
-        'review'  => 'Review',
-        'payment' => 'Payment',
-    );
+	return array(
+		'category' => 'Category',
+		'details'  => 'Details',
+		'contact'  => 'Contact',
+		'review'   => 'Review',
+		'payment'  => 'Payment',
+	);
 }
 
 /**
  * Make sure a session is available to hold the draft.
  *
- * The draft lives in the session, so if the session cannot be started the
- * customer would silently lose their progress at the next redirect. That is
- * worth an explicit failure rather than a warning nobody reads, so callers
- * that can recover (booking.php) check this before rendering.
+ * The draft lives in the session, so a session that cannot be started means the
+ * customer silently loses their progress at the next redirect. Callers that can
+ * recover (booking.php) check this before rendering.
  *
  * @return bool
  */
 function booking_ensure_session() {
-    if ( session_status() === PHP_SESSION_ACTIVE ) {
-        return true;
-    }
+	if ( session_status() === PHP_SESSION_ACTIVE ) {
+		return true;
+	}
 
-    // Output has already begun, so a session can no longer be started.
-    if ( headers_sent() ) {
-        return false;
-    }
+	// Output has already begun, so a session can no longer be started.
+	if ( headers_sent() ) {
+		return false;
+	}
 
-    // Same hardened cookie and strict-mode settings as the logged-in session.
-    // Configured without forcing a session, because this is the lazy public
-    // booking session that must not start on every page view.
-    app_session_configure();
+	// Same cookie settings as the logged-in session, but without forcing one:
+	// this is the lazy public session and must not start on every page view.
+	app_session_configure();
 
-    return (bool) session_start();
+	return (bool) session_start();
 }
 
 /**
@@ -84,72 +71,69 @@ function booking_ensure_session() {
  * @return array
  */
 function booking_draft() {
-    booking_ensure_session();
+	booking_ensure_session();
 
-    if ( ! isset( $_SESSION['booking_draft'] ) || ! is_array( $_SESSION['booking_draft'] ) ) {
-        $_SESSION['booking_draft'] = array(
-            'service'   => '',
-            'group'     => '',
-            'plan_id'   => 0,
-            'plan_ids'  => array(),
-            'details'   => array(),
-            'contact'   => array(),
-            'uploads'   => array(),
-            'upload_dir' => '',
-        );
-    }
+	if ( ! isset( $_SESSION['booking_draft'] ) || ! is_array( $_SESSION['booking_draft'] ) ) {
+		$_SESSION['booking_draft'] = array(
+			'service'   => '',
+			'group'     => '',
+			'plan_id'   => 0,
+			'plan_ids'  => array(),
+			'details'   => array(),
+			'contact'   => array(),
+			'uploads'   => array(),
+			'upload_dir' => '',
+		);
+	}
 
-    return $_SESSION['booking_draft'];
+	return $_SESSION['booking_draft'];
 }
 
 /**
  * Every package id currently on the draft, in selection order.
  *
- * A draft saved before the multi-select existed has only `plan_id`, and one
- * saved by the new package step has both, so this reads whichever is present
- * and never returns an empty list while `plan_id` still holds a value.
+ * Reads plan_ids and falls back to plan_id, so a draft written before
+ * multi-select still resolves.
  *
  * @param array $draft The current draft.
  * @return array Unique, positive service_plans.id values.
  */
 function booking_draft_plan_ids( array $draft ) {
-    $ids = array();
+	$ids = array();
 
-    foreach ( (array) ( $draft['plan_ids'] ?? array() ) as $id ) {
-        $ids[] = (int) $id;
-    }
+	foreach ( (array) ( $draft['plan_ids'] ?? array() ) as $id ) {
+		$ids[] = (int) $id;
+	}
 
-    if ( (int) ( $draft['plan_id'] ?? 0 ) > 0 ) {
-        $ids[] = (int) $draft['plan_id'];
-    }
+	if ( (int) ( $draft['plan_id'] ?? 0 ) > 0 ) {
+		$ids[] = (int) $draft['plan_id'];
+	}
 
-    return array_values( array_unique( array_filter( $ids ) ) );
+	return array_values( array_unique( array_filter( $ids ) ) );
 }
 
 /**
  * The catalogue rows for the packages on the draft, in selection order.
  *
- * The draft stores ids, not rows, so anything that needs a package's name or
- * price has to read the catalogue. Ids that no longer resolve to an active plan
- * are skipped rather than returned as holes, because a deactivated package is not
- * something a customer can be charged for.
+ * Ids that no longer resolve to an active plan are skipped, because a
+ * deactivated package is not something a customer can be charged for.
  *
  * @param PDO   $pdb   Connection.
  * @param array $draft The current draft.
  * @return array Rows from service_plans, ordered as the ids were given.
  */
 function booking_draft_plans( $pdb, array $draft ) {
-    $plans = array();
+	$plans = array();
 
-    foreach ( booking_draft_plan_ids( $draft ) as $id ) {
-        $plan = booking_plan( $pdb, $id );
+	foreach ( booking_draft_plan_ids( $draft ) as $id ) {
+		$plan = booking_plan( $pdb, $id );
 
-        if ( $plan ) {
-            $plans[] = $plan;
-        }
-    }
+		if ( $plan ) {
+			$plans[] = $plan;
+		}
+	}
 
-    return $plans;
+	return $plans;
 }
 
 /**
@@ -159,35 +143,33 @@ function booking_draft_plans( $pdb, array $draft ) {
  * @return array The updated draft.
  */
 function booking_draft_set( array $patch ) {
-    $draft = array_merge( booking_draft(), $patch );
+	$draft = array_merge( booking_draft(), $patch );
 
-    $_SESSION['booking_draft'] = $draft;
+	$_SESSION['booking_draft'] = $draft;
 
-    return $draft;
+	return $draft;
 }
 
 /**
  * Throw the draft away. Called when a booking is created, and whenever the
- * customer switches to a different service, because a package or add-on id
- * from one service is meaningless against another.
+ * customer switches service, because a package id from one service is
+ * meaningless against another.
  */
 function booking_draft_reset() {
-    $draft = booking_draft();
+	$draft = booking_draft();
 
-    booking_discard_uploads( $draft );
+	booking_discard_uploads( $draft );
 
-    unset( $_SESSION['booking_draft'] );
+	unset( $_SESSION['booking_draft'] );
 }
 
 /**
  * The steps that actually apply to a service, in order.
  *
- * Service, package and add-ons are all chosen outside the step machine: the first
- * two on the service page or in the block below the form, the third not at all
- * (extras are ordinary packages now). So a quote-mode service runs
- * details → contact → review and drops payment, and a package-mode service adds
- * payment. The indicator is built per service rather than hard-coded, so no
- * service is ever shown a step it cannot complete.
+ * A service that sells two different jobs under one listing (Audio & Video)
+ * puts the choice between them first, so the details form is never asked about
+ * a job the customer has not settled on. A quote-mode service then runs details
+ * -> contact -> review; a package-mode service adds payment.
  *
  * @param PDO   $pdb     Connection.
  * @param array $service A row from booking_service().
@@ -195,64 +177,97 @@ function booking_draft_reset() {
  * @return array Ordered list of step identifiers.
  */
 function booking_steps( $pdb, $service, $draft ) {
-    $quoteMode = booking_is_quote_mode( $service );
+	$quoteMode = booking_is_quote_mode( $service );
 
-    $steps = array();
+	// A signed-in customer's contact details are already on their account, so
+	// the contact step is dropped. It stays when no contact is known.
+	$skipContact = ! empty( $_SESSION['user_id'] ) && ! empty( $draft['contact']['email'] );
 
-    $steps[] = 'details';
-    $steps[] = 'contact';
-    $steps[] = 'review';
+	$steps = array();
 
-    if ( ! $quoteMode ) {
-        $steps[] = 'payment';
-    }
+	if ( booking_has_category_step( (string) $service['slug'] ) ) {
+		$steps[] = 'category';
+	}
 
-    return $steps;
+	$steps[] = 'details';
+
+	if ( ! $skipContact ) {
+		$steps[] = 'contact';
+	}
+
+	$steps[] = 'review';
+
+	if ( ! $quoteMode ) {
+		$steps[] = 'payment';
+	}
+
+	return $steps;
+}
+
+/**
+ * The contact details held on a customer's account, in booking contact shape.
+ *
+ * @param PDO    $pdb
+ * @param string $userId users.id.
+ * @return array|null Null when the account or its email is missing.
+ */
+function booking_account_contact( $pdb, $userId ) {
+	$stmt = $pdb->prepare( 'SELECT name, email, mobile FROM users WHERE id = :id LIMIT 1' );
+	$stmt->execute( array( ':id' => (string) $userId ) );
+	$user = $stmt->fetch();
+
+	if ( ! $user || empty( $user['email'] ) ) {
+		return null;
+	}
+
+	return array(
+		'name'     => (string) $user['name'],
+		'email'    => (string) $user['email'],
+		'phone'    => (string) ( $user['mobile'] ?? '' ),
+		'whatsapp' => '',
+	);
 }
 
 /**
  * Steps that used to exist, and the step each one now belongs at.
  *
- * Service, package and add-ons were all removed from the journey: the service
- * and its packages are chosen before the form, and an order is nothing but the
- * list of packages being bought. Anyone still holding one of these URLs from a
- * bookmark, an old confirmation link or a browser history gets sent to the step
- * that replaced it, so the retired identifier never renders and never sits in
- * the address bar.
+ * Anyone still holding one of these URLs from a bookmark or browser history is
+ * sent to the step that replaced it, so a retired identifier never renders.
  *
  * @return array Map of retired step identifier => current step identifier.
  */
 function booking_retired_steps() {
-    return array(
-        'service'  => 'details',
-        'service_select' => 'details',
-        'package'  => 'details',
-        'packages' => 'details',
-        'addons'   => 'details',
-        'addon'    => 'details',
-    );
+	return array(
+		'service'  => 'details',
+		'service_select' => 'details',
+		'package'  => 'details',
+		'packages' => 'details',
+		'addons'   => 'details',
+		'addon'    => 'details',
+	);
 }
 
 /**
  * The step that must be answered before the given one can be reached.
  *
- * Used to stop a customer deep-linking to step 7 with a hand-crafted URL.
+ * The furthest a customer may go is the first step they have not answered yet,
+ * or the last step when they have answered them all. That is what stops a
+ * hand-crafted ?step=payment from skipping the earlier questions.
  *
- * @param array  $steps   From booking_steps().
- * @param string $step    The requested step.
- * @return string|null The furthest reachable step.
+ * @param array $steps   From booking_steps().
+ * @param array $draft   The current draft.
+ * @param PDO   $pdb     Connection.
+ * @param array $service A row from booking_service().
+ * @return string
  */
 function booking_furthest_reachable( array $steps, $draft, $pdb, $service ) {
-    $reachable = $steps[0];
+	foreach ( $steps as $step ) {
+		if ( ! booking_step_satisfied( $step, $draft, $pdb, $service ) ) {
+			return $step;
+		}
+	}
 
-    foreach ( $steps as $step ) {
-        if ( ! booking_step_satisfied( $step, $draft, $pdb, $service ) ) {
-            break;
-        }
-        $reachable = $step;
-    }
-
-    return $reachable;
+	return $steps[ count( $steps ) - 1 ];
 }
 
 /**
@@ -265,28 +280,46 @@ function booking_furthest_reachable( array $steps, $draft, $pdb, $service ) {
  * @return bool
  */
 function booking_step_satisfied( $step, $draft, $pdb, $service ) {
-    switch ( $step ) {
-        case 'details':
-            return ! empty( $draft['details'] );
+	switch ( $step ) {
+		case 'category':
+			return ! empty( $draft['details']['service_category'] );
 
-        case 'contact':
-            return ! empty( $draft['contact']['email'] );
+		case 'details':
+	// Every required field on this step has to hold a value: a draft carrying
+	// only an earlier step's answer is not a completed details form.
 
-        case 'review':
-        case 'payment':
-            // A quote-mode service has no plan, so requiring one here would make
-            // review permanently unreachable for Promotion and there would be no
-            // way to submit the quote request at all.
-            $hasSelection = booking_is_quote_mode( $service )
-                || count( booking_draft_plan_ids( $draft ) ) > 0;
+			foreach ( booking_fields_for_step( (string) $service['slug'], 'details' ) as $field ) {
+				if ( empty( $field['required'] ) ) {
+					continue;
+				}
 
-            return $hasSelection
-                && ! empty( $draft['details'] )
-                && ! empty( $draft['contact']['email'] );
+				$value = $draft['details'][ $field['key'] ] ?? null;
 
-        default:
-            return true;
-    }
+				if ( $value === null || $value === '' || $value === array() ) {
+					return false;
+				}
+			}
+
+			return true;
+
+		case 'contact':
+			return ! empty( $draft['contact']['email'] );
+
+		case 'review':
+		case 'payment':
+	// A quote-mode service has no plan, so requiring one here would make review
+	// permanently unreachable and the quote request impossible to submit.
+
+			$hasSelection = booking_is_quote_mode( $service )
+				|| count( booking_draft_plan_ids( $draft ) ) > 0;
+
+			return $hasSelection
+				&& ! empty( $draft['contact']['email'] )
+				&& booking_step_satisfied( 'details', $draft, $pdb, $service );
+
+		default:
+			return true;
+	}
 }
 
 /**
@@ -297,7 +330,7 @@ function booking_step_satisfied( $step, $draft, $pdb, $service ) {
  * @return string
  */
 function booking_step_url( $step, $slug ) {
-    return url( 'booking.php?step=' . rawurlencode( $step ) . '&service=' . rawurlencode( $slug ) );
+	return url( 'booking.php?step=' . rawurlencode( $step ) . '&service=' . rawurlencode( $slug ) );
 }
 
 /**
@@ -310,15 +343,13 @@ function booking_step_url( $step, $slug ) {
  * @return string
  */
 function booking_start_url( $slug ) {
-    return url( 'booking.php?service=' . rawurlencode( $slug ) );
+	return url( 'booking.php?service=' . rawurlencode( $slug ) );
 }
 
 /**
  * The URL that starts a booking with a package already chosen.
  *
- * A service page card links here, so "Book Premium" lands on the next step with
- * Premium selected instead of making the customer find it again. The id is
- * still validated against the service before it is used, so a hand-edited URL
+ * The id is validated against the service before use, so a hand-edited URL
  * cannot carry a plan from another service into this one.
  *
  * @param string $slug    services.slug.
@@ -326,13 +357,13 @@ function booking_start_url( $slug ) {
  * @return string
  */
 function booking_preselect_url( $slug, $planId = 0 ) {
-    $url = booking_start_url( $slug );
+	$url = booking_start_url( $slug );
 
-    if ( (int) $planId > 0 ) {
-        $url .= '&plan_id=' . (int) $planId;
-    }
+	if ( (int) $planId > 0 ) {
+		$url .= '&plan_id=' . (int) $planId;
+	}
 
-    return $url;
+	return $url;
 }
 
 /**
@@ -342,25 +373,21 @@ function booking_preselect_url( $slug, $planId = 0 ) {
  * @return string
  */
 function booking_service_page_url( $slug ) {
-    $map = array(
-        'artists-marketplace'    => 'services/bdc-artists-marketplace/',
-        'audio-video'            => 'services/audio-video-services/',
-        'online-offline-classes' => 'services/online-offline-classes/',
-        'digital-distribution'   => 'services/digital-music-distribution/',
-        'promotion'              => 'services/promotion-services/',
-        'iprs'                   => 'services/iprs-services/',
-    );
+	$map = array(
+		'artists-marketplace'    => 'services/bdc-artists-marketplace/',
+		'audio-video'            => 'services/audio-video-services/',
+		'online-offline-classes' => 'services/online-offline-classes/',
+		'digital-distribution'   => 'services/digital-music-distribution/',
+		'promotion'              => 'services/promotion-services/',
+		'iprs'                   => 'services/iprs-services/',
+	);
 
-    return url( isset( $map[ $slug ] ) ? $map[ $slug ] : 'all-services' );
+	return url( isset( $map[ $slug ] ) ? $map[ $slug ] : 'all-services' );
 }
 
-// ─── Staged uploads ──────────────────────────────────────────────
-//
 // Files arrive on the details step, long before a booking id exists. They are
-// written to a draft-scoped staging directory and promoted into
-// data/uploads/<bookingId>/ when the booking row is created. Nothing is left
-// in staging, and no upload is ever recorded against a booking that was not
-// created.
+// staged in a draft-scoped directory and promoted into
+// data/uploads/<bookingId>/ on create, never against a booking that was not created.
 
 /**
  * The staging directory for the current draft's uploads.
@@ -368,22 +395,22 @@ function booking_service_page_url( $slug ) {
  * @return string Absolute path, created if needed.
  */
 function booking_staging_dir() {
-    $draft = booking_draft();
+	$draft = booking_draft();
 
-    if ( ! empty( $draft['upload_dir'] ) && is_dir( $draft['upload_dir'] ) ) {
-        return $draft['upload_dir'];
-    }
+	if ( ! empty( $draft['upload_dir'] ) && is_dir( $draft['upload_dir'] ) ) {
+		return $draft['upload_dir'];
+	}
 
-    $token = bin2hex( random_bytes( 8 ) );
-    $dir   = dirname( __DIR__ ) . '/data/uploads/_draft/' . $token;
+	$token = bin2hex( random_bytes( 8 ) );
+	$dir   = dirname( __DIR__ ) . '/data/uploads/_draft/' . $token;
 
-    if ( ! is_dir( $dir ) ) {
-        mkdir( $dir, 0755, true );
-    }
+	if ( ! is_dir( $dir ) ) {
+		mkdir( $dir, 0755, true );
+	}
 
-    booking_draft_set( array( 'upload_dir' => $dir ) );
+	booking_draft_set( array( 'upload_dir' => $dir ) );
 
-    return $dir;
+	return $dir;
 }
 
 /**
@@ -392,65 +419,62 @@ function booking_staging_dir() {
  * @param array $draft
  */
 function booking_discard_uploads( $draft ) {
-    $dir = $draft['upload_dir'] ?? '';
-    if ( ! $dir || ! is_dir( $dir ) ) {
-        return;
-    }
+	$dir = $draft['upload_dir'] ?? '';
+	if ( ! $dir || ! is_dir( $dir ) ) {
+		return;
+	}
 
-    // A directory that has been promoted to a real booking id must survive.
-    if ( basename( dirname( $dir ) ) === '_draft' ) {
-        $files = glob( rtrim( $dir, '/\\' ) . '/*' );
-        if ( is_array( $files ) ) {
-            foreach ( $files as $file ) {
-                if ( is_file( $file ) ) {
-                    @unlink( $file );
-                }
-            }
-        }
-        @rmdir( $dir );
-    }
+	// A directory that has been promoted to a real booking id must survive.
+	if ( basename( dirname( $dir ) ) === '_draft' ) {
+		$files = glob( rtrim( $dir, '/\\' ) . '/*' );
+		if ( is_array( $files ) ) {
+			foreach ( $files as $file ) {
+				if ( is_file( $file ) ) {
+					@unlink( $file );
+				}
+			}
+		}
+		@rmdir( $dir );
+	}
 }
 
 /**
  * Forget the staged uploads belonging to one field, deleting the files.
  *
- * Used when a customer re-uploads a field: keeping the old file as well would
- * promote both to the booking and leave the customer with a duplicate they did
- * not ask for. The path is only unlinked when it sits inside this draft's own
- * staging directory, so a tampered record cannot be used to delete a promoted
- * upload.
+ * The path is only unlinked when it sits inside this draft's own staging
+ * directory, so a tampered record cannot delete a promoted upload.
  *
  * @param array  $uploads Staged upload records.
  * @param string $key     Field key whose uploads should go.
  * @return array The remaining upload records.
  */
 function booking_drop_field_uploads( array $uploads, $key ) {
-    $staging = (string) ( booking_draft()['upload_dir'] ?? '' );
-    $kept    = array();
+	$staging = (string) ( booking_draft()['upload_dir'] ?? '' );
+	$kept    = array();
 
-    foreach ( $uploads as $upload ) {
-        if ( ! isset( $upload['field'] ) || $upload['field'] !== $key ) {
-            $kept[] = $upload;
-            continue;
-        }
+	foreach ( $uploads as $upload ) {
+		if ( ! isset( $upload['field'] ) || $upload['field'] !== $key ) {
+			$kept[] = $upload;
+			continue;
+		}
 
-        $path = (string) ( $upload['path'] ?? '' );
+		$path = (string) ( $upload['path'] ?? '' );
 
-        if ( $path !== '' && $staging !== '' && strpos( $path, $staging ) === 0 && is_file( $path ) ) {
-            @unlink( $path );
-        }
-    }
+		if ( $path !== '' && $staging !== '' && strpos( $path, $staging ) === 0 && is_file( $path ) ) {
+			@unlink( $path );
+		}
+	}
 
-    return $kept;
+	return $kept;
 }
 
 /**
  * Delete every staged upload and clear the draft's upload fields.
  */
 function booking_clear_staged_uploads() {
-    $draft = booking_draft();
+	$draft = booking_draft();
 
-    booking_discard_uploads( $draft );
+	booking_discard_uploads( $draft );
 
-    booking_draft_set( array( 'uploads' => array(), 'upload_dir' => '' ) );
+	booking_draft_set( array( 'uploads' => array(), 'upload_dir' => '' ) );
 }

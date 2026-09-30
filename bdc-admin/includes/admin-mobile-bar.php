@@ -15,19 +15,19 @@
  */
 ?>
 <div class="adm-topbar">
-    <button class="adm-burger" type="button" id="admin-menu-toggle"
-        aria-label="Open navigation menu"
-        aria-expanded="false"
-        aria-controls="adm-sidebar">
-        <i class="fa-solid fa-bars" aria-hidden="true"></i>
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-    </button>
-    <div class="adm-topbar-brand">
-        <div class="adm-logo">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-        </div>
-        <span>BDC Admin</span>
-    </div>
+	<button class="adm-burger" type="button" id="admin-menu-toggle"
+		aria-label="Open navigation menu"
+		aria-expanded="false"
+		aria-controls="adm-sidebar">
+		<i class="adm-burger-bars" data-lucide="menu" aria-hidden="true"></i>
+		<i class="adm-burger-close" data-lucide="x" aria-hidden="true"></i>
+	</button>
+	<div class="adm-topbar-brand">
+		<div class="adm-logo">
+			<i data-lucide="shield-half" aria-hidden="true"></i>
+		</div>
+		<span>BDC Admin</span>
+	</div>
 </div>
 
 <div class="adm-backdrop" id="adm-sidebar-backdrop" aria-hidden="true"></div>

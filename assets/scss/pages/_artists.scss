@@ -105,7 +105,7 @@ ARTIST CATEGORY PAGE
 	color: #fff;
 }
 
-/* ─── Search / Filter Toolbar ─────────────────── */
+/* Search / Filter Toolbar ─────────────────── */
 
 .artist-toolbar {
 	display: flex;
@@ -183,7 +183,7 @@ ARTIST CATEGORY PAGE
 	pointer-events: none;
 }
 
-/* ─── Artist Grid ─────────────────────────────── */
+/* Artist Grid ─────────────────────────────── */
 
 .artist-grid {
 	display: grid;
@@ -191,7 +191,7 @@ ARTIST CATEGORY PAGE
 	gap: 24px;
 }
 
-/* ─── Artist Grid Card ────────────────────────── */
+/* Artist Grid Card ────────────────────────── */
 
 .artist-grid-card {
 	display: flex;
@@ -326,7 +326,7 @@ ARTIST CATEGORY PAGE
 	transition: transform $transition-fast;
 }
 
-/* ─── CTA Section ─────────────────────────────── */
+/* CTA Section ─────────────────────────────── */
 
 .artist-cta {
 	text-align: center;
@@ -354,7 +354,7 @@ ARTIST CATEGORY PAGE
 	margin-right: auto;
 }
 
-/* ─── Responsive ───────────────────────────────── */
+/* Responsive ───────────────────────────────── */
 
 @media (max-width: 992px) {
 	.artist-grid {
@@ -405,7 +405,7 @@ ARTIST CATEGORY PAGE
 	}
 }
 
-/* ─── Detail Page (preserved) ─────────────────── */
+/* Detail Page (preserved) ─────────────────── */
 
 .person-list {
 	display: flex;
@@ -526,7 +526,7 @@ ARTIST CATEGORY PAGE
 	transition: transform $transition-fast;
 }
 
-/* ─── Detail Page ──────────────────────────────── */
+/* Detail Page ──────────────────────────────── */
 
 .artist-detail {
 	display: grid;
@@ -590,7 +590,7 @@ ARTIST CATEGORY PAGE
 	margin-top: 12px;
 }
 
-/* ─── Pricing Table ───────────────────────────── */
+/* Pricing Table ───────────────────────────── */
 
 .artist-pricing {
 	margin-top: 24px;
@@ -632,7 +632,7 @@ ARTIST CATEGORY PAGE
 	border-bottom: none;
 }
 
-/* ─── Detail Responsive ───────────────────────── */
+/* Detail Responsive ───────────────────────── */
 
 @media (max-width: 992px) {
 	.artist-detail {

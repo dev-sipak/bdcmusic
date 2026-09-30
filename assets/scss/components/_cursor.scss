@@ -19,8 +19,8 @@ CUSTOM CURSOR
   transform: translate(-50%, -50%);
   will-change: transform;
   transition:
-    background .3s,
-    border-color .3s;
+	background .3s,
+	border-color .3s;
 }
 
 .aw-cursor.active {
@@ -48,6 +48,6 @@ CUSTOM CURSOR
 
 @media (max-width: 992px) {
   .aw-cursor {
-    display: none;
+	display: none;
   }
 }

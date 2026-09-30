@@ -6,18 +6,18 @@
  * String items = current page (no link), array items = linked.
  */
 if ( ! isset( $breadcrumbItems ) || ! is_array( $breadcrumbItems ) ) {
-    return;
+	return;
 }
 ?>
 <div class="breadcrumb">
-    <?php foreach ( $breadcrumbItems as $index => $item ) : ?>
-        <?php if ( is_string( $item ) ) : ?>
-            <span><?php echo htmlspecialchars( $item ); ?></span>
-        <?php elseif ( is_array( $item ) ) : ?>
-            <a href="<?php echo htmlspecialchars( $item['url'] ); ?>"><?php echo htmlspecialchars( $item['label'] ); ?></a>
-        <?php endif; ?>
-        <?php if ( $index < count( $breadcrumbItems ) - 1 ) : ?>
-            <span>/</span>
-        <?php endif; ?>
-    <?php endforeach; ?>
+	<?php foreach ( $breadcrumbItems as $index => $item ) : ?>
+		<?php if ( is_string( $item ) ) : ?>
+			<span><?php echo htmlspecialchars( $item ); ?></span>
+		<?php elseif ( is_array( $item ) ) : ?>
+			<a href="<?php echo htmlspecialchars( $item['url'] ); ?>"><?php echo htmlspecialchars( $item['label'] ); ?></a>
+		<?php endif; ?>
+		<?php if ( $index < count( $breadcrumbItems ) - 1 ) : ?>
+			<span>/</span>
+		<?php endif; ?>
+	<?php endforeach; ?>
 </div>

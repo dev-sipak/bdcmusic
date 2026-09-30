@@ -13,10 +13,10 @@
  * @returns {string} the selected value, or '' when nothing is selected
  */
 function getToggleValue(groupName) {
-    var selected = document.querySelector(
-        'input[type="radio"][name="' + groupName + '"]:checked'
-    );
-    return selected ? selected.value : '';
+	var selected = document.querySelector(
+		'input[type="radio"][name="' + groupName + '"]:checked'
+	);
+	return selected ? selected.value : '';
 }
 
 /**
@@ -27,17 +27,17 @@ function getToggleValue(groupName) {
  * @param {boolean} isEnabled
  */
 function applyToggleDetail(targetName, isEnabled) {
-    var detail = document.querySelector('[data-toggle-detail="' + targetName + '"]');
-    if (!detail) return;
+	var detail = document.querySelector('[data-toggle-detail="' + targetName + '"]');
+	if (!detail) return;
 
-    detail.hidden = !isEnabled;
+	detail.hidden = !isEnabled;
 
-    detail.querySelectorAll('input, select, textarea').forEach(function (field) {
-        field.disabled = !isEnabled;
-        if (field.hasAttribute('data-required-when-shown')) {
-            field.required = isEnabled;
-        }
-    });
+	detail.querySelectorAll('input, select, textarea').forEach(function (field) {
+		field.disabled = !isEnabled;
+		if (field.hasAttribute('data-required-when-shown')) {
+			field.required = isEnabled;
+		}
+	});
 }
 
 /**
@@ -45,20 +45,20 @@ function applyToggleDetail(targetName, isEnabled) {
  * @param {string} groupName
  */
 function bindToggleGroup(groupName) {
-    var group = document.querySelector('[data-toggle-group="' + groupName + '"]');
-    if (!group) return;
+	var group = document.querySelector('[data-toggle-group="' + groupName + '"]');
+	if (!group) return;
 
-    var sync = function () {
-        applyToggleDetail(groupName, getToggleValue(groupName) === 'Yes');
-    };
+	var sync = function () {
+		applyToggleDetail(groupName, getToggleValue(groupName) === 'Yes');
+	};
 
-    group.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-        radio.addEventListener('change', sync);
-    });
+	group.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+		radio.addEventListener('change', sync);
+	});
 
-    sync();
+	sync();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    ['isrc', 'upc', 'copyright_help'].forEach(bindToggleGroup);
+	['isrc', 'upc', 'copyright_help'].forEach(bindToggleGroup);
 });

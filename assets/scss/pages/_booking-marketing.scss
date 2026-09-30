@@ -10,7 +10,7 @@ BOOKING ELEMENTS ON SERVICE PAGES
 // which styles the checkout itself, because these appear on the public service
 // pages and have to work inside .plans-grid there.
 
-// ─── The "Book now" call to action ────────────────────────────────
+// The "Book now" call to action
 //
 // Replaces the enquiry form each service page used to carry. Centred, because it
 // sits alone in a section with nothing competing with it.
@@ -31,7 +31,7 @@ BOOKING ELEMENTS ON SERVICE PAGES
 	}
 }
 
-// ─── The "Get This Package" link on a card ────────────────────────
+// The "Get This Package" link on a card
 //
 // Pushed to the bottom of the card so the cards in a row line their buttons up
 // even when the feature lists are different lengths. A card is a flex column, so
@@ -93,7 +93,7 @@ BOOKING ELEMENTS ON SERVICE PAGES
 	text-transform: uppercase;
 }
 
-// ─── Quote-mode notice ────────────────────────────────────────────
+// Quote-mode notice
 //
 // A service with no fixed price says so rather than looking like an oversight.
 // Reused from the checkout, which shows the same notice before the details step.

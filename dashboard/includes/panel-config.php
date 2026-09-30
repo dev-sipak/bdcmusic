@@ -18,21 +18,21 @@ require_once __DIR__ . '/../../includes/helpers.php';
 ?>
 <script>
 var customerDashboardConfig = {
-    basePath: <?php echo json_encode( $basePath ); ?>,
-    csrfToken: <?php echo json_encode( generate_csrf_token() ); ?>,
-    passwordMinLength: <?php echo json_encode( PASSWORD_MIN_LENGTH ); ?>,
-    updateProfileUrl: <?php echo json_encode( $basePath . 'includes/update-profile' ); ?>,
-    changePasswordUrl: <?php echo json_encode( $basePath . 'includes/change-password' ); ?>,
-    uploadProfilePicUrl: <?php echo json_encode( $basePath . 'includes/upload-profile-pic' ); ?>,
-    orderDetailUrl: <?php echo json_encode( $basePath . 'includes/customer/order-detail' ); ?>,
-    services: <?php echo json_encode( array_values( $purchasedServices ) ); ?>,
-    activeService: <?php echo json_encode( $activeServiceSlug ); ?>
+	basePath: <?php echo json_encode( $basePath ); ?>,
+	csrfToken: <?php echo json_encode( generate_csrf_token() ); ?>,
+	passwordMinLength: <?php echo json_encode( PASSWORD_MIN_LENGTH ); ?>,
+	updateProfileUrl: <?php echo json_encode( $basePath . 'includes/update-profile' ); ?>,
+	changePasswordUrl: <?php echo json_encode( $basePath . 'includes/change-password' ); ?>,
+	uploadProfilePicUrl: <?php echo json_encode( $basePath . 'includes/upload-profile-pic' ); ?>,
+	orderDetailUrl: <?php echo json_encode( $basePath . 'includes/customer/order-detail' ); ?>,
+	services: <?php echo json_encode( array_values( $purchasedServices ) ); ?>,
+	activeService: <?php echo json_encode( $activeServiceSlug ); ?>
 };
 </script>
 <script>
 var customerReleasesConfig = {
-    basePath: <?php echo json_encode( $basePath ); ?>,
-    csrfToken: <?php echo json_encode( generate_csrf_token() ); ?>,
-    activeTab: <?php echo json_encode( $activeReleaseStatus ); ?>
+	basePath: <?php echo json_encode( $basePath ); ?>,
+	csrfToken: <?php echo json_encode( generate_csrf_token() ); ?>,
+	activeTab: <?php echo json_encode( $activeReleaseStatus ); ?>
 };
 </script>

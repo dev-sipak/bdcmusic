@@ -11,8 +11,8 @@ require_once __DIR__ . '/session.php';
 $relativePath = $_GET['file'] ?? '';
 
 if ( empty( $relativePath ) ) {
-    http_response_code( 400 );
-    exit( 'Missing file parameter.' );
+	http_response_code( 400 );
+	exit( 'Missing file parameter.' );
 }
 
 $rootDir       = realpath( dirname( __DIR__ ) );
@@ -22,16 +22,16 @@ $requestedFile = realpath( dirname( __DIR__ ) . '/' . $relativePath );
 $sep = DIRECTORY_SEPARATOR;
 
 if ( $rootDir === false || $uploadsDir === false || $requestedFile === false ) {
-    http_response_code( 403 );
-    exit( 'Access denied.' );
+	http_response_code( 403 );
+	exit( 'Access denied.' );
 }
 
 // The file has to sit inside the uploads directory, not merely inside the
 // project, so a path like /data/config.php cannot be read through this endpoint.
 $uploadsWithSep = rtrim( $uploadsDir, $sep ) . $sep;
 if ( strpos( $requestedFile, $uploadsWithSep ) !== 0 ) {
-    http_response_code( 403 );
-    exit( 'Access denied.' );
+	http_response_code( 403 );
+	exit( 'Access denied.' );
 }
 
 require_once __DIR__ . '/database.php';
@@ -47,36 +47,36 @@ $userRole = isset( $_SESSION['user_role'] ) ? (string) $_SESSION['user_role'] : 
 $allowed = false;
 
 if ( $userRole === 'admin' ) {
-    $allowed = true;
+	$allowed = true;
 } else {
-    try {
-        $pdo = db_connect();
-        $stmt = $pdo->prepare( 'SELECT b.booking_id, b.customer_id, b.customer_type FROM uploaded_files uf JOIN bookings b ON uf.booking_id = b.booking_id WHERE uf.file_path = :path LIMIT 1' );
-        $stmt->execute( [ ':path' => $storedPath ] );
-        $row = $stmt->fetch( PDO::FETCH_ASSOC );
-        if ( $row ) {
-            if ( $userId !== '' && (string) $row['customer_id'] === $userId ) {
-                $allowed = true;
-            } elseif ( $row['customer_type'] === 'guest' && ! empty( $_SESSION['booking_confirmed'] ) && hash_equals( (string) $_SESSION['booking_confirmed'], (string) $row['booking_id'] ) ) {
-                $allowed = true;
-            }
-        }
-      } catch ( Throwable $e ) {
-          // Fail closed: an unreadable path or missing realpath means this file
-          // is not demonstrably inside the uploads directory, so deny it.
-          app_log( 'download-file', 'path check failed', $e );
-          $allowed = false;
-      }
+	try {
+		$pdo = db_connect();
+		$stmt = $pdo->prepare( 'SELECT b.booking_id, b.customer_id, b.customer_type FROM uploaded_files uf JOIN bookings b ON uf.booking_id = b.booking_id WHERE uf.file_path = :path LIMIT 1' );
+		$stmt->execute( [ ':path' => $storedPath ] );
+		$row = $stmt->fetch( PDO::FETCH_ASSOC );
+		if ( $row ) {
+			if ( $userId !== '' && (string) $row['customer_id'] === $userId ) {
+				$allowed = true;
+			} elseif ( $row['customer_type'] === 'guest' && ! empty( $_SESSION['booking_confirmed'] ) && hash_equals( (string) $_SESSION['booking_confirmed'], (string) $row['booking_id'] ) ) {
+				$allowed = true;
+			}
+		}
+	  } catch ( Throwable $e ) {
+		  // Fail closed: an unreadable path or missing realpath means this file
+		  // is not demonstrably inside the uploads directory, so deny it.
+		  app_log( 'download-file', 'path check failed', $e );
+		  $allowed = false;
+	  }
 }
 
 if ( ! $allowed ) {
-    http_response_code( 403 );
-    exit( 'Access denied.' );
+	http_response_code( 403 );
+	exit( 'Access denied.' );
 }
 
 if ( ! file_exists( $requestedFile ) || ! is_file( $requestedFile ) ) {
-    http_response_code( 404 );
-    exit( 'File not found.' );
+	http_response_code( 404 );
+	exit( 'File not found.' );
 }
 
 $fileName = basename( $requestedFile );

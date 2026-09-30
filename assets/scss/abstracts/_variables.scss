@@ -2,7 +2,7 @@
 DESIGN TOKENS
 ==================================================*/
 
-// ─── Color Tokens ───────────────────────────────
+// Color Tokens
 $primary: #E4002B;
 $secondary: #F5F5F5;
 $dark: #FAFAFA;
@@ -16,7 +16,7 @@ $warning: #f59e0b;
 $error: #ef4444;
 $info: #3b82f6;
 
-// ─── Typography Tokens ──────────────────────────
+// Typography Tokens
 $font-heading: "Fraunces", serif;
 $font-body: "Inter", sans-serif;
 
@@ -48,7 +48,7 @@ $line-height-scale: (
   h6: 1.5,
 );
 
-// ─── Spacing Scale ──────────────────────────────
+// Spacing Scale
 $spacing: (
   0: 0,
   1: 0.25rem,
@@ -69,13 +69,13 @@ $space-lg: 24px;
 $space-xl: 30px;
 $space-2xl: 40px;
 
-// ─── Layout Tokens ──────────────────────────────
+// Layout Tokens
 $container-max-width: 1320px;
 $container-max-width-compact: 1200px;
 $gutter-desktop: 4vw;
 $gutter-mobile: 15px;
 
-// ─── Border & Radius Tokens ─────────────────────
+// Border & Radius Tokens
 $radius: 22px;
 $radius-sm: 8px;
 $radius-md: 12px;
@@ -84,19 +84,19 @@ $radius-xl: 20px;
 $radius-2xl: 24px;
 $radius-pill: 999px;
 
-// ─── Shadow Tokens ──────────────────────────────
+// Shadow Tokens
 $shadow: 0 20px 60px rgba(0, 0, 0, .08);
 $shadow-sm: 0 2px 8px rgba(0, 0, 0, .06);
 $shadow-md: 0 8px 24px rgba(0, 0, 0, .08);
 $shadow-lg: 0 12px 30px rgba(0, 0, 0, .12);
 $shadow-xl: 0 20px 50px rgba(0, 0, 0, .15);
 
-// ─── Transition Tokens ──────────────────────────
+// Transition Tokens
 $transition: .35s ease;
 $transition-fast: .2s ease;
 $transition-slow: .5s ease;
 
-// ─── Z-Index Scale ──────────────────────────────
+// Z-Index Scale
 $z-dropdown: 100;
 $z-sticky: 200;
 $z-fixed: 300;
@@ -105,7 +105,7 @@ $z-modal: 500;
 $z-popover: 600;
 $z-tooltip: 700;
 
-// ─── Breakpoints ────────────────────────────────
+// Breakpoints
 $breakpoints: (
   xs: 420px,
   sm: 576px,

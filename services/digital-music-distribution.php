@@ -15,33 +15,33 @@ include_once '../header.php';
 ?>
 
 <section class="page-hero pb-0">
-    <div class="container">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb">
-            <a href="<?php echo $siteUrl; ?>">Home</a>
-            <span>/</span>
-            <a href="<?php echo $siteUrl; ?>all-services">Services</a>
-            <span>/</span>
-            <span>Digital Music Distribution</span>
-        </div>
-        <!-- Hero -->
-        <div class="section-hero music-distribution-bg reveal">
-            <div class="section-hero-content">
-                <span class="heading-tag"> DISTRIBUTION SERVICES </span>
-                <h1> Digital Music Distribution Services for Independent Artists </h1>
-                <p> Release your music globally across Spotify, Apple Music, YouTube Music, Amazon Music and other streaming platforms with complete distribution support. </p>
-                <a href="#choose-package"class="btn"> Start Distribution </a>
-            </div>
-        </div>
-        <!-- About -->
-        <section class="section-block">
-            <h2> About Digital Music Distribution </h2>
-            <p class="section-intro"> BDC Music Studio helps independent artists distribute their music worldwide. From release preparation, metadata management, artwork, audio checks, and platform delivery, we support every step of your music release journey. </p>
-        </section>
-     
-    </div><!-- /.container -->
-    <div class="container-fluid">
-        <!-- Platforms -->
+	<div class="container">
+		<!-- Breadcrumb -->
+		<div class="breadcrumb">
+			<a href="<?php echo $siteUrl; ?>">Home</a>
+			<span>/</span>
+			<a href="<?php echo $siteUrl; ?>all-services">Services</a>
+			<span>/</span>
+			<span>Digital Music Distribution</span>
+		</div>
+		<!-- Hero -->
+		<div class="section-hero music-distribution-bg reveal">
+			<div class="section-hero-content">
+				<span class="heading-tag"> DISTRIBUTION SERVICES </span>
+				<h1> Digital Music Distribution Services for Independent Artists </h1>
+				<p> Release your music globally across Spotify, Apple Music, YouTube Music, Amazon Music and other streaming platforms with complete distribution support. </p>
+				<a href="#choose-package"class="btn"> Start Distribution </a>
+			</div>
+		</div>
+		<!-- About -->
+		<section class="section-block">
+			<h2> About Digital Music Distribution </h2>
+			<p class="section-intro"> BDC Music Studio helps independent artists distribute their music worldwide. From release preparation, metadata management, artwork, audio checks, and platform delivery, we support every step of your music release journey. </p>
+		</section>
+	 
+	</div><!-- /.container -->
+	<div class="container-fluid">
+		<!-- Platforms -->
 		<section class="section-block pt-0">
 
 			<h2>Where Your Music Gets Distributed</h2>
@@ -213,23 +213,23 @@ include_once '../header.php';
 			</div>
 
 		</section>
-    </div><!-- /.container-fluid -->
-    <div class="container">
-        
-        <!-- Pricing -->
+	</div><!-- /.container-fluid -->
+	<div class="container">
+		
+		<!-- Pricing -->
 		<section class="section-block pt-0" id="choose-package">
-            <h2> Distribution Plans </h2>
-            <?php
-            // The four distribution plans, rendered from service_plans.
-            //
-            // Two of these cards used to read "/ Year" after the amount. The
-            // checkout takes a one-time payment, so that suffix promised
-            // recurring billing that does not exist. The displayed amount is
-            // now exactly the amount charged.
-            echo booking_plan_grid( 'digital-distribution' );
-            ?>
-        </section>
-    </div>
+			<h2> Distribution Plans </h2>
+			<?php
+			// The four distribution plans, rendered from service_plans.
+			//
+			// Two of these cards used to read "/ Year" after the amount. The
+			// checkout takes a one-time payment, so that suffix promised
+			// recurring billing that does not exist. The displayed amount is
+			// now exactly the amount charged.
+			echo booking_plan_grid( 'digital-distribution' );
+			?>
+		</section>
+	</div>
 </section>
 <script src="<?php echo $assetPath; ?>js/distribution-form.js"></script>
 <?php

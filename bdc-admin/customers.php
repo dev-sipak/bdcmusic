@@ -14,41 +14,41 @@ $adminScripts = array( 'admin-dashboard.js' );
 ?>
 
 <section class="adm-page">
-    <div class="container-fluid px-6">
-        <div class="adm-layout">
+	<div class="container-fluid px-6">
+		<div class="adm-layout">
 
-            <?php include __DIR__ . '/includes/admin-nav.php'; ?>
+			<?php include __DIR__ . '/includes/admin-nav.php'; ?>
 
-            <?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
+			<?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
 
-            <main class="adm-main">
+			<main class="adm-main">
 
-                <div class="adm-tab active" id="adm-tab-customers">
-                    <div class="adm-tab-header">
-                        <h2>Customers</h2>
-                        <p>View all registered customers and their order history.</p>
-                    </div>
-                    <div class="adm-table-wrap">
-                        <table class="adm-table">
-                            <thead>
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Total Orders</th>
-                                    <th>Total Spent</th>
-                                    <th>Last Order</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-customers-tbody"></tbody>
-                        </table>
-                    </div>
-                    <div id="admin-customers-pagination"></div>
-                </div>
+				<div class="adm-tab active" id="adm-tab-customers">
+					<div class="adm-tab-header">
+						<h2>Customers</h2>
+						<p>View all registered customers and their order history.</p>
+					</div>
+					<div class="adm-table-wrap">
+						<table class="adm-table">
+							<thead>
+								<tr>
+									<th>Customer</th>
+									<th>Email</th>
+									<th>Phone</th>
+									<th>Total Orders</th>
+									<th>Total Spent</th>
+									<th>Last Order</th>
+								</tr>
+							</thead>
+							<tbody id="admin-customers-tbody"></tbody>
+						</table>
+					</div>
+					<div id="admin-customers-pagination"></div>
+				</div>
 
-            </main>
-        </div>
-    </div>
+			</main>
+		</div>
+	</div>
 </section>
 
 <?php include __DIR__ . '/includes/admin-config.php'; ?>

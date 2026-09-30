@@ -15,181 +15,181 @@ include_once '../header.php';
 ?>
 
 <section class="page-hero">
-    <div class="container">
+	<div class="container">
 
-        <div class="breadcrumb">
+		<div class="breadcrumb">
 
-            <a href="<?php echo $siteUrl; ?>">Home</a>
+			<a href="<?php echo $siteUrl; ?>">Home</a>
 
-            <span>/</span>
+			<span>/</span>
 
-            <a href="<?php echo $siteUrl; ?>all-services">Services</a>
+			<a href="<?php echo $siteUrl; ?>all-services">Services</a>
 
-            <span>/</span>
+			<span>/</span>
 
-            <span>Promotion Services</span>
+			<span>Promotion Services</span>
 
-        </div>
+		</div>
 
-        <div class="section-hero promotional-bg">
+		<div class="section-hero promotional-bg">
 
-            <div class="section-hero-content">
+			<div class="section-hero-content">
 
-                <span class="heading-tag">
-                    MARKETING &amp; PROMOTION
-                </span>
+				<span class="heading-tag">
+					MARKETING &amp; PROMOTION
+				</span>
 
-                <h1>
-                    Audio &amp; Video Promotion Services to Grow Reach and Engagement
-                </h1>
+				<h1>
+					Audio &amp; Video Promotion Services to Grow Reach and Engagement
+				</h1>
 
-                <p>
-                    Drive visibility for your reels, short films,
-                    music videos, and promotional content with a strategy
-                    built for discovery and audience growth.
-                </p>
+				<p>
+					Drive visibility for your reels, short films,
+					music videos, and promotional content with a strategy
+					built for discovery and audience growth.
+				</p>
 
-                <a
-                    href="<?php echo booking_esc( booking_preselect_url( 'promotion' ) ); ?>"
-                    class="btn"
-                >
-                    Book Promotion Support
-                </a>
+				<a
+					href="<?php echo booking_esc( booking_preselect_url( 'promotion' ) ); ?>"
+					class="btn"
+				>
+					Book Promotion Support
+				</a>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-        <section class="section-block">
+		<section class="section-block">
 
-            <h2>
-                About the Service
-            </h2>
+			<h2>
+				About the Service
+			</h2>
 
-            <p class="section-intro">
-                Our promo services help artists and brands gain traction by positioning video content in front of the right audience. Whether you are launching a new track or building a social presence, we make sure your content is seen and remembered.
-            </p>
+			<p class="section-intro">
+				Our promo services help artists and brands gain traction by positioning video content in front of the right audience. Whether you are launching a new track or building a social presence, we make sure your content is seen and remembered.
+			</p>
 
-        </section>
+		</section>
 
-        <div class="section-block pt-0">
+		<div class="section-block pt-0">
 
-            <h2>
-                Benefits
-            </h2>
+			<h2>
+				Benefits
+			</h2>
 
-            <div class="card-grid-2">
+			<div class="card-grid-2">
 
-                <!-- Benefit 1 -->
+				<!-- Benefit 1 -->
 
-                <div class="card-inline">
+				<div class="card-inline">
 
-                    <div class="benefit-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
+					<div class="benefit-icon">
+						<i data-lucide="eye"></i>
+					</div>
 
-                    <div class="benefit-content">
+					<div class="benefit-content">
 
-                        <h3>
-                            Better Visibility
-                        </h3>
+						<h3>
+							Better Visibility
+						</h3>
 
-                        <p>
-                            Increase reach on YouTube, Instagram Reels, and other short-form platforms.
-                        </p>
+						<p>
+							Increase reach on YouTube, Instagram Reels, and other short-form platforms.
+						</p>
 
-                    </div>
+					</div>
 
-                </div>
+				</div>
 
-                <!-- Benefit 2 -->
+				<!-- Benefit 2 -->
 
-                <div class="card-inline">
+				<div class="card-inline">
 
-                    <div class="benefit-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
+					<div class="benefit-icon">
+						<i data-lucide="users"></i>
+					</div>
 
-                    <div class="benefit-content">
+					<div class="benefit-content">
 
-                        <h3>
-                            Audience Growth
-                        </h3>
+						<h3>
+							Audience Growth
+						</h3>
 
-                        <p>
-                            Reach viewers with stronger targeting and better content positioning.
-                        </p>
+						<p>
+							Reach viewers with stronger targeting and better content positioning.
+						</p>
 
-                    </div>
+					</div>
 
-                </div>
+				</div>
 
-                <!-- Benefit 3 -->
+				<!-- Benefit 3 -->
 
-                <div class="card-inline">
+				<div class="card-inline">
 
-                    <div class="benefit-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
+					<div class="benefit-icon">
+						<i data-lucide="target"></i>
+					</div>
 
-                    <div class="benefit-content">
+					<div class="benefit-content">
 
-                        <h3>
-                            Targeted Promotion
-                        </h3>
+						<h3>
+							Targeted Promotion
+						</h3>
 
-                        <p>
-                            Connect your music and video content with audiences who are more likely to engage with your work.
-                        </p>
+						<p>
+							Connect your music and video content with audiences who are more likely to engage with your work.
+						</p>
 
-                    </div>
+					</div>
 
-                </div>
+				</div>
 
-                <!-- Benefit 4 -->
+				<!-- Benefit 4 -->
 
-                <div class="card-inline">
+				<div class="card-inline">
 
-                    <div class="benefit-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
+					<div class="benefit-icon">
+						<i data-lucide="chart-line"></i>
+					</div>
 
-                    <div class="benefit-content">
+					<div class="benefit-content">
 
-                        <h3>
-                            Stronger Engagement
-                        </h3>
+						<h3>
+							Stronger Engagement
+						</h3>
 
-                        <p>
-                            Build greater attention and engagement around your music releases, videos, reels, and promotional content.
-                        </p>
+						<p>
+							Build greater attention and engagement around your music releases, videos, reels, and promotional content.
+						</p>
 
-                    </div>
+					</div>
 
-                </div>
+				</div>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-        <!-- Pricing -->
+		<!-- Pricing -->
 
-        <div class="section-block pt-0">
+		<div class="section-block pt-0">
 
-            <?php
-            // This service has no package list, because it is quoted per
-            // project. The note explaining that used to sit inside the
-            // enquiry section at the foot of this page. That section was a
-            // booking form, not information, so removing it must not leave a
-            // quote-mode service saying nothing at all about how it is
-            // priced. booking_quote_note() only renders for quote-mode
-            // services, so this stays empty if promotion ever gains plans.
-            echo booking_quote_note( 'promotion' );
-            ?>
+			<?php
+			// This service has no package list, because it is quoted per
+			// project. The note explaining that used to sit inside the
+			// enquiry section at the foot of this page. That section was a
+			// booking form, not information, so removing it must not leave a
+			// quote-mode service saying nothing at all about how it is
+			// priced. booking_quote_note() only renders for quote-mode
+			// services, so this stays empty if promotion ever gains plans.
+			echo booking_quote_note( 'promotion' );
+			?>
 
-        </div>
+		</div>
 
-    </div>
+	</div>
 
 </section>
 

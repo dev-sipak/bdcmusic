@@ -60,7 +60,8 @@ Runtime dependencies are only third-party CDNs, all loaded from `header.php:31-3
 and `booking.php` / `footer.php`:
 
 - Google Fonts (two separate stylesheet requests)
-- Font Awesome 6.6.0 (cdnjs)
+- Lucide 1.48.0 (jsdelivr, UMD build) — **the icon library**; loaded from `footer.php` and
+  `bdc-admin/includes/admin-footer.php`, not in the head
 - Swiper 11 (jsdelivr) — CSS on all public pages, JS initialised on the homepage only
 - Razorpay Checkout.js
 
@@ -148,8 +149,8 @@ Three tiers of JS:
    `admin-*.js`, `customer-*.js`. Each is an IIFE or `DOMContentLoaded` block that
    fetches JSON and re-renders table/panel regions via `innerHTML`.
 2. **Cross-cutting scripts** — `shared.js` (sidebar toggle, status/payment badges,
-   pagination HTML, FAQ accordion) loaded on every page; `app.js` (nav, dropdowns,
-   sliders, reveal-on-scroll, FAQ) loaded on every public page.
+   pagination HTML, FAQ accordion, Lucide rendering) loaded on every page; `app.js`
+   (nav, dropdowns, sliders, reveal-on-scroll, FAQ) loaded on every public page.
 3. **Legacy per-service form scripts** — `audio-video-services.js`,
    `distribution-form.js`, `online-offline-classes-form.js`. All three target
    selectors that do not exist in the current markup, so none of them do anything.
@@ -162,6 +163,20 @@ Output escaping is inconsistent between files (see §12): five files define a lo
 `customer-dashboard.js:10`, `customer-releases.js:13`, `customer-service.js:26`),
 `shared.js:48-50` has an inline variant, and `admin-enquiries.js` +
 `admin-artists.js` have none.
+
+**Icons are declared, not drawn.** PHP emits `data-lucide="<name>"` and Lucide
+replaces the element with an inline `<svg>`. Two rules follow from that, and both
+have already been broken once:
+
+1. Anything injected after load (dashboard tables, order modals) is not rendered
+   by the initial `createIcons()` call, so `shared.js` also watches the DOM with a
+   `MutationObserver` and re-renders. A new feature that builds rows with
+   `innerHTML` needs no icon code of its own.
+2. An icon name that does not exist in the pinned version fails **silently** — the
+   element is left as an empty inline block and the page loses its icon with no
+   error. Names were checked against the actual 1.48.0 export rather than guessed;
+   the five brand marks that Lucide does not ship use `brand_icon()` from
+   `includes/brand-icons.php` instead.
 
 ### Backend architecture
 
@@ -266,8 +281,9 @@ Single shared-credential model in `includes/auth.php`, called by `login.php` +
 | Razorpay Orders API | server → Razorpay | `curl` in `booking-create.php`; key secret never leaves the server |
 | Razorpay Checkout.js | client → Razorpay | key id only (public by design) |
 | Razorpay signature verify | server-side, local | `razorpay-verify.php:193` |
-| PHP `mail()` | server → SMTP | `enquiry-reply.php:70` (suppressed, unchecked), booking notification in `booking-create.php` |
-| Font Awesome / Swiper / Google Fonts | client → CDN | no SRI attributes |
+| PHP `mail()` | server → SMTP | `includes/notifications.php` (all booking, account and enquiry mail), `enquiry-reply.php:70` (suppressed, unchecked) |
+| Lucide 1.48.0 (UMD CDN) | client → CDN | `data-lucide` + `createIcons()` from `assets/js/shared.js`; rendered again by a `MutationObserver` for injected markup; no SRI attribute |
+| Swiper / Google Fonts | client → CDN | no SRI attributes |
 
 ### Important data flows
 
@@ -279,9 +295,11 @@ service page  ──booking_plan_grid()──►  renders plan cards from servic
       ▼
 booking.php?service=…  ──(no service/package step)──►  default plan auto-selected
       │  booking_steps() computes which steps apply for THIS service:
-      │  details | contact | review | payment   (quote mode drops payment)
-      │  the "related packages / related services" block below the form posts
-      │  form=packages and rewrites plan_ids (booking.php case 'packages')
+      │  details | contact | review | payment   (quote mode drops payment,
+      │  a signed-in customer with an account email drops contact;
+      │  audio-video inserts a leading "category" step)
+      │  there is no package picker here: the plan is chosen on the service
+      │  page and the review step states the one-service-at-a-time rule
       │  each POST → booking_draft_set() ; files → data/uploads/_draft/<token>/
       ▼
 payment step → assets/js/booking-checkout.js
@@ -372,9 +390,11 @@ direct `.php` URLs are also live and indexable — there is no canonical redirec
 | `footer.php` | root | Footer markup, social links, Swiper JS, `shared.js`, `app.js` |
 | `includes/config.php` | `includes/` | Env loading, path constants, feature flags, `$currentPage` detection |
 | `includes/database.php` | `includes/` | `db_connect()` PDO singleton |
-| `includes/helpers.php` | `includes/` | 24 functions: sanitisation, CSRF, booking id, URLs, `e()`, badge HTML, `imageResizeAndConvert()`, order amount/plan/addon/payment shaping |
-| `assets/js/shared.js` | `assets/js/` | Sidebar toggle, `statusBadgeHtml`, `paymentBadgeHtml`, `renderPaginationHtml`, `initFaqAccordion` |
+| `includes/helpers.php` | `includes/` | sanitisation, CSRF, booking id, URLs, `e()`, badge HTML, `imageResizeAndConvert()`, order amount/plan/payment shaping, **login throttling**, **Razorpay gateway calls** |
+| `assets/js/shared.js` | `assets/js/` | Sidebar toggle, `statusBadgeHtml`, `paymentBadgeHtml`, `renderPaginationHtml`, `initFaqAccordion`, **Lucide icon bootstrap** |
 | `assets/js/app.js` | `assets/js/` | Nav, dropdowns, hero slider, scroll reveal, FAQ, footer year |
+| `assets/scss/base/_icons.scss` | `assets/scss/base/` | Every icon rule: `[data-lucide]` sizing, the CSS-mask ticks and chevrons, the spinner animation |
+| `includes/brand-icons.php` | `includes/` | Inline SVG for the five social marks, which have no Lucide equivalent |
 
 ### Feature-specific, high-value
 
@@ -473,16 +493,16 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 | `service_plans` | Packages | `service_id`, `group_key`, `group_label`, `price`, `price_note` (e.g. `Custom Quote`), `features` (JSON), `sort_order`, `is_default`, `is_enquiry`, `is_orderable` |
 | `bookings` | An order | `booking_id` varchar PK `BDCM-XXXXXX` (3 random bytes hex), `customer_id` varchar **nullable** (NULL = guest), `customer_type enum('registered','guest')`, snapshot columns (`customer_name/email/phone/whatsapp`), `status enum`, `payment_status`, `payment_provider` (`razorpay`/`manual`), `razorpay_order_id`, `razorpay_signature`, `payment_failure_reason`, `plan_*` snapshots, `subtotal`, `addons_total` (kept NOT NULL for old orders; new orders write 0), `price`, `meta` JSON, `invoice_no`, `service_slug`, `service_name` |
 | `booking_items` | One package line per order | `booking_id`, `plan_id`, `plan_name`, `plan_group`, `plan_group_label`, `unit_price`, `qty` (always 1), `line_total`; UNIQUE (`booking_id`,`plan_id`) |
-| `booking_addons` | **History only, read-only** | `booking_id`, `addon_id` (no longer a FK), `addon_name`, `unit_price`, `qty`, `line_total` (snapshotted). Holds the lines of the six orders placed before add-ons left the catalogue; nothing writes to it now. |
-| `booking_items` | Per-package lines | `booking_id`, `plan_id`, `plan_name`, `plan_group`, `plan_group_label`, `unit_price`, `qty`, `line_total`; UNIQUE `(booking_id,plan_id)`; FK cascade on booking delete |
 | `booking_payments` | Payment attempts | `booking_id`, `provider`, `razorpay_order_id/payment_id/signature`, `amount`, `status`, `method`, `failure_reason` |
+| `bookings.created_at` | Order timestamp | Stored DATETIME, but **every** reader now selects it as `DATE_FORMAT(b.created_at, '%Y-%m-%d %H:%i')` under the label "Date & Time" (admin list/detail, customer list/detail, `service-overview.php` paid_at, and both order modals). Formatting is done in SQL, not in JS, so the value is identical in the table and the modal |
 | `service_records` | Customer-visible progress | UNIQUE `booking_id`, `headline`, `sub_headline`, `progress`, `starts_on`, `ends_on`, `location`, `notes` |
 | `uploaded_files` | Uploaded files | `booking_id`, `field_name`, `original_name`, `file_path`, `mime_type`, `file_size` |
+| `login_attempts` | **Load-bearing** — rate-limit ledger | `identifier`, `scope enum('email','ip')`, `attempted_at`, `succeeded`; KEY (`identifier`,`scope`,`attempted_at`). Read and written by `login_failed_count` / `login_record_attempt` / `login_clear_attempts` / `login_prune_attempts` in `helpers.php`. Backs the 5-attempt/15-minute lockout on `auth.php` login, on `change-password.php`, and the abuse throttle on `artist-enquiry-submit.php`. Verified live: three wrong passwords write six rows (email + ip scope) and the sixth attempt is refused. **Do not remove** — dropping it silently disables every brute-force lockout on the site. |
 | `artists` | Artist profiles | `slug` UNIQUE, `image`, `category_id`, `bio`, `is_active` |
 | `artist_categories` | Marketplace categories | `slug`, `sort_order`, `is_active` |
 | `artist_pricing` | Per-artist per-service price | `artist_id`, `service_type`, `price` — **no unique key, no FK** |
 | `artist_enquiries` | Marketplace leads | `artist_id`, `name`, `email`, `phone`, `message text`, `status` |
-| `releases` | Digital distribution releases | `booking_id`, `customer_id`, `title`, `type`, `isrc`, `upc`, `status enum`, `go_live_date`, `dolby`, `apple_itunes` |
+| `releases` | Digital distribution releases | `booking_id`, `customer_id`, `title`, `type enum('single','album')`, `isrc`, `upc`, `status enum`, `go_live_date`, `dolby`, `apple_itunes` — one order is one release, so `ep` was dropped from the enum and the seed |
 | `release_artists` | Release contributors | `release_id`, `role`, `name` |
 | `release_tracks` | Track list | UNIQUE `(release_id, track_no)` |
 | `release_platform_links` | Store links | UNIQUE `(release_id, platform)`, `url`, `is_active` |
@@ -493,7 +513,6 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 ```
 services 1─* service_plans
 services 1─* bookings 1─* booking_items      (one row per package, qty 1)
-                1─* booking_addons            (history only, no longer written)
                 1─* booking_payments
                 1─1 service_records
                 1─* uploaded_files
@@ -510,12 +529,12 @@ releases 1─* release_tracks / release_platform_links / release_artists / relea
   and `booking_items` carries the per-package snapshot for every line. The booking
   rows, not a join back to `service_plans`, are the money source of truth — so a
   later price or plan edit never rewrites history. Preserve this.
-- An order is **one service and a list of its packages**. `bookings.plan_id` /
-  `plan_name` / `plan_group` mirror only the first line so existing single-package
-  readers keep working; `booking_items` is the full list.
-- `booking_addons` is **read-only history**. Add-ons are no longer sold, so nothing
-  inserts into it and the `addon_id` foreign key is gone. Do not "restore" the table
-  it pointed at.
+- An order is **one service and exactly one of its packages**. `bookings.plan_id` /
+  `plan_name` / `plan_group` and the `booking_items` row agree, and a booking is
+  never multi-line. The single-package decision is the one assignment
+  `$allowMulti = false` in `booking.php`; every multi-line branch in
+  `booking_resolve_selection()` and `booking_items` is still in place, so
+  widening an order to several packages is a one-word change there.
 - `service_plans.is_orderable` separates "published" from "buyable". A `0` row
   still renders its name and price on a service page but can never be added to an
   order, even by a hand-edited `?plan_id=`. A/V uses this for its 48 sub-service
@@ -535,9 +554,9 @@ releases 1─* release_tracks / release_platform_links / release_artists / relea
   `SELECT COUNT(*) … FROM (<sql>) _count_table`, then re-runs the SQL with
   `LIMIT/OFFSET`. Callers pass hardcoded SQL (only `artists/index.php` today).
 - Child rows for a page of parents are fetched in **one** `IN (…)` query, not per
-  row: `booking_order_addons` / `booking_order_items` in `helpers.php`,
-  `artists-list.php`, `releases-list.php`, `service-overview.php`. This is
-  deliberate and good; preserve the batched pattern when adding endpoints.
+  row: `booking_order_items` in `helpers.php`, `artists-list.php`,
+  `releases-list.php`, `service-overview.php`. This is deliberate and good;
+  preserve the batched pattern when adding endpoints.
 - `LIKE` search terms are bound but **not** wildcard-escaped.
 
 ### Migrations
@@ -635,10 +654,32 @@ to a live step rather than rendering one underneath a dead `step` parameter.
 **`booking_steps()` computes which steps actually apply, per service:**
 
 - No service resolved yet → `[]` (the bare service chooser, no step indicator).
-- Quote-mode service (`booking_is_quote_mode()` → `payment_provider = 'manual'`):
-  `details, contact, review`. **No** `payment`. `promotion` is the only such service
-  today.
+- Quote-mode service (`services.booking_mode = 'quote'`): `details, contact,
+  review`. **No** `payment`. `promotion` is the only such service today.
+- Signed-in customer whose account has an email: `contact` is **dropped**, so a
+  priced service becomes `details, review, payment` and `promotion` becomes
+  `details, review`. `booking_account_contact()` copies the account name, email
+  and phone into the draft before this is computed, so the review block shows
+  them with a "From your account" note and no Change link (there is no step to
+  link to). A guest still gets `contact`.
 - Non-quote: `details, contact, review, payment`.
+
+Because the list varies, **no handler may name the next step as a literal.** The
+`details` and `contact` POST cases redirect via
+`booking_next_step( $steps, <current> )`. Hardcoding `contact` there once made
+the Continue button a no-op for every signed-in customer: the redirect target
+was not in `$steps`, so the reachability guard clamped the request back to
+Details.
+
+`payment_provider` is **not** the signal for quote mode. Quote orders write
+`manual`, but so does any priced order placed while no gateway is switched on, so
+anything that needs to know "is this a quote?" must ask
+`booking_is_quote_mode()` about the service — as `booking-thank-you.php` does.
+Reading the provider instead is what once made an offline booking announce
+"REQUEST RECEIVED" and "Awaiting quote" against a real total. The `&quote=1`
+query parameter that `booking-create.php` and `plan-enquiry-submit.php` put on
+their redirect is not read anywhere and cannot be used either: the confirmation
+page is re-reachable later from the dashboard, where no such parameter exists.
 
 The progress `<ol>` is the only step indicator. There is no "STEP n OF m" counter
 and the `h1` is the service name, not the step word.
@@ -646,20 +687,68 @@ and the `h1` is the service name, not the step word.
 **Package selection:** opening `booking.php?service=<slug>` auto-selects the
 service's default package via `booking_apply_default_plan()` (active, non-enquiry,
 `is_default DESC, sort_order, id`); with no default it redirects to
-`booking_service_page_url()`. `?plan_id=` and `?plan_ids[]` are **additive** — the
-ids are validated against the service, enquiry tiers and duplicates are ignored, and
-anything already on the order stays. The related block posts `form=packages` to a
-`case 'packages'` handler that re-validates the ids against the service, clamps to
-one when the service is not multi-select, and redirects back — it never advances
-the step. `booking_service_allows_multi_plan()` is true for every package-mode
-service.
+`booking_service_page_url()`. `?plan_id=` **replaces** the selection, because an
+order holds one package, and it is the only way to change it: the related-packages
+block, its `form=packages` handler and the "Change your package" link were all
+removed, so the review step instead states `You can book one service at a time.`
+A single-package service renders `plan_id` radio inputs. There is no "add another
+service" section: the other-services carousel was removed.
 
 `booking_furthest_reachable()` gates forward navigation;
 `booking_step_satisfied()` decides whether a step may be left.
 
+**Service Category step (`audio-video` only):** `booking_steps()` puts `category`
+ahead of `details` for this one service; every other service's list is unchanged.
+The answer lives in `$_SESSION['booking_draft']['details']['service_category']`
+and is written by the `case 'category'` handler. It is authoritative: the
+`case 'details'` handler copies it back over `$_POST` before validating, and again
+over the cleaned result, so a hand-crafted post cannot restate an answer the
+customer already gave. `booking_furthest_reachable()` clamps a deep link such as
+`?step=payment` back to this step until it is answered, and the same clamp keeps a
+second visit from skipping it.
+
 **Draft reset:** `booking_draft_reset()` is called when a booking is created. It
 also discards staged uploads. Switching service goes through
 `booking_service_page_url()`, which builds a fresh draft.
+
+### Conditional option cards (`audio-video`)
+
+`audio-video` is the one service where one answer changes the meaning of others.
+Rather than a bespoke page, the field spec carries the rule and both the renderer
+and the validator honour it, so the browser and the server always agree.
+
+Declarative keys added to `includes/booking-registry.php`:
+
+| Key | On | Meaning |
+|---|---|---|
+| `cards` | radio / checkbox field | Render as a grid of premium selectable cards, not pills |
+| `option_groups` | checkbox field | `['Audio' => ['WAV','MP3','FLAC'], 'Video' => ['MP4','MOV','4K','Full HD']]` |
+| `group_source` | checkbox field | Which other field's answer selects the allowed set — `service_category` |
+| `media_source` | file field | Which other field's answer drives the label and `accept` |
+| `media_labels` | file field | `['Audio' => 'Upload Audio', 'Video' => 'Upload Video']` |
+| `media_accept` | file field | `['Audio' => '.wav,.mp3,.flac', 'Video' => '.mp4,.mov']` |
+
+The renderer emits `data-booking-group-source`, `data-booking-option-group` and
+`data-booking-media-source/-labels/-accept/-default-label` attributes.
+`initMediaToggle()` in `assets/js/booking-checkout.js` reacts: it relabels the
+upload, swaps `accept`, hides the options belonging to the other answer, and
+**unchecks** anything it hid. It acts on `change`, so the form is never in a state
+the server would reject.
+
+Two server-side guarantees back the JS up:
+
+- `booking_validate_details()` drops any posted option not in the allowed group
+  before it is stored, so a hand-edited request cannot buy a WAV master with a
+  video order.
+- The `service_category` the group is selected against is read from the draft
+  rather than the request, so hand-editing it is not an opening either.
+- The real `<input>` elements are **never removed or disabled** — they are only
+  visually hidden by `_form.scss` — so keyboard and assistive-tech users keep
+  working, and a form that fails JS validation still submits normally.
+
+The selected indicator is a `::after` tick drawn as a CSS mask from Lucide's
+`check` glyph (see `assets/scss/base/_icons.scss`); selected state comes from
+`input:checked + ...` / `:has()`, not from a JS-added class, so it cannot desync.
 
 ### Pricing — the authority chain
 
@@ -671,37 +760,67 @@ also discards staged uploads. Switching service goes through
    over the single mirrored `$planId`. Every plan must belong to the service; an
    inactive or enquiry tier is refused, and for a **single**-line order the plan
    must also match `$groupKey`, which is what stops a Classes customer pricing a
-   Singing package while the UI shows another group. A multi-line order carries
-   one group per line, so each line is checked against its own group instead.
+   Singing package while the UI shows another group. The multi-line branch (one
+   group per line) is still implemented and still correct, but an order is one
+   package now, so nothing in the live flow produces it; `booking.php` and
+   `booking-create.php` both refuse a selection that resolved to more than one.
 3. `$addonIds` is accepted and ignored. Add-ons left the catalogue; the parameter
    only remains so existing positional callers keep working.
 4. A plan with `is_orderable = 0` is refused as well. It is published as a price
    list and may be read for its name and price, but it can never price an order
    and can never be the auto-selected default.
 5. `subtotal = Σ plan.price` over every line, summed in **integer paise**.
-   `total = subtotal`; `addons_total` is always 0 and `addons` always empty, kept
-   only so the NOT NULL `bookings.addons_total` and existing readers still work.
+   `total = subtotal`. `addons_total` is always 0 and is written only because
+   `bookings.addons_total` is `NOT NULL`; no endpoint returns an `addons` key any
+   more, and the `booking_addons` table has been dropped.
 
 Quote mode returns `plan = null` → `subtotal = 0` → "Quoted on request".
-`booking.php` and `booking-create.php` both call this. Both must pass the draft's
+`booking.php` and `booking-create.php` both call this. Both pass the draft's
 **whole** package list — `booking_draft_plan_ids( $draft )` — not just the mirrored
-`plan_id`, or a multi-package order silently gets charged for one package. A `null`
+`plan_id`, so the priced selection and the snapshot always agree. A `null`
 result resets the draft and bounces to the service chooser.
 
 ### Payment settlement
+
+The booking is committed **before** the gateway is touched. That ordering is the
+whole point: an unreachable Razorpay must never cost a customer their order.
 
 1. `booking-create.php` re-validates the draft from scratch, re-resolves the price
    over the whole package list, inserts `bookings` + one `booking_items` row per
    package (at `qty` 1) in a transaction, promotes staged uploads
    from `data/uploads/_draft/<token>/` to `data/uploads/<booking_id>/`, records
-   `uploaded_files` rows, then creates a Razorpay order.
-2. `razorpay-verify.php` proves ownership (`hash_equals` against
+   `uploaded_files` rows, and commits. `razorpay_order_id` is written `NULL` here
+   and stamped afterwards.
+2. **Payment stage**, after the commit, in `booking-create.php`:
+   `booking_payment_ready()` decides whether there is a gateway to talk to.
+   - Ready → `booking_razorpay_order_create()` (SDK if `vendor/razorpay` exists,
+     otherwise the cURL path in `helpers.php`; `Razorpay\Api\Request` is a
+     misspelling and is never used), then the order id is stamped on both
+     `bookings` and `booking_payments`.
+   - Not ready → nothing to do. The response carries `payment_required: false` and
+     a `payment_note`, and `booking-checkout.js` sends the customer to
+     `booking-thank-you.php` instead of opening a checkout that cannot complete.
+   - Any throw in that stage is caught: the booking stands, `payment_required`
+     flips to `false`, and the failure is logged. It is never fatal.
+   Either way the row is `payment_status='awaiting'`, and `payment_provider` is
+   `razorpay` when a gateway exists and `manual` when it does not, so the admin
+   order screen does not file a hand-settled order as a card payment.
+3. `razorpay-verify.php` proves ownership (`hash_equals` against
    `$_SESSION['booking_confirmed']` / the session user), verifies the HMAC
    signature, checks the amount matches the stored total, blocks replay, then settles
    in one transaction (`payment_status='paid'`, `invoice_no`, `paid_at`,
    `service_records` row, notification mail).
-3. `BOOKING_DEMO` short-circuits the gateway **only** outside production. This is
+4. `BOOKING_DEMO` short-circuits the gateway **only** outside production. This is
    intentional and load-bearing — do not "simplify" it.
+
+Configuration lives in `config.php`: `PAYMENT_PROVIDER_ENABLED`,
+`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and the derived `RAZORPAY_READY`
+(keys present **and** provider enabled). The two are separate switches on purpose,
+so credentials can sit in `.env` on a machine that must not take money yet.
+`booking_payment_ready()` is the only question any caller asks, and it ORs in
+`BOOKING_DEMO` — the demo bypass, which is forced false in production so a
+half-configured or mis-set deploy can never hand out a confirmed-but-unpaid
+booking.
 
 ### Booking id format
 
@@ -723,12 +842,43 @@ whether the purchased service is "unlocked" for the customer.
 tracks, platform links and an audit row in `release_history`. Platform URLs are
 validated server-side with `FILTER_VALIDATE_URL` plus an `^https?://` check
 (`release-save.php` admin, `:71-86`). Track numbers are renumbered server-side.
+`type` is `single` or `album` only — an EP is an album, and the three-tier
+single/EP/album choice no longer exists anywhere in the schema, the admin form or
+the seed.
 
 ### Artist enquiry → reply
 
 Public form posts to `includes/artist-enquiry-submit.php` (no auth, no CSRF, no
 rate limit) → `artist_enquiries` row. Admin replies from the Enquiries screen, which
 sets `status='replied'` **and then** calls `@mail()`; the mail result is ignored.
+
+### Customer accounts and notifications
+
+Two new include files carry the outbound mail and the account that a paid order
+attaches itself to.
+
+`includes/notifications.php` is the only place that builds a message. Every
+sender is `@mail()` with a header block, the result is not checked, and the
+admin address comes from config. Wired into:
+
+| Trigger | File | Mail |
+|---|---|---|
+| Signup | `includes/auth.php` | welcome |
+| Password change | `includes/change-password.php` | confirmation |
+| Booking created | `includes/booking-create.php` | order confirmation; the welcome/account mail is sent **only** when a payment is actually taken |
+| Payment verified | `includes/razorpay-verify.php` | payment received |
+| Admin status change | `includes/admin/order-update.php` | status update to the customer |
+| Artist enquiry | `includes/artist-enquiry-submit.php` | admin notification |
+| Plan enquiry | `includes/plan-enquiry-submit.php` | admin notification |
+
+`includes/customer-accounts.php` normalises the submitted contact (trim, lower-case
+email, digits-only phone), looks for a `user` with `user_role = 'customer'` and that
+email, creates one with a random password when there is none, and points
+`bookings.customer_id` / `customer_type` at it. It runs **only on the paid path**:
+a quote, an enquiry tier, or an order left `awaiting` with
+`payment_provider = 'manual'` does not create an account, because nothing has been
+bought yet. Signup, account creation and booking creation all call it, so a
+customer is never created twice for the same address.
 
 ---
 
@@ -1333,7 +1483,7 @@ Only code-supported observations; nothing is optimised prematurely here.
 |---|---|---|---|
 | P-1 | A DB query on **every** public page render | `header.php:93` — `SELECT name, slug FROM artist_categories` inside the shared header, inlined into the nav of 22 pages | One extra round trip per page load, including `/privacy-policy` and `/terms-and-conditions`. Cacheable in-session |
 | P-2 | ~7.6 MB of hero imagery above the fold | `index.php:27,33,39,45` — four PNGs (1.7–2.0 MB each), no `loading`, no `width`/`height` | Multi-megabyte LCP and layout shift on the highest-traffic page |
-| P-3 | Four render-blocking third-party stylesheets, two to the same host | `header.php:31-37` — preconnects, then Outfit, Font Awesome 6.6.0, Swiper 11, and a second Google Fonts call (Fraunces + Inter) | Directly delays first paint on all 22 pages |
+| P-3 | Three render-blocking third-party stylesheets, two to the same host | `header.php:31-37` — preconnects, then Outfit, Swiper 11, and a second Google Fonts call (Fraunces + Inter) | Directly delays first paint on all 22 pages. The Font Awesome link has since been dropped for Lucide, which is loaded from the footer |
 | P-4 | Swiper CSS on all public pages, initialised only on the homepage | `header.php:36` vs `footer.php:54` / `app.js` | Dead bytes on 21 pages |
 | P-5 | `shared.js` shipped to every public page but dashboard-only in practice | `footer.php:55`; `initSidebarToggle` is called only from admin/customer dashboard scripts | Dead JS on 13 content pages |
 | P-6 | Unbounded full-table order queries on the admin overview and orders pages | `bdc-admin/index.php:17-26`, `bdc-admin/orders.php:21-33` — no `LIMIT`, result inlined into the page via `admin-config.php:16` | Grows with the order table; ships all customer PII in page source; the `orders.php` copy is not used by its own JS |
@@ -1363,6 +1513,13 @@ files** — the dependency is unused.
 `package.json` exposes only `npm run dev` and `npm run build`. There is no `test`
 script, so there is no command to run.
 
+Ad-hoc browser checks have been run with `playwright ^1.63.0` from throwaway
+scripts (driven against the live WAMP site, then deleted — they are not a
+regression suite). That is how the dead `contact` redirect in the Details POST
+handler was found, and how the Lucide sweep was verified: no
+`[data-lucide]` element left unrendered or visible at zero size on any public,
+admin or customer page, nor in an order modal injected after load.
+
 ### Critical business logic with zero tests
 
 Ordered by blast radius if it regresses:
@@ -1372,9 +1529,10 @@ Ordered by blast radius if it regresses:
    settlement. Nothing verifies that a tampered or replayed payload is refused.
 2. **Price resolution** — `includes/booking-catalog.php`: plan/service/group
    matching, multi-line totals, paise arithmetic, quote mode. A regression here
-   changes what customers are charged. The specific trap: every caller must pass
-   the draft's whole `plan_ids` list, not just `plan_id`, or a multi-package order
-   is charged for one package.
+   changes what customers are charged. The specific traps: every caller must pass
+   the draft's whole `plan_ids` list rather than just `plan_id`, or the priced
+   selection and the written snapshot disagree; and a selection resolving to more
+   than one package must be refused rather than silently truncated.
 3. **The checkout state machine** — `includes/booking-session.php`: `booking_steps()`,
    `booking_retired_steps()`, `booking_step_satisfied()`,
    `booking_furthest_reachable()`. Nothing pins the per-service step list, which is
@@ -1448,8 +1606,9 @@ implemented without explicit approval.
 | **Price resolution and money arithmetic** | The single authority for what a customer is charged; paise rounding is deliberate | `includes/booking-catalog.php:309-382`, `booking_money`, `booking_to_paise`, `booking_from_paise` |
 | **`BOOKING_DEMO` / `IS_PRODUCTION` logic** | Load-bearing safety interlock — an unset `APP_ENV` must refuse payment, not bypass the gateway | `includes/config.php:60-75` |
 | **The `bookings` snapshot columns** | The booking row, not a join, is the historical money record; rewrites destroy auditability | `customer_*`, `plan_*`, `price`, `subtotal`, `addons_total` in `bookings` |
-| **The checkout step machine** | Step list, gating and reachability drive the entire user flow and its "Step N of M" copy | `includes/booking-session.php`, `booking.php` |
+| **The checkout step machine** | Step list, gating and reachability drive the entire user flow; a handler that names the next step as a literal breaks the moment the list varies | `includes/booking-session.php`, `booking.php` |
 | **Per-service field definitions** | They are simultaneously the form spec, the validation rules and the dashboard display model | `includes/booking-registry.php`, `includes/service-fields.php` |
+| **The pinned Lucide version** | Icon names fail silently, so a version bump can blank icons across the site with no error anywhere | the script tags in `footer.php` and `bdc-admin/includes/admin-footer.php` |
 | **Guest ownership proof** | Session-marker comparison, not id knowledge, is the security boundary | `booking-thank-you.php:46-56`, `razorpay-verify.php:112-118` |
 | **Schema (`database/bdcmusic.sql`)** | No migration framework exists; hand edits are not reproducible and there is no version table | all |
 | **`users.id` / `bookings.customer_id` typing** | Both are deliberately `varchar`; a "cleanup" to integers would break every customer link | see S-8 |
@@ -1475,3 +1634,8 @@ implemented without explicit approval.
 8. **Keep this file current.** Any change to architecture, routes, APIs, data model,
    auth, business logic, dependencies or security posture requires a corresponding
    edit to the relevant section here — replacing outdated text rather than appending.
+9. **Never hardcode a step id in a redirect.** The step list varies by service, by
+   quote mode and by whether the customer is signed in; use
+   `booking_next_step( $steps, $current )`.
+10. **Check an icon name against the pinned Lucide build, not against memory.** A
+   name that does not exist leaves an empty element behind instead of an error.

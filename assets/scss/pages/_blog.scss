@@ -43,12 +43,12 @@ BLOG
 
 @include respond(xl) {
   .blog-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @include respond(md) {
   .blog-grid {
-    grid-template-columns: 1fr;
+	grid-template-columns: 1fr;
   }
 }

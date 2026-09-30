@@ -35,114 +35,110 @@ $slug   = isset( $_GET['service'] ) ? clean_text( $_GET['service'] ) : '';
 $def    = service_definition( $slug );
 
 if ( $slug === '' || $def === null ) {
-    echo json_encode( [ 'success' => false, 'message' => 'Unknown service.' ] );
-    exit;
+	echo json_encode( [ 'success' => false, 'message' => 'Unknown service.' ] );
+	exit;
 }
 
 try {
-    // Resolve the service, then confirm this customer actually bought it.
-    $svcStmt = $pdo->prepare( 'SELECT id, slug, name FROM services WHERE slug = :slug AND is_active = 1 LIMIT 1' );
-    $svcStmt->execute( [ ':slug' => $slug ] );
-    $service = $svcStmt->fetch();
+	// Resolve the service, then confirm this customer actually bought it.
+	$svcStmt = $pdo->prepare( 'SELECT id, slug, name FROM services WHERE slug = :slug AND is_active = 1 LIMIT 1' );
+	$svcStmt->execute( [ ':slug' => $slug ] );
+	$service = $svcStmt->fetch();
 
-    if ( ! $service ) {
-        echo json_encode( [ 'success' => false, 'message' => 'Unknown service.' ] );
-        exit;
-    }
+	if ( ! $service ) {
+		echo json_encode( [ 'success' => false, 'message' => 'Unknown service.' ] );
+		exit;
+	}
 
-    $orderStmt = $pdo->prepare(
-        'SELECT b.booking_id, b.invoice_no, b.status, b.payment_status, b.price, b.message, b.meta,
+	$orderStmt = $pdo->prepare(
+		'SELECT b.booking_id, b.invoice_no, b.status, b.payment_status, b.price, b.message, b.meta,
                 b.plan_id, b.plan_name, b.plan_group, b.plan_group_label,
                 b.subtotal, b.addons_total, b.currency,
-                DATE_FORMAT(b.created_at, "%Y-%m-%d") AS created_at,
-                DATE_FORMAT(b.paid_at, "%Y-%m-%d") AS paid_at
+                DATE_FORMAT(b.created_at, "%Y-%m-%d %H:%i") AS created_at,
+                DATE_FORMAT(b.paid_at, "%Y-%m-%d %H:%i") AS paid_at
          FROM bookings b
          WHERE b.customer_id = :cid AND b.service_id = :sid
          ORDER BY b.created_at DESC'
-    );
-    $orderStmt->execute( [ ':cid' => $_SESSION['user_id'], ':sid' => $service['id'] ] );
-    $orders = $orderStmt->fetchAll();
+	);
+	$orderStmt->execute( [ ':cid' => $_SESSION['user_id'], ':sid' => $service['id'] ] );
+	$orders = $orderStmt->fetchAll();
 
-    if ( empty( $orders ) ) {
-        echo json_encode( [ 'success' => false, 'message' => 'You have not purchased this service.' ] );
-        exit;
-    }
+	if ( empty( $orders ) ) {
+		echo json_encode( [ 'success' => false, 'message' => 'You have not purchased this service.' ] );
+		exit;
+	}
 
-    $bookingIds = array_column( $orders, 'booking_id' );
-    $unlocked   = false;
+	$bookingIds = array_column( $orders, 'booking_id' );
+	$unlocked   = false;
 
-    // Admin-managed arrangement rows, keyed by booking.
-    $recordMap = array();
-    $placeholders = implode( ',', array_fill( 0, count( $bookingIds ), '?' ) );
-    $recStmt = $pdo->prepare(
-        'SELECT booking_id, headline, sub_headline, progress, location,
+	// Admin-managed arrangement rows, keyed by booking.
+	$recordMap = array();
+	$placeholders = implode( ',', array_fill( 0, count( $bookingIds ), '?' ) );
+	$recStmt = $pdo->prepare(
+		'SELECT booking_id, headline, sub_headline, progress, location,
                 DATE_FORMAT(starts_on, "%Y-%m-%d") AS starts_on,
                 DATE_FORMAT(ends_on, "%Y-%m-%d") AS ends_on,
                 notes
          FROM service_records
          WHERE booking_id IN (' . $placeholders . ')'
-    );
-    $recStmt->execute( $bookingIds );
-    foreach ( $recStmt->fetchAll() as $rec ) {
-        $recordMap[ $rec['booking_id'] ] = $rec;
-    }
+	);
+	$recStmt->execute( $bookingIds );
+	foreach ( $recStmt->fetchAll() as $rec ) {
+		$recordMap[ $rec['booking_id'] ] = $rec;
+	}
 
-    // Files the customer uploaded, grouped by booking.
-    $fileMap = array();
-    $fileStmt = $pdo->prepare(
-        'SELECT booking_id, original_name, file_path, mime_type, file_size
+	// Files the customer uploaded, grouped by booking.
+	$fileMap = array();
+	$fileStmt = $pdo->prepare(
+		'SELECT booking_id, original_name, file_path, mime_type, file_size
          FROM uploaded_files
          WHERE booking_id IN (' . $placeholders . ')
          ORDER BY uploaded_at'
-    );
-    $fileStmt->execute( $bookingIds );
-    foreach ( $fileStmt->fetchAll() as $file ) {
-        $fileMap[ $file['booking_id'] ][] = $file;
-    }
+	);
+	$fileStmt->execute( $bookingIds );
+	foreach ( $fileStmt->fetchAll() as $file ) {
+		$fileMap[ $file['booking_id'] ][] = $file;
+	}
 
-    // Add-on lines, grouped by booking, at the prices each order was charged.
-    $addonMap = booking_order_addons( $pdo, $bookingIds );
+	// Package lines, grouped by booking: one order can carry several.
+	$itemMap = booking_order_items( $pdo, $bookingIds );
 
-    // Package lines, grouped by booking: one order can carry several.
-    $itemMap = booking_order_items( $pdo, $bookingIds );
+	foreach ( $orders as &$order ) {
+		if ( service_status_unlocks( $order['status'] ) ) {
+			$unlocked = true;
+		}
 
-    foreach ( $orders as &$order ) {
-        if ( service_status_unlocks( $order['status'] ) ) {
-            $unlocked = true;
-        }
+		$meta = json_decode( (string) $order['meta'], true );
 
-        $meta = json_decode( (string) $order['meta'], true );
+		$order['metaFields']   = service_meta_pairs( $slug, $meta );
+		$order['message']      = (string) $order['message'];
+		$order['statusLabel']  = service_status_label( $order['status'] );
+		$order['paymentLabel'] = booking_payment_status_label( $order['payment_status'] );
+		$order['amounts']      = booking_order_amounts( $order );
+		$order['amount']       = (float) $order['price'];
+		$order['plan']         = booking_order_plan( $order );
+		$order['items']        = $itemMap[ $order['booking_id'] ] ?? array();
+		$order['files']        = $fileMap[ $order['booking_id'] ] ?? array();
+		$order['arrangement']  = $recordMap[ $order['booking_id'] ] ?? null;
+	}
+	unset( $order );
 
-        $order['metaFields']   = service_meta_pairs( $slug, $meta );
-        $order['message']      = (string) $order['message'];
-        $order['statusLabel']  = service_status_label( $order['status'] );
-        $order['paymentLabel'] = booking_payment_status_label( $order['payment_status'] );
-        $order['amounts']      = booking_order_amounts( $order );
-        $order['amount']       = (float) $order['price'];
-        $order['plan']         = booking_order_plan( $order );
-        $order['items']        = $itemMap[ $order['booking_id'] ] ?? array();
-        $order['addons']       = $addonMap[ $order['booking_id'] ] ?? array();
-        $order['files']        = $fileMap[ $order['booking_id'] ] ?? array();
-        $order['arrangement']  = $recordMap[ $order['booking_id'] ] ?? null;
-    }
-    unset( $order );
-
-    echo json_encode( [
-        'success' => true,
-        'service' => array(
-            'slug'        => $service['slug'],
-            'name'        => $service['name'],
-            'nav'         => $def['nav'] ?? $service['name'],
-            'icon'        => $def['icon'] ?? 'fa-circle',
-            'blurb'       => service_blurb( $slug ),
-            'unlocked'    => $unlocked,
-            'arrangement' => service_arrangement_fields( $slug ),
-            'progress'    => service_progress_options( $slug ),
-        ),
-        'orders'  => $orders,
-    ] );
+	echo json_encode( [
+		'success' => true,
+		'service' => array(
+			'slug'        => $service['slug'],
+			'name'        => $service['name'],
+			'nav'         => $def['nav'] ?? $service['name'],
+			'icon'        => $def['icon'] ?? 'circle',
+			'blurb'       => service_blurb( $slug ),
+			'unlocked'    => $unlocked,
+			'arrangement' => service_arrangement_fields( $slug ),
+			'progress'    => service_progress_options( $slug ),
+		),
+		'orders'  => $orders,
+	] );
 } catch ( Throwable $e ) {
-    app_log( 'customer-service-overview', 'request failed', $e );
-    http_response_code( 500 );
-    echo json_encode( [ 'success' => false, 'message' => 'This service could not be loaded. Please try again.' ] );
+	app_log( 'customer-service-overview', 'request failed', $e );
+	http_response_code( 500 );
+	echo json_encode( [ 'success' => false, 'message' => 'This service could not be loaded. Please try again.' ] );
 }

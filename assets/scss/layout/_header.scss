@@ -25,15 +25,15 @@ HEADER
 
 @include respond(lg) {
   .header {
-    padding: 20px 0;
+	padding: 20px 0;
   }
 
   .header .container {
-    gap: 10px;
+	gap: 10px;
   }
 
   .header .logo {
-    margin-right: auto;
+	margin-right: auto;
   }
 
   // The Sign In call to action used to be switched off entirely below 992px,
@@ -43,16 +43,16 @@ HEADER
   // ordered ahead of the menu toggle to keep the header reading
   // logo -> action -> menu.
   .header .btn {
-    display: inline-flex;
-    order: 2;
-    width: auto;
-    padding: 12px 22px;
-    min-height: 44px;
-    font-size: .875rem;
+	display: inline-flex;
+	order: 2;
+	width: auto;
+	padding: 12px 22px;
+	min-height: 44px;
+	font-size: .875rem;
   }
 
   .header .menu-toggle {
-    order: 3;
-    margin-left: 0;
+	order: 3;
+	margin-left: 0;
   }
 }

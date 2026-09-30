@@ -33,519 +33,519 @@ $marketingPdb = booking_marketing_pdb();
  * stated once here rather than guessed at each use.
  */
 $courseGroupKeys = [
-    'Singing'            => 'singing',
-    'Music Production'   => 'music-production',
-    'Instrument Courses' => 'instrument',
-    'Video Editing'      => 'video-editing',
+	'Singing'            => 'singing',
+	'Music Production'   => 'music-production',
+	'Instrument Courses' => 'instrument',
+	'Video Editing'      => 'video-editing',
 ];
 
 $classServiceId = (int) booking_service( $marketingPdb, 'online-offline-classes' )['id'];
 $courses         = [];
 
 foreach ( $courseGroupKeys as $courseLabel => $groupKey ) {
-    $courses[ $courseLabel ] = [];
+	$courses[ $courseLabel ] = [];
 
-    foreach ( booking_plans( $marketingPdb, $classServiceId, $groupKey ) as $plan ) {
-        $courses[ $courseLabel ][ $plan['name'] ] = [
-            'id'    => (int) $plan['id'],
-            'price' => booking_money( $plan['price'] ),
-        ];
-    }
+	foreach ( booking_plans( $marketingPdb, $classServiceId, $groupKey ) as $plan ) {
+		$courses[ $courseLabel ][ $plan['name'] ] = [
+			'id'    => (int) $plan['id'],
+			'price' => booking_money( $plan['price'] ),
+		];
+	}
 }
 
 $planDetails = [
 
-    'Singing' => [
+	'Singing' => [
 
-        'Basic' => [
-            'Duration: 1 Month',
-            'Classes: 8',
-            'Mode: Online / Offline',
-            'Vocal warm-up',
-            'Breathing techniques',
-            'Basic voice training',
-            'Alankars',
-            'Pitch and rhythm',
-            'Beginner singing exercises',
-            'Practice material',
-            'Certificate',
-            'WhatsApp support',
-        ],
+		'Basic' => [
+			'Duration: 1 Month',
+			'Classes: 8',
+			'Mode: Online / Offline',
+			'Vocal warm-up',
+			'Breathing techniques',
+			'Basic voice training',
+			'Alankars',
+			'Pitch and rhythm',
+			'Beginner singing exercises',
+			'Practice material',
+			'Certificate',
+			'WhatsApp support',
+		],
 
-        'Standard' => [
-            'Duration: 3 Months',
-            'Classes: 24',
-            'Voice training',
-            'Bollywood singing',
-            'Classical basics',
-            'Song practice',
-            'Performance techniques',
-            'Priority WhatsApp support',
-        ],
+		'Standard' => [
+			'Duration: 3 Months',
+			'Classes: 24',
+			'Voice training',
+			'Bollywood singing',
+			'Classical basics',
+			'Song practice',
+			'Performance techniques',
+			'Priority WhatsApp support',
+		],
 
-        'Premium' => [
-            'Duration: 6 Months',
-            'Classes: 48',
-            'Professional vocal training',
-            'Advanced techniques',
-            'Semi classical',
-            'Stage performance',
-            'Studio recording',
-            'Artist grooming',
-            'Personalized practice',
-            'Premium support',
-        ],
+		'Premium' => [
+			'Duration: 6 Months',
+			'Classes: 48',
+			'Professional vocal training',
+			'Advanced techniques',
+			'Semi classical',
+			'Stage performance',
+			'Studio recording',
+			'Artist grooming',
+			'Personalized practice',
+			'Premium support',
+		],
 
-        'Enterprise' => [
-            'Duration: 12 Months',
-            '96+ classes',
-            'Complete professional training',
-            'Recording sessions',
-            'Live performance',
-            'Artist grooming',
-            'Portfolio building',
-            'Career guidance',
-            'Dedicated mentor',
-        ],
-    ],
+		'Enterprise' => [
+			'Duration: 12 Months',
+			'96+ classes',
+			'Complete professional training',
+			'Recording sessions',
+			'Live performance',
+			'Artist grooming',
+			'Portfolio building',
+			'Career guidance',
+			'Dedicated mentor',
+		],
+	],
 
-    'Music Production' => [
+	'Music Production' => [
 
-        'Basic' => [
-            'DAW introduction',
-            'Beat making',
-            'MIDI basics',
-            'Mixing',
-            'Practice projects',
-        ],
+		'Basic' => [
+			'DAW introduction',
+			'Beat making',
+			'MIDI basics',
+			'Mixing',
+			'Practice projects',
+		],
 
-        'Standard' => [
-            'Advanced beat making',
-            'Melody',
-            'Chords',
-            'Drum programming',
-            'Recording',
-            'Mastering basics',
-        ],
+		'Standard' => [
+			'Advanced beat making',
+			'Melody',
+			'Chords',
+			'Drum programming',
+			'Recording',
+			'Mastering basics',
+		],
 
-        'Premium' => [
-            'Advanced mixing',
-            'Mastering',
-            'Sound design',
-            'Vocal processing',
-            'Music arrangement',
-            'Portfolio projects',
-        ],
+		'Premium' => [
+			'Advanced mixing',
+			'Mastering',
+			'Sound design',
+			'Vocal processing',
+			'Music arrangement',
+			'Portfolio projects',
+		],
 
-        'Enterprise' => [
-            'Industry-level production',
-            'Film music',
-            'OTT music',
-            'Dolby Atmos basics',
-            'Music release strategy',
-            'Client projects',
-            'Career guidance',
-            'Dedicated mentor',
-        ],
-    ],
+		'Enterprise' => [
+			'Industry-level production',
+			'Film music',
+			'OTT music',
+			'Dolby Atmos basics',
+			'Music release strategy',
+			'Client projects',
+			'Career guidance',
+			'Dedicated mentor',
+		],
+	],
 
-    'Instrument Courses' => [
+	'Instrument Courses' => [
 
-        'Basic' => [
-            'Posture and hand positioning',
-            'Scale practice',
-            'Rhythm basics',
-            'Beginner songs',
-            'Practice routine',
-        ],
+		'Basic' => [
+			'Posture and hand positioning',
+			'Scale practice',
+			'Rhythm basics',
+			'Beginner songs',
+			'Practice routine',
+		],
 
-        'Standard' => [
-            'Chords and progressions',
-            'Finger exercises',
-            'Notation basics',
-            'Song practice',
-            'Performance confidence',
-        ],
+		'Standard' => [
+			'Chords and progressions',
+			'Finger exercises',
+			'Notation basics',
+			'Song practice',
+			'Performance confidence',
+		],
 
-        'Premium' => [
-            'Advanced techniques',
-            'Improvisation',
-            'Genre-based practice',
-            'Recording readiness',
-            'Personalized feedback',
-        ],
+		'Premium' => [
+			'Advanced techniques',
+			'Improvisation',
+			'Genre-based practice',
+			'Recording readiness',
+			'Personalized feedback',
+		],
 
-        'Enterprise' => [
-            'Professional repertoire',
-            'Stage performance',
-            'Studio preparation',
-            'Portfolio building',
-            'Dedicated mentor',
-        ],
-    ],
+		'Enterprise' => [
+			'Professional repertoire',
+			'Stage performance',
+			'Studio preparation',
+			'Portfolio building',
+			'Dedicated mentor',
+		],
+	],
 
-    'Video Editing' => [
+	'Video Editing' => [
 
-        'Basic' => [
-            'Software introduction',
-            'Timeline editing',
-            'Cuts and transitions',
-            'Audio sync',
-            'Export settings',
-        ],
+		'Basic' => [
+			'Software introduction',
+			'Timeline editing',
+			'Cuts and transitions',
+			'Audio sync',
+			'Export settings',
+		],
 
-        'Standard' => [
-            'Story flow',
-            'Color correction',
-            'Text and titles',
-            'Reels and shorts editing',
-            'Project workflow',
-        ],
+		'Standard' => [
+			'Story flow',
+			'Color correction',
+			'Text and titles',
+			'Reels and shorts editing',
+			'Project workflow',
+		],
 
-        'Premium' => [
-            'Advanced color grading',
-            'Motion graphics basics',
-            'Music video editing',
-            'Sound design',
-            'Portfolio projects',
-        ],
+		'Premium' => [
+			'Advanced color grading',
+			'Motion graphics basics',
+			'Music video editing',
+			'Sound design',
+			'Portfolio projects',
+		],
 
-        'Enterprise' => [
-            'Commercial editing workflow',
-            'Multi-camera editing',
-            'Brand video packaging',
-            'Client projects',
-            'Career guidance',
-        ],
-    ],
+		'Enterprise' => [
+			'Commercial editing workflow',
+			'Multi-camera editing',
+			'Brand video packaging',
+			'Client projects',
+			'Career guidance',
+		],
+	],
 ];
 
 $instruments = [
-    'Guitar',
-    'Keyboard',
-    'Piano',
-    'Violin',
-    'Drums',
-    'Tabla',
-    'Dholak',
-    'Flute',
-    'Bass Guitar',
-    'Electric Guitar',
-    'Ukulele',
-    'Harmonium',
-    'Saxophone',
+	'Guitar',
+	'Keyboard',
+	'Piano',
+	'Violin',
+	'Drums',
+	'Tabla',
+	'Dholak',
+	'Flute',
+	'Bass Guitar',
+	'Electric Guitar',
+	'Ukulele',
+	'Harmonium',
+	'Saxophone',
 ];
 ?>
 
 <section class="page-hero">
 
-    <div class="container">
+	<div class="container">
 
-        <!-- BREADCRUMB -->
-        <div class="breadcrumb">
+		<!-- BREADCRUMB -->
+		<div class="breadcrumb">
 
-            <a href="<?php echo $siteUrl; ?>">
-                Home
-            </a>
+			<a href="<?php echo $siteUrl; ?>">
+				Home
+			</a>
 
-            <span>/</span>
+			<span>/</span>
 
-            <a href="<?php echo $siteUrl; ?>services">
-                Services
-            </a>
+			<a href="<?php echo $siteUrl; ?>services">
+				Services
+			</a>
 
-            <span>/</span>
+			<span>/</span>
 
-            <span>
-                Online & Offline Classes
-            </span>
+			<span>
+				Online & Offline Classes
+			</span>
 
-        </div>
+		</div>
 
-        <!-- HERO -->
-        <div class="section-hero online-offline-bg">
+		<!-- HERO -->
+		<div class="section-hero online-offline-bg">
 
-            <div class="section-hero-content">
+			<div class="section-hero-content">
 
-                <span class="heading-tag">
-                    ONLINE & OFFLINE CLASSES
-                </span>
+				<span class="heading-tag">
+					ONLINE & OFFLINE CLASSES
+				</span>
 
-                <h1>
-                    Learn Music,
-                    Production &
-                    <span class="highlight">Creative Skills</span>
-                </h1>
+				<h1>
+					Learn Music,
+					Production &
+					<span class="highlight">Creative Skills</span>
+				</h1>
 
-                <p>
-                    Learn from experienced trainers with flexible online
-                    and offline classes for singing, instruments,
-                    music production and video editing.
-                </p>
+				<p>
+					Learn from experienced trainers with flexible online
+					and offline classes for singing, instruments,
+					music production and video editing.
+				</p>
 
-                <div class="hero-actions">
+				<div class="hero-actions">
 
-                    <a
+					<a
 href="#choose-package"
-                        class="btn"
-                    >
-                        Start Your Learning Journey
-                    </a>
+						class="btn"
+					>
+						Start Your Learning Journey
+					</a>
 
-                </div>
+				</div>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-        <!-- PROGRAM SELECTION -->
-        <div class="section-block">
+		<!-- PROGRAM SELECTION -->
+		<div class="section-block">
 
-            <h2>
-                Choose Your Learning Program
-            </h2>
+			<h2>
+				Choose Your Learning Program
+			</h2>
 
-            <p class="section-intro">
-                Whether you're starting from scratch or looking to build
-                professional-level skills, choose a program designed
-                around your goals.
-            </p>
+			<p class="section-intro">
+				Whether you're starting from scratch or looking to build
+				professional-level skills, choose a program designed
+				around your goals.
+			</p>
 
-            <div class="instrument-cloud">
+			<div class="instrument-cloud">
 
-                <a
-                    href="#singing"
-                >
-                    Singing
-                </a>
+				<a
+					href="#singing"
+				>
+					Singing
+				</a>
 
-                <a
-                    href="#music-production"
-                >
-                    Music Production
-                </a>
+				<a
+					href="#music-production"
+				>
+					Music Production
+				</a>
 
-                <a
-                    href="#instrument-courses"
-                >
-                    Instrument Training
-                </a>
+				<a
+					href="#instrument-courses"
+				>
+					Instrument Training
+				</a>
 
-                <a
-                    href="#video-editing"
-                >
-                    Video Editing
-                </a>
+				<a
+					href="#video-editing"
+				>
+					Video Editing
+				</a>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-        <!-- PACKAGE COMPARISON -->
+		<!-- PACKAGE COMPARISON -->
 <div class="section-block pt-0" id="choose-package">
 
-            <h2>
-                Choose Your Package
-            </h2>
+			<h2>
+				Choose Your Package
+			</h2>
 
-            <p class="section-intro">
-                Compare our professionally designed learning programs
-                and choose the package that best matches your goals,
-                experience and learning level.
-            </p>
+			<p class="section-intro">
+				Compare our professionally designed learning programs
+				and choose the package that best matches your goals,
+				experience and learning level.
+			</p>
 
-            <div class="comparison-wrap">
+			<div class="comparison-wrap">
 
-                <?php foreach ( $planDetails as $courseName => $plans ) : ?>
+				<?php foreach ( $planDetails as $courseName => $plans ) : ?>
 
-                    <?php
+					<?php
 
-                    $priceKey = $courseName;
+					$priceKey = $courseName;
 
-                    $sectionId = strtolower(
-                        str_replace(
-                            ' ',
-                            '-',
-                            $courseName
-                        )
-                    );
+					$sectionId = strtolower(
+						str_replace(
+							' ',
+							'-',
+							$courseName
+						)
+					);
 
-                    ?>
+					?>
 
-                    <!-- COURSE CATEGORY -->
-                    <div
-                        class="category-block"
-                        id="<?php echo htmlspecialchars( $sectionId ); ?>"
-                    >
+					<!-- COURSE CATEGORY -->
+					<div
+						class="category-block"
+						id="<?php echo htmlspecialchars( $sectionId ); ?>"
+					>
 
-                        <h3>
-                            <?php echo htmlspecialchars( $courseName ); ?>
-                        </h3>
+						<h3>
+							<?php echo htmlspecialchars( $courseName ); ?>
+						</h3>
 
-                        <?php if ( $courseName === 'Singing' ) : ?>
+						<?php if ( $courseName === 'Singing' ) : ?>
 
-                            <p>
-                                Learn professional vocal techniques,
-                                breathing, pitch control, rhythm and
-                                performance skills through structured
-                                online and offline classes.
-                            </p>
+							<p>
+								Learn professional vocal techniques,
+								breathing, pitch control, rhythm and
+								performance skills through structured
+								online and offline classes.
+							</p>
 
-                        <?php elseif ( $courseName === 'Music Production' ) : ?>
+						<?php elseif ( $courseName === 'Music Production' ) : ?>
 
-                            <p>
-                                Master beat making, recording, mixing,
-                                mastering and professional music production
-                                workflows using industry-standard software.
-                            </p>
+							<p>
+								Master beat making, recording, mixing,
+								mastering and professional music production
+								workflows using industry-standard software.
+							</p>
 
-                        <?php elseif ( $courseName === 'Instrument Courses' ) : ?>
+						<?php elseif ( $courseName === 'Instrument Courses' ) : ?>
 
-                            <p>
-                                Learn your favourite instrument through
-                                practical lessons designed for beginners
-                                and advanced musicians.
-                            </p>
+							<p>
+								Learn your favourite instrument through
+								practical lessons designed for beginners
+								and advanced musicians.
+							</p>
 
-                            <div class="instruments">
+							<div class="instruments">
 
-                                <?php foreach ( $instruments as $instrument ) : ?>
+								<?php foreach ( $instruments as $instrument ) : ?>
 
-                                    <span>
-                                        <?php echo htmlspecialchars( $instrument ); ?>
-                                    </span>
+									<span>
+										<?php echo htmlspecialchars( $instrument ); ?>
+									</span>
 
-                                <?php endforeach; ?>
+								<?php endforeach; ?>
 
-                            </div>
+							</div>
 
-                        <?php elseif ( $courseName === 'Video Editing' ) : ?>
+						<?php elseif ( $courseName === 'Video Editing' ) : ?>
 
-                            <p>
-                                Build professional editing skills including
-                                storytelling, colour grading, motion graphics,
-                                social media content and commercial workflows.
-                            </p>
+							<p>
+								Build professional editing skills including
+								storytelling, colour grading, motion graphics,
+								social media content and commercial workflows.
+							</p>
 
-                        <?php endif; ?>
+						<?php endif; ?>
 
-                        <!-- PLANS -->
-                        <div class="details-grid">
+						<!-- PLANS -->
+						<div class="details-grid">
 
-                            <?php foreach ( $plans as $planName => $features ) : ?>
+							<?php foreach ( $plans as $planName => $features ) : ?>
 
-                                <?php
+								<?php
 
-                                $plan         = $courses[ $priceKey ][ $planName ] ?? null;
+								$plan         = $courses[ $priceKey ][ $planName ] ?? null;
 
-                                // A hand-written feature list can name a package the
-                                // catalogue no longer sells. Skip the card rather
-                                // than render a price that is not there.
-                                if ( $plan === null ) {
-                                    continue;
-                                }
+								// A hand-written feature list can name a package the
+								// catalogue no longer sells. Skip the card rather
+								// than render a price that is not there.
+								if ( $plan === null ) {
+									continue;
+								}
 
-                                $isRecommended =
-                                    ( $planName === 'Standard' );
+								$isRecommended =
+									( $planName === 'Standard' );
 
-                                ?>
+								?>
 
-                                <div
-                                    class="detail-card"
-                                    <?php
-                                    if ( $isRecommended ) {
-                                        echo 'data-recommended="true"';
-                                    }
-                                    ?>
-                                >
+								<div
+									class="detail-card"
+									<?php
+									if ( $isRecommended ) {
+										echo 'data-recommended="true"';
+									}
+									?>
+								>
 
-                                    <?php if ( $isRecommended ) : ?>
+									<?php if ( $isRecommended ) : ?>
 
-                                        <span class="most-popular">
-                                            MOST POPULAR
-                                        </span>
+										<span class="most-popular">
+											MOST POPULAR
+										</span>
 
-                                    <?php endif; ?>
+									<?php endif; ?>
 
-                                    <h3>
-                                        <?php echo htmlspecialchars( $planName ); ?>
-                                    </h3>
+									<h3>
+										<?php echo htmlspecialchars( $planName ); ?>
+									</h3>
 
-                                    <span class="price">
-                                        <?php
-                                        echo htmlspecialchars( $plan['price'] );
-                                        ?>
-                                    </span>
+									<span class="price">
+										<?php
+										echo htmlspecialchars( $plan['price'] );
+										?>
+									</span>
 
-                                    <ul class="feature-list">
+									<ul class="feature-list">
 
-                                        <?php foreach ( $features as $feature ) : ?>
+										<?php foreach ( $features as $feature ) : ?>
 
-                                            <li>
-                                                <?php
-                                                echo htmlspecialchars( $feature );
-                                                ?>
-                                            </li>
+											<li>
+												<?php
+												echo htmlspecialchars( $feature );
+												?>
+											</li>
 
-                                        <?php endforeach; ?>
+										<?php endforeach; ?>
 
-                                    </ul>
+									</ul>
 
-                                    <a
-                                        class="btn btn-book"
-                                        href="<?php
-                                        echo htmlspecialchars(
-                                            booking_preselect_url(
-                                                'online-offline-classes',
-                                                $plan['id']
-                                            )
-                                        );
-                                        ?>"
-                                    >
-                                        Get This Package
-                                    </a>
+									<a
+										class="btn btn-book"
+										href="<?php
+										echo htmlspecialchars(
+											booking_preselect_url(
+												'online-offline-classes',
+												$plan['id']
+											)
+										);
+										?>"
+									>
+										Get This Package
+									</a>
 
-                                </div>
+								</div>
 
-                            <?php endforeach; ?>
+							<?php endforeach; ?>
 
-                        </div>
+						</div>
 
-                    </div>
+					</div>
 
-                <?php endforeach; ?>
+				<?php endforeach; ?>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-        <!-- ASSISTANCE CTA -->
-        <div class="section-block pt-0">
+		<!-- ASSISTANCE CTA -->
+		<div class="section-block pt-0">
 
-            <h2>
-                Not Sure Which Package to Choose?
-            </h2>
+			<h2>
+				Not Sure Which Package to Choose?
+			</h2>
 
-            <p class="section-intro">
-                Tell us about your goals and preferred class mode.
-                Our team can help you choose the right program
-                and learning plan.
-            </p>
+			<p class="section-intro">
+				Tell us about your goals and preferred class mode.
+				Our team can help you choose the right program
+				and learning plan.
+			</p>
 
-            <div class="hero-actions text-center">
+			<div class="hero-actions text-center">
 
-                <a
+				<a
 href="#choose-package"
-                    class="btn"
-                >
-                    Talk to Our Team
-                </a>
+					class="btn"
+				>
+					Talk to Our Team
+				</a>
 
-            </div>
+			</div>
 
-        </div>
+		</div>
 
-    </div>
+	</div>
 
 </section>
 

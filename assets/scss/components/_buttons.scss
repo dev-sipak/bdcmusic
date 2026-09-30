@@ -2,7 +2,7 @@
 BUTTONS
 ==================================================*/
 
-// ─── Base Button ────────────────────────────────
+// Base Button
 
 .btn {
   display: inline-flex;
@@ -23,10 +23,10 @@ BUTTONS
   white-space: nowrap;
   cursor: pointer;
   transition:
-    transform .3s ease,
-    box-shadow .3s ease,
-    background .3s ease,
-    color .3s ease;
+	transform .3s ease,
+	box-shadow .3s ease,
+	background .3s ease,
+	color .3s ease;
 }
 
 .btn:hover {
@@ -56,9 +56,9 @@ BUTTONS
   opacity: 0;
   pointer-events: none;
   background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, .35),
-    transparent 70%
+	circle,
+	rgba(255, 255, 255, .35),
+	transparent 70%
   );
   transition: opacity .25s ease;
 }
@@ -80,7 +80,7 @@ BUTTONS
 }
 
 
-// ─── Button Sizes ───────────────────────────────
+// Button Sizes
 
 .btn-sm {
   padding: 10px 20px;
@@ -100,7 +100,7 @@ BUTTONS
   font-size: 1.125rem;
 }
 
-// ─── Button Variants ────────────────────────────
+// Button Variants
 
 .btn-secondary {
   background: var(--text);
@@ -139,7 +139,7 @@ BUTTONS
   color: #fff;
 }
 
-// ─── Outline Buttons ────────────────────────────
+// Outline Buttons
 
 .btn-outline {
   background: transparent;
@@ -174,7 +174,7 @@ BUTTONS
   color: var(--dark);
 }
 
-// ─── Button States ──────────────────────────────
+// Button States
 
 .btn:disabled,
 .btn.disabled {
@@ -190,29 +190,29 @@ BUTTONS
   border-radius: 50%;
 }
 
-// ─── Button Group ───────────────────────────────
+// Button Group
 
 .btn-group {
   display: inline-flex;
 
   .btn {
-    border-radius: 0;
+	border-radius: 0;
 
-    &:first-child {
-      border-radius: $radius-pill 0 0 $radius-pill;
-    }
+	&:first-child {
+	  border-radius: $radius-pill 0 0 $radius-pill;
+	}
 
-    &:last-child {
-      border-radius: 0 $radius-pill $radius-pill 0;
-    }
+	&:last-child {
+	  border-radius: 0 $radius-pill $radius-pill 0;
+	}
 
-    & + .btn {
-      margin-left: -2px;
-    }
+	& + .btn {
+	  margin-left: -2px;
+	}
   }
 }
 
-// ─── Close Button ───────────────────────────────
+// Close Button
 
 .btn-close {
   display: inline-flex;
@@ -236,29 +236,29 @@ BUTTONS
   border-color: #fca5a5;
 }
 
-// ─── Responsive ─────────────────────────────────
+// Responsive
 
 @include respond(md) {
   .btn {
-    padding: 14px 28px;
-    min-height: 50px;
-    font-size: .95rem;
+	padding: 14px 28px;
+	min-height: 50px;
+	font-size: .95rem;
   }
 }
 
 @include respond(sm) {
   .btn {
-    width: 100%;
-    padding: 14px 20px;
-    min-height: 48px;
-    font-size: .95rem;
+	width: 100%;
+	padding: 14px 20px;
+	min-height: 48px;
+	font-size: .95rem;
   }
 }
 
 @include respond(xs) {
   .btn {
-    padding: 13px 18px;
-    min-height: 46px;
-    font-size: .9rem;
+	padding: 13px 18px;
+	min-height: 46px;
+	font-size: .9rem;
   }
 }

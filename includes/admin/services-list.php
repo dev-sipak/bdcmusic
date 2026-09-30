@@ -11,31 +11,31 @@ header( 'Content-Type: application/json' );
 $pdo = require_api_role( 'admin' );
 
 try {
-    $services = $pdo->query(
-        'SELECT s.id, s.slug, s.name, s.booking_mode, s.price_note, s.is_active,
+	$services = $pdo->query(
+		'SELECT s.id, s.slug, s.name, s.booking_mode, s.price_note, s.is_active,
                 ( SELECT COUNT(*) FROM service_plans p
                    WHERE p.service_id = s.id AND p.is_active = 1 ) AS plan_count
          FROM services s
          ORDER BY s.name'
-    )->fetchAll();
+	)->fetchAll();
 
-    // The package filter needs every group that exists, not only the ones on
-    // the page currently loaded, so it comes back with the services.
-    $groups = $pdo->query(
-        'SELECT service_id, group_key, MIN(group_label) AS group_label, COUNT(*) AS plan_count
+	// The package filter needs every group that exists, not only the ones on
+	// the page currently loaded, so it comes back with the services.
+	$groups = $pdo->query(
+		'SELECT service_id, group_key, MIN(group_label) AS group_label, COUNT(*) AS plan_count
          FROM service_plans
          WHERE is_active = 1
          GROUP BY service_id, group_key
          ORDER BY MIN(sort_order), group_key'
-    )->fetchAll();
+	)->fetchAll();
 
-    echo json_encode( [
-        'success'  => true,
-        'services' => $services,
-        'groups'   => $groups,
-    ] );
+	echo json_encode( [
+		'success'  => true,
+		'services' => $services,
+		'groups'   => $groups,
+	] );
 } catch ( Throwable $e ) {
-    app_log( 'services-list', 'request failed', $e );
-    http_response_code( 500 );
-    echo json_encode( [ 'success' => false, 'message' => 'The services could not be loaded. Please try again.' ] );
+	app_log( 'services-list', 'request failed', $e );
+	http_response_code( 500 );
+	echo json_encode( [ 'success' => false, 'message' => 'The services could not be loaded. Please try again.' ] );
 }

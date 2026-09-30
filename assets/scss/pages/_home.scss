@@ -264,12 +264,12 @@ CTA
 }
 
 .cta:after {
-    content: "BDC";
-    position: absolute;
-    right: -30px;
-    bottom: -130px;
+	content: "BDC";
+	position: absolute;
+	right: -30px;
+	bottom: -130px;
 	font: 900 380px Georgia;
-    color: rgba(255, 255, 255, .08);
+	color: rgba(255, 255, 255, .08);
 	z-index: 1;
 }
 
@@ -444,7 +444,7 @@ ACADEMY
 	gap: 16px;
 	flex-wrap: wrap;
 	position: relative;
-    z-index: 2;
+	z-index: 2;
 }
 
 .brand-grid {

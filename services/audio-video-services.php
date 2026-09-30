@@ -60,7 +60,7 @@
 						studio workflow.
 					</p>
 					<div class="hero-actions">
-						<a href="<?php echo booking_esc( booking_preselect_url( 'audio-video' ) ); ?>" class="btn">
+						<a href="#choose-package" class="btn">
 							Find Your Package
 						</a>
 					</div>

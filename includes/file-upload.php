@@ -6,64 +6,64 @@
  */
 
 if ( ! defined( 'HELPERS_LOADED' ) ) {
-    require_once __DIR__ . '/helpers.php';
+	require_once __DIR__ . '/helpers.php';
 }
 
 /**
  * Get allowed MIME types by service.
  */
 function get_allowed_mime_types( $service = 'general' ) {
-    $types = [
-        'audio-video' => [
-            'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3',
-            'audio/flac', 'audio/x-flac',
-            'video/mp4', 'video/quicktime', 'video/x-msvideo',
-        ],
-        'digital-distribution' => [
-            'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3',
-            'image/jpeg', 'image/png',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-excel',
-            'text/csv',
-        ],
-        'iprs' => [
-            'image/jpeg', 'image/png',
-            'application/pdf',
-        ],
-        'general' => [
-            'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3', 'audio/flac',
-            'video/mp4', 'video/quicktime',
-            'image/jpeg', 'image/png',
-            'application/pdf',
-        ],
-    ];
+	$types = [
+		'audio-video' => [
+			'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3',
+			'audio/flac', 'audio/x-flac',
+			'video/mp4', 'video/quicktime', 'video/x-msvideo',
+		],
+		'digital-distribution' => [
+			'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3',
+			'image/jpeg', 'image/png',
+			'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			'application/vnd.ms-excel',
+			'text/csv',
+		],
+		'iprs' => [
+			'image/jpeg', 'image/png',
+			'application/pdf',
+		],
+		'general' => [
+			'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/mp3', 'audio/flac',
+			'video/mp4', 'video/quicktime',
+			'image/jpeg', 'image/png',
+			'application/pdf',
+		],
+	];
 
-    return $types[ $service ] ?? $types['general'];
+	return $types[ $service ] ?? $types['general'];
 }
 
 /**
  * Get max file size by service (in bytes).
  */
 function get_max_file_size( $service = 'general' ) {
-    $sizes = [
-        'audio-video'          => 200 * 1024 * 1024,  // 200MB
-        'digital-distribution' => 300 * 1024 * 1024,  // 300MB
-        'iprs'                 => 10 * 1024 * 1024,   // 10MB
-        'general'              => 50 * 1024 * 1024,   // 50MB
-    ];
+	$sizes = [
+		'audio-video'          => 200 * 1024 * 1024,  // 200MB
+		'digital-distribution' => 300 * 1024 * 1024,  // 300MB
+		'iprs'                 => 10 * 1024 * 1024,   // 10MB
+		'general'              => 50 * 1024 * 1024,   // 50MB
+	];
 
-    return $sizes[ $service ] ?? $sizes['general'];
+	return $sizes[ $service ] ?? $sizes['general'];
 }
 
 /**
  * Build the upload directory path for a service/booking.
  */
 function get_upload_dir( $service, $bookingId ) {
-    $dataDir = dirname( __DIR__ ) . '/data/uploads/' . $service . '/' . preg_replace( '/[^a-zA-Z0-9_-]/', '', $bookingId );
-    if ( ! is_dir( $dataDir ) ) {
-        mkdir( $dataDir, 0755, true );
-    }
-    return $dataDir;
+	$dataDir = dirname( __DIR__ ) . '/data/uploads/' . $service . '/' . preg_replace( '/[^a-zA-Z0-9_-]/', '', $bookingId );
+	if ( ! is_dir( $dataDir ) ) {
+		mkdir( $dataDir, 0755, true );
+	}
+	return $dataDir;
 }
 
 /**
@@ -76,45 +76,45 @@ function get_upload_dir( $service, $bookingId ) {
  * @return array|false        Array with file info on success, false on failure.
  */
 function process_file_upload( $file, $uploadDir, $allowedMime = [], $maxSize = 52428800 ) {
-    if ( $file['error'] !== UPLOAD_ERR_OK ) {
-        return false;
-    }
+	if ( $file['error'] !== UPLOAD_ERR_OK ) {
+		return false;
+	}
 
-    if ( $file['size'] > $maxSize ) {
-        return false;
-    }
+	if ( $file['size'] > $maxSize ) {
+		return false;
+	}
 
-    if ( ! empty( $allowedMime ) ) {
-        $finfo = finfo_open( FILEINFO_MIME_TYPE );
-        $mimeType = finfo_file( $finfo, $file['tmp_name'] );
-        finfo_close( $finfo );
+	if ( ! empty( $allowedMime ) ) {
+		$finfo = finfo_open( FILEINFO_MIME_TYPE );
+		$mimeType = finfo_file( $finfo, $file['tmp_name'] );
+		finfo_close( $finfo );
 
-        if ( ! in_array( $mimeType, $allowedMime, true ) ) {
-            return false;
-        }
-    } else {
-        $mimeType = $file['type'] ?: 'application/octet-stream';
-    }
+		if ( ! in_array( $mimeType, $allowedMime, true ) ) {
+			return false;
+		}
+	} else {
+		$mimeType = $file['type'] ?: 'application/octet-stream';
+	}
 
-    $originalName = basename( $file['name'] );
-    $safeName = preg_replace( '/[^a-zA-Z0-9._-]/', '_', $originalName );
-    // The random component is load-bearing. Several files in one multi-file
-    // upload can share an original name (track.mp3 twice), and time() alone
-    // would give them the same destination and silently keep only the last.
-    $finalName = time() . '_' . bin2hex( random_bytes( 4 ) ) . '_' . $safeName;
-    $destination = $uploadDir . '/' . $finalName;
+	$originalName = basename( $file['name'] );
+	$safeName = preg_replace( '/[^a-zA-Z0-9._-]/', '_', $originalName );
+	// The random component is load-bearing. Several files in one multi-file
+	// upload can share an original name (track.mp3 twice), and time() alone
+	// would give them the same destination and silently keep only the last.
+	$finalName = time() . '_' . bin2hex( random_bytes( 4 ) ) . '_' . $safeName;
+	$destination = $uploadDir . '/' . $finalName;
 
-    if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
-        return false;
-    }
+	if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
+		return false;
+	}
 
-    return [
-        'name'    => $originalName,
-        'stored'  => $finalName,
-        'path'    => $destination,
-        'type'    => $mimeType,
-        'size'    => $file['size'],
-    ];
+	return [
+		'name'    => $originalName,
+		'stored'  => $finalName,
+		'path'    => $destination,
+		'type'    => $mimeType,
+		'size'    => $file['size'],
+	];
 }
 
 /**
@@ -127,23 +127,23 @@ function process_file_upload( $file, $uploadDir, $allowedMime = [], $maxSize = 5
  * @return array               Array of file info arrays.
  */
 function process_multiple_uploads( $files, $uploadDir, $allowedMime = [], $maxSize = 52428800 ) {
-    $stored = [];
-    $count = is_array( $files['name'] ) ? count( $files['name'] ) : 0;
+	$stored = [];
+	$count = is_array( $files['name'] ) ? count( $files['name'] ) : 0;
 
-    for ( $i = 0; $i < $count; $i++ ) {
-        $singleFile = [
-            'name'     => $files['name'][ $i ],
-            'type'     => $files['type'][ $i ],
-            'tmp_name' => $files['tmp_name'][ $i ],
-            'error'    => $files['error'][ $i ],
-            'size'     => $files['size'][ $i ],
-        ];
+	for ( $i = 0; $i < $count; $i++ ) {
+		$singleFile = [
+			'name'     => $files['name'][ $i ],
+			'type'     => $files['type'][ $i ],
+			'tmp_name' => $files['tmp_name'][ $i ],
+			'error'    => $files['error'][ $i ],
+			'size'     => $files['size'][ $i ],
+		];
 
-        $result = process_file_upload( $singleFile, $uploadDir, $allowedMime, $maxSize );
-        if ( $result ) {
-            $stored[] = $result;
-        }
-    }
+		$result = process_file_upload( $singleFile, $uploadDir, $allowedMime, $maxSize );
+		if ( $result ) {
+			$stored[] = $result;
+		}
+	}
 
-    return $stored;
+	return $stored;
 }

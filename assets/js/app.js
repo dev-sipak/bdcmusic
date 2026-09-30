@@ -6,52 +6,52 @@ const counters = document.querySelectorAll(".counter-grid h2");
 
 if (counters.length) {
 
-    const counterObserver = new IntersectionObserver((entries) => {
+	const counterObserver = new IntersectionObserver((entries) => {
 
-        entries.forEach(entry => {
+		entries.forEach(entry => {
 
-            if (!entry.isIntersecting) return;
+			if (!entry.isIntersecting) return;
 
-            const el = entry.target;
+			const el = entry.target;
 
-            const end = parseInt(el.textContent.replace(/\D/g, ""), 10);
+			const end = parseInt(el.textContent.replace(/\D/g, ""), 10);
 
-            const suffix = el.textContent.replace(/[0-9]/g, "");
+			const suffix = el.textContent.replace(/[0-9]/g, "");
 
-            let current = 0;
+			let current = 0;
 
-            const duration = 2000;
-            const increment = end / (duration / 16);
+			const duration = 2000;
+			const increment = end / (duration / 16);
 
-            function updateCounter() {
+			function updateCounter() {
 
-                current += increment;
+				current += increment;
 
-                if (current < end) {
+				if (current < end) {
 
-                    el.textContent = Math.floor(current) + suffix;
+					el.textContent = Math.floor(current) + suffix;
 
-                    requestAnimationFrame(updateCounter);
+					requestAnimationFrame(updateCounter);
 
-                } else {
+				} else {
 
-                    el.textContent = end + suffix;
+					el.textContent = end + suffix;
 
-                }
+				}
 
-            }
+			}
 
-            updateCounter();
+			updateCounter();
 
-            counterObserver.unobserve(el);
+			counterObserver.unobserve(el);
 
-        });
+		});
 
-    }, {
-        threshold: 0.4
-    });
+	}, {
+		threshold: 0.4
+	});
 
-    counters.forEach(counter => counterObserver.observe(counter));
+	counters.forEach(counter => counterObserver.observe(counter));
 
 }
 
@@ -62,199 +62,199 @@ ARTIST SWIPER
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const menuToggle = document.querySelector(".menu-toggle");
-    const nav = document.querySelector(".nav");
-    const dropdownItem = document.querySelector(".has-dropdown");
-    const dropdownToggle = document.querySelector(".dropdown-toggle");
+	const menuToggle = document.querySelector(".menu-toggle");
+	const nav = document.querySelector(".nav");
+	const dropdownItem = document.querySelector(".has-dropdown");
+	const dropdownToggle = document.querySelector(".dropdown-toggle");
 
-    if (menuToggle && nav) {
+	if (menuToggle && nav) {
 
-        menuToggle.addEventListener("click", function () {
+		menuToggle.addEventListener("click", function () {
 
-            const isOpen = nav.classList.toggle("nav-open");
-            menuToggle.setAttribute("aria-expanded", isOpen);
+			const isOpen = nav.classList.toggle("nav-open");
+			menuToggle.setAttribute("aria-expanded", isOpen);
 
-            menuToggle.innerHTML = isOpen
-                ? '<i class="fa-solid fa-xmark"></i>'
-                : '<i class="fa-solid fa-bars"></i>';
+			menuToggle.innerHTML = isOpen
+				? '<i data-lucide="x"></i>'
+				: '<i data-lucide="menu"></i>';
 
-        });
+		});
 
-        if (dropdownItem && dropdownToggle) {
+		if (dropdownItem && dropdownToggle) {
 
-     // Mobile click dropdown
-    dropdownToggle.addEventListener("click", function (event) {
+	 // Mobile click dropdown
+	dropdownToggle.addEventListener("click", function (event) {
 
-        if (window.innerWidth <= 992) {
+		if (window.innerWidth <= 992) {
 
-            event.preventDefault();
-            event.stopPropagation();
+			event.preventDefault();
+			event.stopPropagation();
 
-            const isOpen = dropdownItem.classList.toggle("dropdown-open");
+			const isOpen = dropdownItem.classList.toggle("dropdown-open");
 
-            dropdownToggle.setAttribute(
-                "aria-expanded",
-                isOpen ? "true" : "false"
-            );
-        }
+			dropdownToggle.setAttribute(
+				"aria-expanded",
+				isOpen ? "true" : "false"
+			);
+		}
 
-    });
+	});
 
 
    
-    // Close dropdown when clicking outside (mobile only)
-    document.addEventListener("click", function (event) {
+	// Close dropdown when clicking outside (mobile only)
+	document.addEventListener("click", function (event) {
 
-        if (window.innerWidth <= 992) {
+		if (window.innerWidth <= 992) {
 
-            if (!dropdownItem.contains(event.target)) {
+			if (!dropdownItem.contains(event.target)) {
 
-                dropdownItem.classList.remove("dropdown-open");
+				dropdownItem.classList.remove("dropdown-open");
 
-                dropdownToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
+				dropdownToggle.setAttribute(
+					"aria-expanded",
+					"false"
+				);
 
-            }
+			}
 
-        }
+		}
 
-    });
+	});
 
 
-    // Escape close
-    document.addEventListener("keydown", function (event) {
+	// Escape close
+	document.addEventListener("keydown", function (event) {
 
-        if (event.key === "Escape") {
+		if (event.key === "Escape") {
 
-            dropdownItem.classList.remove("dropdown-open");
+			dropdownItem.classList.remove("dropdown-open");
 
-            dropdownToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+			dropdownToggle.setAttribute(
+				"aria-expanded",
+				"false"
+			);
 
-            nav.classList.remove("nav-open");
+			nav.classList.remove("nav-open");
 
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+			menuToggle.setAttribute(
+				"aria-expanded",
+				"false"
+			);
 
-            menuToggle.innerHTML =
-                '<i class="fa-solid fa-bars"></i>';
+			menuToggle.innerHTML =
+				'<i data-lucide="menu"></i>';
 
-        }
+		}
 
-    });
+	});
 
 }
 
-        document.querySelectorAll(".nav a").forEach(function (link) {
+		document.querySelectorAll(".nav a").forEach(function (link) {
 
-            link.addEventListener("click", function () {
+			link.addEventListener("click", function () {
 
-                nav.classList.remove("nav-open");
-                if (dropdownItem && dropdownToggle) {
-                    dropdownItem.classList.remove("dropdown-open");
-                    dropdownToggle.setAttribute("aria-expanded", "false");
-                }
-                menuToggle.setAttribute("aria-expanded", "false");
-                menuToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
+				nav.classList.remove("nav-open");
+				if (dropdownItem && dropdownToggle) {
+					dropdownItem.classList.remove("dropdown-open");
+					dropdownToggle.setAttribute("aria-expanded", "false");
+				}
+				menuToggle.setAttribute("aria-expanded", "false");
+				menuToggle.innerHTML = '<i data-lucide="menu"></i>';
 
-            });
+			});
 
-        });
+		});
 
-    }
+	}
 
-    if (typeof Swiper === "undefined") {
+	if (typeof Swiper === "undefined") {
 
-        console.error("Swiper JS not loaded.");
+		console.error("Swiper JS not loaded.");
 
-        return;
+		return;
 
-    }
+	}
 
-    if (typeof IntersectionObserver !== "undefined") {
+	if (typeof IntersectionObserver !== "undefined") {
 
-        const revealObserver = new IntersectionObserver((entries) => {
+		const revealObserver = new IntersectionObserver((entries) => {
 
-            entries.forEach((entry) => {
+			entries.forEach((entry) => {
 
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("is-visible");
-                    revealObserver.unobserve(entry.target);
-                }
+				if (entry.isIntersecting) {
+					entry.target.classList.add("is-visible");
+					revealObserver.unobserve(entry.target);
+				}
 
-            });
+			});
 
-        }, {
-            threshold: 0.16
-        });
+		}, {
+			threshold: 0.16
+		});
 
-        document.querySelectorAll(".reveal").forEach((item) => revealObserver.observe(item));
+		document.querySelectorAll(".reveal").forEach((item) => revealObserver.observe(item));
 
-    } else {
+	} else {
 
-        document.querySelectorAll(".reveal").forEach((item) => item.classList.add("is-visible"));
+		document.querySelectorAll(".reveal").forEach((item) => item.classList.add("is-visible"));
 
-    }
+	}
 
-    new Swiper(".person-slider", {
+	new Swiper(".person-slider", {
 
-        slidesPerView: 5,
-        spaceBetween: 30,
+		slidesPerView: 5,
+		spaceBetween: 30,
 
-        loop: true,
+		loop: true,
 
-        speed: 1200,
+		speed: 1200,
 
-        allowTouchMove: false,
+		allowTouchMove: false,
 
-        grabCursor: true,
+		grabCursor: true,
 
-        autoplay: {
-            delay: 6000,
-            disableOnInteraction: false,
-        },
+		autoplay: {
+			delay: 6000,
+			disableOnInteraction: false,
+		},
 
-        pagination: {
-            el: ".person-slider .swiper-pagination",
-            clickable: true,
-        },
+		pagination: {
+			el: ".person-slider .swiper-pagination",
+			clickable: true,
+		},
 
-        breakpoints: {
+		breakpoints: {
 
-            320: {
-                slidesPerView: 1,
-                spaceBetween: 20
-            },
+			320: {
+				slidesPerView: 1,
+				spaceBetween: 20
+			},
 
-            576: {
-                slidesPerView: 2,
-                spaceBetween: 20
-            },
+			576: {
+				slidesPerView: 2,
+				spaceBetween: 20
+			},
 
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 25
-            },
+			768: {
+				slidesPerView: 2,
+				spaceBetween: 25
+			},
 
-            992: {
-                slidesPerView: 3,
-                spaceBetween: 30
-            },
+			992: {
+				slidesPerView: 3,
+				spaceBetween: 30
+			},
 
-            1200: {
-                slidesPerView: 5,
-                spaceBetween: 30
-            }
+			1200: {
+				slidesPerView: 5,
+				spaceBetween: 30
+			}
 
-        }
+		}
 
-    });
+	});
 
 });
 
@@ -264,78 +264,78 @@ HERO CARD SLIDER
 =========================================================*/
 document.addEventListener("DOMContentLoaded", () => {
 
-    new Swiper(".hero-card-slider", {
-        slidesPerView: 1,
-        loop: true,
-        speed: 1000,
+	new Swiper(".hero-card-slider", {
+		slidesPerView: 1,
+		loop: true,
+		speed: 1000,
 		effect:"fade",
 		fadeEffect:{
 			crossFade:true
 		},
-        grabCursor: true,
-        allowTouchMove: true,
-        observer: true,
-        observeParents: true,
-        autoplay: {
-            delay: 3500,
-            disableOnInteraction: false
-        }
-    });
+		grabCursor: true,
+		allowTouchMove: true,
+		observer: true,
+		observeParents: true,
+		autoplay: {
+			delay: 3500,
+			disableOnInteraction: false
+		}
+	});
 
 });
 
 document.addEventListener("DOMContentLoaded", () => {
 
 new Swiper(".testimonial-slider", {
-    slidesPerView: 1,
-    spaceBetween: 30,
-    loop: true,
-    grabCursor: true,
-    autoHeight: true,
+	slidesPerView: 1,
+	spaceBetween: 30,
+	loop: true,
+	grabCursor: true,
+	autoHeight: true,
 
-    autoplay: {
-        delay: 6000,
-        disableOnInteraction: false,
-    },
+	autoplay: {
+		delay: 6000,
+		disableOnInteraction: false,
+	},
 
-    pagination: {
-        el: ".testimonial-slider .swiper-pagination",
-        clickable: true,
-    },
+	pagination: {
+		el: ".testimonial-slider .swiper-pagination",
+		clickable: true,
+	},
 
-    breakpoints: {
-        0: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-        },
-        768: {
-            slidesPerView: 1,
-            spaceBetween: 24,
-        },
-        1024: {
-            slidesPerView: 1,
-            spaceBetween: 30,
-        }
-    }
+	breakpoints: {
+		0: {
+			slidesPerView: 1,
+			spaceBetween: 20,
+		},
+		768: {
+			slidesPerView: 1,
+			spaceBetween: 24,
+		},
+		1024: {
+			slidesPerView: 1,
+			spaceBetween: 30,
+		}
+	}
 });
 document.querySelectorAll(".faq-item").forEach(item => {
-    item.addEventListener("toggle", () => {
+	item.addEventListener("toggle", () => {
 
-        if (!item.open) {
-            item.classList.remove("active");
-            return;
-        }
+		if (!item.open) {
+			item.classList.remove("active");
+			return;
+		}
 
-        document.querySelectorAll(".faq-item").forEach(faq => {
-            if (faq !== item) {
-                faq.open = false;
-                faq.classList.remove("active");
-            }
-        });
+		document.querySelectorAll(".faq-item").forEach(faq => {
+			if (faq !== item) {
+				faq.open = false;
+				faq.classList.remove("active");
+			}
+		});
 
-        item.classList.add("active");
+		item.classList.add("active");
 
-    });
+	});
 });
 
 /*=========================================================
@@ -347,57 +347,57 @@ BACK TO TOP
 // enough for "back to top" to mean anything, then fades in.
 (() => {
 
-    const btn = document.querySelector(".back-to-top");
+	const btn = document.querySelector(".back-to-top");
 
-    if (!btn) return;
+	if (!btn) return;
 
-    // Shown after roughly one and a half screens of scrolling.
-    const SHOW_AFTER = 500;
+	// Shown after roughly one and a half screens of scrolling.
+	const SHOW_AFTER = 500;
 
-    // Lets the same rule drive both the class and the inline aria state, so the
-    // control is never left visible to a screen reader while hidden on screen.
-    function setVisible(visible) {
-        btn.classList.toggle("is-visible", visible);
-        btn.setAttribute("aria-hidden", visible ? "false" : "true");
-        // Keep it out of the tab order while it is off screen, so a keyboard user
-        // does not tab into a button they cannot see.
-        btn.tabIndex = visible ? 0 : -1;
-    }
+	// Lets the same rule drive both the class and the inline aria state, so the
+	// control is never left visible to a screen reader while hidden on screen.
+	function setVisible(visible) {
+		btn.classList.toggle("is-visible", visible);
+		btn.setAttribute("aria-hidden", visible ? "false" : "true");
+		// Keep it out of the tab order while it is off screen, so a keyboard user
+		// does not tab into a button they cannot see.
+		btn.tabIndex = visible ? 0 : -1;
+	}
 
-    let ticking = false;
+	let ticking = false;
 
-    function onScroll() {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(() => {
-            setVisible(window.scrollY > SHOW_AFTER);
-            ticking = false;
-        });
-    }
+	function onScroll() {
+		if (ticking) return;
+		ticking = true;
+		window.requestAnimationFrame(() => {
+			setVisible(window.scrollY > SHOW_AFTER);
+			ticking = false;
+		});
+	}
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+	window.addEventListener("scroll", onScroll, { passive: true });
 
-    btn.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                ? "auto"
-                : "smooth"
-        });
-    });
+	btn.addEventListener("click", () => {
+		window.scrollTo({
+			top: 0,
+			behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+				? "auto"
+				: "smooth"
+		});
+	});
 
-    // Keyboard shortcut, the convention for this control.
-    document.addEventListener("keydown", (e) => {
-        if (e.key !== "Home" || e.ctrlKey || e.metaKey || e.shiftKey) return;
-        // Let a Home keypress inside a field move the caret, not the page.
-        const tag = document.activeElement && document.activeElement.tagName;
-        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+	// Keyboard shortcut, the convention for this control.
+	document.addEventListener("keydown", (e) => {
+		if (e.key !== "Home" || e.ctrlKey || e.metaKey || e.shiftKey) return;
+		// Let a Home keypress inside a field move the caret, not the page.
+		const tag = document.activeElement && document.activeElement.tagName;
+		if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	});
 
-    // The page can be loaded already scrolled (a refresh part way down, or a
-    // fragment link), so set the initial state rather than waiting for a scroll.
-    setVisible(window.scrollY > SHOW_AFTER);
+	// The page can be loaded already scrolled (a refresh part way down, or a
+	// fragment link), so set the initial state rather than waiting for a scroll.
+	setVisible(window.scrollY > SHOW_AFTER);
 
 })();
 

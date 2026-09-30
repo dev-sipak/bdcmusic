@@ -13,13 +13,14 @@
 	line-height: 1.4;
 }
 
-// ─── Page frame ───────────────────────────────────────────────────
+// Page frame
 
 .booking-page { padding: 120px 0 80px; }
 
 
 .booking-page h1 {
 	margin-bottom: 1.5rem;
+	font-size: clamp(3.4rem,4vw,6.5rem);
 }
 
 // A payment that the server refused. booking-checkout.js adds .is-error to the
@@ -32,6 +33,26 @@
 // Shown next to a control by the registry when a field is required.
 .required-star {
 	color: var(--error);
+}
+
+// A standing caveat on the page rather than a step of its own.
+.booking-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 28px;
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	padding: 12px 16px;
+	background: #fff;
+	color: var(--muted);
+	font-size: 0.9rem;
+
+	i {
+		flex-shrink: 0;
+		margin-top: 2px;
+		color: var(--primary);
+	}
 }
 
 // An invalid control is tinted, so it is obvious on a long form without
@@ -53,7 +74,7 @@
 	}
 }
 
-// ─── Attached files ──────────────────────────────────────────────
+// Attached files
 
 .field-files {
 	display: flex;
@@ -78,7 +99,7 @@
 	}
 }
 
-// ─── Progress indicator ──────────────────────────────────────────
+// Progress indicator
 
 .booking-progress {
 	display: flex;
@@ -141,7 +162,7 @@
 	}
 }
 
-// ─── Layout ──────────────────────────────────────────────────────
+// Layout
 
 .booking-layout {
 	display: grid;
@@ -163,6 +184,7 @@
 
 	> h2 {
 		margin-bottom: 6px;
+		font-size: clamp(2.2rem,1vw,4rem);
 	}
 
 	> p.booking-intro {
@@ -183,7 +205,7 @@
 	}
 }
 
-// ─── Summary card ────────────────────────────────────────────────
+// Summary card
 
 .booking-summary {
 	border: 1px solid var(--border);
@@ -240,7 +262,7 @@
 	}
 }
 
-// ─── Package selection cards ─────────────────────────────────────
+// Package selection cards
 
 .booking-plans {
 	display: grid;
@@ -311,12 +333,13 @@
 		gap: 8px;
 
 		&::before {
-			content: "\f00c";
-			flex-shrink: 0;
-			color: var(--success);
-			font-family: "Font Awesome 6 Free";
-			font-size: 0.7rem;
-			font-weight: 900;
+			content: "";
+			flex: 0 0 12px;
+			width: 12px;
+			height: 12px;
+			background-color: var(--success);
+			-webkit-mask: var(--icon-check) center / contain no-repeat;
+			mask: var(--icon-check) center / contain no-repeat;
 		}
 	}
 }
@@ -335,7 +358,7 @@
 	text-transform: uppercase;
 }
 
-// ─── Review list ─────────────────────────────────────────────────
+// Review list
 
 .booking-review {
 	display: grid;
@@ -399,7 +422,7 @@
 	}
 }
 
-// ─── Quote notice ────────────────────────────────────────────────
+// Quote notice
 //
 // Promotion is quote mode: nothing is charged here, so the panel says so
 // plainly rather than showing a payment total of zero as if it were real.
@@ -425,7 +448,7 @@
 	}
 }
 
-// ─── Navigation ──────────────────────────────────────────────────
+// Navigation
 
 .booking-nav {
 	display: flex;

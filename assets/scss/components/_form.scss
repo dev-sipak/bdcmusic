@@ -123,8 +123,7 @@
 	position: relative;
 
 	> i,
-	> .fa-solid,
-	> .fas {
+	> svg.lucide {
 		position: absolute;
 		left: 14px;
 		top: 50%;
@@ -158,32 +157,37 @@
 
 	&:focus-within {
 		> i,
-		> .fa-solid,
-		> .fas {
+		> svg.lucide {
 			color: var(--primary);
 		}
 	}
 
-	/* Select chevron */
+	/* Select chevron, drawn from two borders so the field does not have to wait
+	   on an icon font or a JavaScript render to show it. */
 	&.has-chevron::after {
-		content: "\f078";
+		content: "";
 		position: absolute;
-		right: 14px;
+		right: 16px;
 		top: 50%;
 		z-index: 1;
-		transform: translateY(-50%);
-		color: #9ca3af;
-		font-family: "Font Awesome 6 Free";
-		font-size: 0.75rem;
-		font-weight: 900;
+		width: 7px;
+		height: 7px;
+		margin-top: -5px;
+		border-right: 2px solid #9ca3af;
+		border-bottom: 2px solid #9ca3af;
+		transform: rotate(45deg);
 		pointer-events: none;
+		transition: border-color 0.25s ease;
+	}
+
+	&.has-chevron:focus-within::after {
+		border-color: var(--primary);
 	}
 
 	/* Textarea icon */
 	&.textarea-icon {
 		> i,
-		> .fa-solid,
-		> .fas {
+		> svg.lucide {
 			top: 18px;
 			transform: none;
 		}
@@ -192,8 +196,7 @@
 	/* File input icon */
 	&.file-icon {
 		> i,
-		> .fa-solid,
-		> .fas {
+		> svg.lucide {
 			top: 50%;
 			transform: translateY(-50%);
 		}
@@ -216,7 +219,12 @@
 	gap: 12px;
 }
 
-.radio-card,
+.radio-card{
+	cursor: pointer;
+	display: flex;
+	gap: 4px;
+}
+
 .checkbox-card,
 .chip-card,
 .choice-card,
@@ -234,10 +242,94 @@
 	}
 }
 
-.radio-card:has(input:checked),
+
 .checkbox-card:has(input:checked) {
 	border-color: var(--primary);
 	background: #fafafa;
+}
+
+/* =========================================================
+   SELECTABLE CARDS
+   A radio or checkbox group rendered as cards: the whole card
+   is the hit area, the real input stays in the DOM and keeps
+   its name, value and focus behaviour, and a drawn check shows
+   which one is selected.
+   ========================================================= */
+
+.radio-card.is-card,
+.checkbox-card.is-card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 150px;
+	padding: 14px 18px;
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	background: #fff;
+	cursor: pointer;
+	transition: var(--transition);
+
+	// Hidden, not removed: the browser still groups, submits, validates and
+	// keyboard-focuses the control, so the form posts exactly what it always
+	// did and JS with the CSS off is still usable.
+	input[type="radio"],
+	input[type="checkbox"] {
+		position: absolute;
+		opacity: 0;
+		width: 1px;
+		height: 1px;
+		margin: 0;
+		pointer-events: none;
+	}
+
+	// The check indicator. Empty until the card is selected. The ring is an
+	// inset shadow rather than a border because a mask would hide the border
+	// along with everything else on the element.
+	&::after {
+		content: "";
+		flex: 0 0 22px;
+		width: 22px;
+		height: 22px;
+		margin-left: auto;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px var(--border);
+		background-color: currentColor;
+		color: transparent;
+		-webkit-mask: var(--icon-check) center / 12px 12px no-repeat;
+		mask: var(--icon-check) center / 12px 12px no-repeat;
+		transition: var(--transition);
+	}
+
+	&:hover {
+		border-color: var(--primary);
+		box-shadow: 0 16px 34px rgba(17, 17, 17, 0.07);
+	}
+
+	&:has(input:checked) {
+		border-color: var(--primary);
+		background: rgba(228, 0, 43, 0.06);
+		box-shadow: 0 10px 24px rgba(228, 0, 43, 0.12);
+
+		&::after {
+			box-shadow: inset 0 0 0 1px var(--primary);
+			background-color: var(--primary);
+			color: #fff;
+		}
+	}
+
+	// The input is visually hidden, so the ring has to be drawn on the card.
+	&:has(input:focus-visible) {
+		outline: 2px solid var(--primary);
+		outline-offset: 2px;
+	}
+}
+
+@media (max-width: 575px) {
+	.radio-card.is-card,
+	.checkbox-card.is-card {
+		width: 100%;
+	}
 }
 
 /* =========================================================
@@ -251,6 +343,7 @@ input[type="checkbox"] {
 	}
 
 	accent-color: #e4002b;
+	width: 20px;
 }
 
 input,

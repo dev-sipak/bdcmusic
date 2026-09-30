@@ -11,8 +11,8 @@
  */
 
 if ( ! isset( $_SESSION['user_id'] ) || ! isset( $_SESSION['user_role'] ) || $_SESSION['user_role'] !== 'admin' ) {
-    header( 'Location: ' . $basePath . 'login' );
-    exit;
+	header( 'Location: ' . $basePath . 'login' );
+	exit;
 }
 
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -21,22 +21,22 @@ require_once __DIR__ . '/../../includes/helpers.php';
 // recorded at sign-in no longer matches the stored hash once it has been
 // changed, so the admin session is dropped rather than left usable.
 try {
-    require_once __DIR__ . '/../../includes/database.php';
+	require_once __DIR__ . '/../../includes/database.php';
 
-    if ( ! session_password_is_current( db_connect(), $_SESSION['user_id'] ) ) {
-        app_session_destroy();
-        header( 'Location: ' . $basePath . 'login' );
-        exit;
-    }
+	if ( ! session_password_is_current( db_connect(), $_SESSION['user_id'] ) ) {
+		app_session_destroy();
+		header( 'Location: ' . $basePath . 'login' );
+		exit;
+	}
 } catch ( PDOException $e ) {
-    // A database problem must not silently grant or revoke admin access, and it
-    // must not lock the administrator out during an outage. The role check
-    // above has already passed, so the session stands.
-    app_log( 'admin-guard', 'could not verify session for ' . $_SESSION['user_id'], $e );
+	// A database problem must not silently grant or revoke admin access, and it
+	// must not lock the administrator out during an outage. The role check
+	// above has already passed, so the session stands.
+	app_log( 'admin-guard', 'could not verify session for ' . $_SESSION['user_id'], $e );
 }
 
 $adminBase = $basePath . 'bdc-admin/';
 
 if ( ! isset( $adminPage ) ) {
-    $adminPage = 'overview';
+	$adminPage = 'overview';
 }

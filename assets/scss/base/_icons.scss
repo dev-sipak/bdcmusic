@@ -1,0 +1,53 @@
+/*==================================================
+ICONS (LUCIDE)
+==================================================*/
+
+/* A tick as a mask rather than a glyph. A few check marks are drawn by CSS
+   alone - the radio and checkbox cards, the package feature lists - and a mask
+   lets those take the colour of the text they sit in, which an icon font glyph
+   could not. */
+:root {
+	--icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+/* Lucide hands back 24x24 SVGs that carry width and height as attributes, so
+   without this every icon would be 24px whatever the text around it is doing.
+   1em keeps the behaviour the old icon font had: an icon is exactly as tall as
+   the line it sits on, and inherits that line's colour through currentColor. */
+svg.lucide {
+	width: 1em;
+	height: 1em;
+	flex-shrink: 0;
+	vertical-align: -0.125em;
+}
+
+/* The placeholder is sized the same way, so the space an icon will take is
+   already reserved before the bundle swaps it for an SVG. */
+i[data-lucide] {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.125em;
+}
+
+/* Lucide has no brand logos, so the few social marks on the site are inlined by
+   includes/brand-icons.php on the same 24x24 grid. They fill with currentColor
+   and are sized here to match, so the two kinds of mark sit alike. */
+svg.brand-icon {
+	width: 1em;
+	height: 1em;
+	flex-shrink: 0;
+	vertical-align: -0.125em;
+	fill: currentColor;
+}
+
+/* .is-spinning replaces the old font's spin class, for the loading states. */
+.is-spinning {
+	animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

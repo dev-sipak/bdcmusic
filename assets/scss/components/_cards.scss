@@ -49,11 +49,11 @@ SERVICES
   transform-style: preserve-3d;
   will-change: transform;
   transition:
-    transform .35s ease,
-    box-shadow .35s ease,
-    border-color .35s ease,
-    background .35s ease,
-    color .35s ease;
+	transform .35s ease,
+	box-shadow .35s ease,
+	border-color .35s ease,
+	background .35s ease,
+	color .35s ease;
 }
 
 .card:hover {
@@ -170,11 +170,11 @@ HOVER EFFECTS
 .btn,
 .social a {
   transition:
-    transform .35s ease,
-    box-shadow .35s ease,
-    border-color .35s ease,
-    background .35s ease,
-    color .35s ease;
+	transform .35s ease,
+	box-shadow .35s ease,
+	border-color .35s ease,
+	background .35s ease,
+	color .35s ease;
 }
 
 .blog-grid article:hover {
@@ -208,8 +208,8 @@ PART 3B
 
 img.red-svg {
   filter: brightness(0) saturate(100%)
-    invert(16%) sepia(94%) saturate(7475%)
-    hue-rotate(345deg) brightness(91%) contrast(115%);
+	invert(16%) sepia(94%) saturate(7475%)
+	hue-rotate(345deg) brightness(91%) contrast(115%);
   width: 32px;
 }
 
@@ -225,19 +225,19 @@ img.red-svg {
 }
 
 .eco-card:before {
-    content: "";
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(228, 0, 43, .12), transparent 70%);
-    right: -80px;
-    top: -80px;
-    opacity: 0;
-    transition: .45s;
+	content: "";
+	position: absolute;
+	width: 220px;
+	height: 220px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(228, 0, 43, .12), transparent 70%);
+	right: -80px;
+	top: -80px;
+	opacity: 0;
+	transition: .45s;
 }
 .eco-card:hover:before {
-    opacity: 1;
+	opacity: 1;
 }
 .eco-card:hover {
   border-color: rgba(228, 0, 43, 0.28);
@@ -304,18 +304,18 @@ img.red-svg {
    genuinely unique to that page. */
 @include respond(xl) {
 .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ecosystem-grid,
   .person-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @include respond(lg) {
   .counter-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -324,6 +324,6 @@ img.red-svg {
   .counter-grid,
   .ecosystem-grid,
   .person-grid {
-    grid-template-columns: 1fr;
+	grid-template-columns: 1fr;
   }
 }

@@ -14,49 +14,49 @@ $adminScripts = array( 'admin-artists.js' );
 ?>
 
 <section class="adm-page">
-    <div class="container-fluid px-6">
-        <div class="adm-layout">
+	<div class="container-fluid px-6">
+		<div class="adm-layout">
 
-            <?php include __DIR__ . '/includes/admin-nav.php'; ?>
+			<?php include __DIR__ . '/includes/admin-nav.php'; ?>
 
-            <?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
+			<?php include __DIR__ . '/includes/admin-mobile-bar.php'; ?>
 
-            <main class="adm-main">
+			<main class="adm-main">
 
-                <div class="adm-tab active" id="adm-tab-artists">
-                    <div class="adm-tab-header">
-                        <h2>Artists Management</h2>
-                        <p>Manage artists, categories, and pricing for the marketplace.</p>
-                    </div>
-                    <div class="adm-filter-bar">
-                        <button type="button" class="btn" id="adm-add-artist-btn">
-                            <i class="fa-solid fa-plus"></i> Add New Artist
-                        </button>
-                    </div>
-                    <div class="adm-table-wrap">
-                        <table class="adm-table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adm-artists-tbody"></tbody>
-                        </table>
-                    </div>
-                    <p class="adm-empty d-none" id="adm-artists-empty">No artists found.</p>
-                    <div id="adm-artists-pagination"></div>
-                </div>
+				<div class="adm-tab active" id="adm-tab-artists">
+					<div class="adm-tab-header">
+						<h2>Artists Management</h2>
+						<p>Manage artists, categories, and pricing for the marketplace.</p>
+					</div>
+					<div class="adm-filter-bar">
+						<button type="button" class="btn" id="adm-add-artist-btn">
+							<i data-lucide="plus"></i> Add New Artist
+						</button>
+					</div>
+					<div class="adm-table-wrap">
+						<table class="adm-table">
+							<thead>
+								<tr>
+									<th>Image</th>
+									<th>Name</th>
+									<th>Category</th>
+									<th>Location</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody id="adm-artists-tbody"></tbody>
+						</table>
+					</div>
+					<p class="adm-empty d-none" id="adm-artists-empty">No artists found.</p>
+					<div id="adm-artists-pagination"></div>
+				</div>
 
-            </main>
-        </div>
-    </div>
+			</main>
+		</div>
+	</div>
 
-    <?php include __DIR__ . '/includes/artist-modal.php'; ?>
+	<?php include __DIR__ . '/includes/artist-modal.php'; ?>
 </section>
 
 <?php include __DIR__ . '/includes/admin-config.php'; ?>

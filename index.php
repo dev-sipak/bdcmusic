@@ -1,115 +1,115 @@
 <?php include_once 'header.php'; ?>
-    <main>
-        <section class="hero hero-bg" id="home">
-            <div class="hero-ambient ambient-b"></div>
-            <div class="container hero-grid">
-                <div class="hero-content reveal">
-                    <span class="heading-tag">All-in-one music platform</span>
-                    <h1>From Your First Track to Global Recognition</h1>
-                    <p>Build your music career with BDC—music distribution, promotion, classes, audio & video services, artist marketplace and IPRS services, all under one roof.</p>
-                    <div class="hero-buttons">
-                        <a href="mailto:info@bdcmusic.in" class="btn">Get In Touch</a>
-                        <a href="<?php echo $basePath; ?>all-services" class="btn btn-outline">Explore Services</a>
-                    </div>
-                    <div class="hero-trust" aria-label="BDC Music trust indicators">
-                        <div class="hero-trust-item">
-                            <span class="trust-rating">★ 4.9/5</span>
-                            <span>Trusted by independent creators</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="swiper hero-card-slider">
-                        <div class="swiper-wrapper">
+	<main>
+		<section class="hero hero-bg" id="home">
+			<div class="hero-ambient ambient-b"></div>
+			<div class="container hero-grid">
+				<div class="hero-content reveal">
+					<span class="heading-tag">All-in-one music platform</span>
+					<h1>From Your First Track to Global Recognition</h1>
+					<p>Build your music career with BDC—music distribution, promotion, classes, audio & video services, artist marketplace and IPRS services, all under one roof.</p>
+					<div class="hero-buttons">
+						<a href="mailto:info@bdcmusic.in" class="btn">Get In Touch</a>
+						<a href="<?php echo $basePath; ?>all-services" class="btn btn-outline">Explore Services</a>
+					</div>
+					<div class="hero-trust" aria-label="BDC Music trust indicators">
+						<div class="hero-trust-item">
+							<span class="trust-rating">★ 4.9/5</span>
+							<span>Trusted by independent creators</span>
+						</div>
+					</div>
+				</div>
+				<div class="hero-visual">
+					<div class="swiper hero-card-slider">
+						<div class="swiper-wrapper">
 
-                            <div class="swiper-slide">
-                                <div class="hero-card">
-                                    <img src="<?php echo $assetPath; ?>images/hero-1.png" alt="BDC Music Studio">
-                                </div>
-                            </div>
+							<div class="swiper-slide">
+								<div class="hero-card">
+									<img src="<?php echo $assetPath; ?>images/hero-1.png" alt="BDC Music Studio">
+								</div>
+							</div>
 
-                            <div class="swiper-slide">
-                                <div class="hero-card">
-                                    <img src="<?php echo $assetPath; ?>images/hero-2.png" alt="Music Production">
-                                </div>
-                            </div>
+							<div class="swiper-slide">
+								<div class="hero-card">
+									<img src="<?php echo $assetPath; ?>images/hero-2.png" alt="Music Production">
+								</div>
+							</div>
 
-                            <div class="swiper-slide">
-                                <div class="hero-card">
-                                    <img src="<?php echo $assetPath; ?>images/hero-3.png" alt="Recording Studio">
-                                </div>
-                            </div>
+							<div class="swiper-slide">
+								<div class="hero-card">
+									<img src="<?php echo $assetPath; ?>images/hero-3.png" alt="Recording Studio">
+								</div>
+							</div>
 
-                            <div class="swiper-slide">
-                                <div class="hero-card">
-                                    <img src="<?php echo $assetPath; ?>images/hero-4.png" alt="Recording Studio">
-                                </div>
-                            </div>
+							<div class="swiper-slide">
+								<div class="hero-card">
+									<img src="<?php echo $assetPath; ?>images/hero-4.png" alt="Recording Studio">
+								</div>
+							</div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-        <section class="trust-bar" aria-label="BDC Music highlights">
-            <div class="container trust-grid">
-                <div class="trust-item reveal">
-                    <h6>500+ Artists</h6>
-                    <p>Supported</p>
-                </div>
-                <div class="trust-item reveal">
-                    <h6>1000+ Releases</h6>
-                    <p>Managed</p>
-                </div>
-                <div class="trust-item reveal">
-                    <h6>Global Distribution</h6>
-                    <p>Across major platforms</p>
-                </div>
-                <div class="trust-item reveal">
-                    <h6>Professional Production</h6>
-                    <p>From recording to mastering</p>
-                </div>
-            </div>
-        </section>
+		<section class="trust-bar" aria-label="BDC Music highlights">
+			<div class="container trust-grid">
+				<div class="trust-item reveal">
+					<h6>500+ Artists</h6>
+					<p>Supported</p>
+				</div>
+				<div class="trust-item reveal">
+					<h6>1000+ Releases</h6>
+					<p>Managed</p>
+				</div>
+				<div class="trust-item reveal">
+					<h6>Global Distribution</h6>
+					<p>Across major platforms</p>
+				</div>
+				<div class="trust-item reveal">
+					<h6>Professional Production</h6>
+					<p>From recording to mastering</p>
+				</div>
+			</div>
+		</section>
 
-        <section class="brand-positioning section-surface py-9" id="about">
-            <div class="container brand-grid">
-                <div class="brand-media reveal">
-                    <div class="brand-image-stack">
-                        <img src="<?php echo $assetPath; ?>images/platform-service.png" alt="BDC Music service platform" loading="lazy">
-                        <div class="brand-card glass-card">
-                            <span class="heading-tag">Creative ecosystem</span>
-                            <h3>One platform for every stage of your music career</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="brand-content reveal">
-                    <span class="heading-tag">Why BDC Music</span>
-                    <h2>Everything Artists Need To Build A Music Career</h2>
-                    <p>BDC Music brings together multiple independent services so artists can pick the support they need, whether that means management, production, distribution, branding, education or community access.</p>
-                    <div class="brand-points">
-                        <div class="brand-point">
-                            <i class="fa-solid fa-layer-group"></i>
-                            <div>
-                                <h3>Flexible creative support</h3>
-                                <p>Choose services that match your goals without being locked into one path.</p>
-                            </div>
-                        </div>
-                        <div class="brand-point">
-                            <i class="fa-solid fa-bolt"></i>
-                            <div>
-                                <h3>Built for modern artists</h3>
-                                <p>Premium strategy, polished production and audience growth under one roof.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="<?php echo $basePath; ?>all-services" class="btn">Explore BDC Services</a>
-                </div>
-            </div>
-        </section>
+		<section class="brand-positioning section-surface py-9" id="about">
+			<div class="container brand-grid">
+				<div class="brand-media reveal">
+					<div class="brand-image-stack">
+						<img src="<?php echo $assetPath; ?>images/platform-service.png" alt="BDC Music service platform" loading="lazy">
+						<div class="brand-card glass-card">
+							<span class="heading-tag">Creative ecosystem</span>
+							<h3>One platform for every stage of your music career</h3>
+						</div>
+					</div>
+				</div>
+				<div class="brand-content reveal">
+					<span class="heading-tag">Why BDC Music</span>
+					<h2>Everything Artists Need To Build A Music Career</h2>
+					<p>BDC Music brings together multiple independent services so artists can pick the support they need, whether that means management, production, distribution, branding, education or community access.</p>
+					<div class="brand-points">
+						<div class="brand-point">
+							<i data-lucide="layers"></i>
+							<div>
+								<h3>Flexible creative support</h3>
+								<p>Choose services that match your goals without being locked into one path.</p>
+							</div>
+						</div>
+						<div class="brand-point">
+							<i data-lucide="zap"></i>
+							<div>
+								<h3>Built for modern artists</h3>
+								<p>Premium strategy, polished production and audience growth under one roof.</p>
+							</div>
+						</div>
+					</div>
+					<a href="<?php echo $basePath; ?>all-services" class="btn">Explore BDC Services</a>
+				</div>
+			</div>
+		</section>
 
-        <section class="ecosystem section-dark py-9" id="services">
+		<section class="ecosystem section-dark py-9" id="services">
 			<div class="container">
 				<div class="section-heading reveal">
 					<span class="heading-tag">What We Cover</span>
@@ -223,121 +223,121 @@
 			</div>
 		</section>
 
-        <section class="people py-9" id="people">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <span class="heading-tag">Featured artists</span>
-                    <h2>Creators building their next chapter with BDC Music</h2>
-                </div>
-                <div class="swiper person-slider">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="person-card reveal">
-                                <img src="<?php echo $assetPath; ?>images/artist/rohit-tiwari.webp" alt="Rohit Tiwari" loading="lazy">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/music-producer/" class="person-tag">Music Producer</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/music-producer/rohit-tiwari/">Rohit Tiwari</a></h3>
-                                    <span class="location">Chhatarpur, Delhi</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card reveal">
-                                <img src="<?php echo $assetPath; ?>images/artist/ayush-sachdeva.webp" alt="Ayush Sachdeva" loading="lazy">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/reels-stars/ayush-sachdeva/">Ayush Sachdeva</a></h3>
-                                    <span class="location">Ghaziabad, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card reveal">
-                                <img src="<?php echo $assetPath; ?>images/artist/alaap-gahlaut.webp" alt="Alaap Gahlaut" loading="lazy">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/singer/alaap-gahlaut/">Alaap Gahlaut</a></h3>
-                                    <span class="location">New Delhi, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card reveal">
-                                <img src="<?php echo $assetPath; ?>images/artist/nishaad.webp" alt="Nishaad" loading="lazy">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/singer/nishaad/">Nishaad</a></h3>
-                                    <span class="location">Haryana, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card reveal">
-                                <img src="<?php echo $assetPath; ?>images/artist/sitara.webp" alt="Sitara" loading="lazy">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/reels-stars/sitara/">Sitara</a></h3>
-                                    <span class="location">Noida, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card">
-                                <img src="<?php echo $assetPath; ?>images/artist/gunjan-jha.webp" alt="Gunjan Jha">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/singer/gunjan-jha/">Gunjan Jha</a></h3>
-                                    <span class="location">Delhi, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card">
-                                <img src="<?php echo $assetPath; ?>images/artist/amit-sati.webp" alt="Amit Sati">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/director/amit-sati/">Amit Sati</a></h3>
-                                    <span class="location">Uttarakhand, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card">
-                                <img src="<?php echo $assetPath; ?>images/artist/rajendra-rajawat.webp" alt="Rajendra Rajawat">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/actor/" class="person-tag">Actor</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/actor/rajendra-rajawat/">Rajendra Rajawat</a></h3>
-                                    <span class="location">Delhi, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card">
-                                <img src="<?php echo $assetPath; ?>images/artist/lalit-thakur.webp" alt="Lalit Thakur">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/director/lalit-thakur/">Lalit Thakur</a></h3>
-                                    <span class="location">Delhi, India</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="person-card">
-                                <img src="<?php echo $assetPath; ?>images/artist/vishal-kumar.webp" alt="Vishal Kumar">
-                                <div class="person-content">
-                                    <a href="<?php echo $basePath; ?>artists/instrument-player/" class="person-tag">Guitarist</a>
-                                    <h3><a href="<?php echo $basePath; ?>artists/instrument-player/vishal-kumar/">Vishal Kumar</a></h3>
-                                    <span class="location">Delhi, India</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-        </section>
+		<section class="people py-9" id="people">
+			<div class="container">
+				<div class="section-heading reveal">
+					<span class="heading-tag">Featured artists</span>
+					<h2>Creators building their next chapter with BDC Music</h2>
+				</div>
+				<div class="swiper person-slider">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<div class="person-card reveal">
+								<img src="<?php echo $assetPath; ?>images/artist/rohit-tiwari.webp" alt="Rohit Tiwari" loading="lazy">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/music-producer/" class="person-tag">Music Producer</a>
+									<h3><a href="<?php echo $basePath; ?>artists/music-producer/rohit-tiwari/">Rohit Tiwari</a></h3>
+									<span class="location">Chhatarpur, Delhi</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card reveal">
+								<img src="<?php echo $assetPath; ?>images/artist/ayush-sachdeva.webp" alt="Ayush Sachdeva" loading="lazy">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
+									<h3><a href="<?php echo $basePath; ?>artists/reels-stars/ayush-sachdeva/">Ayush Sachdeva</a></h3>
+									<span class="location">Ghaziabad, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card reveal">
+								<img src="<?php echo $assetPath; ?>images/artist/alaap-gahlaut.webp" alt="Alaap Gahlaut" loading="lazy">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+									<h3><a href="<?php echo $basePath; ?>artists/singer/alaap-gahlaut/">Alaap Gahlaut</a></h3>
+									<span class="location">New Delhi, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card reveal">
+								<img src="<?php echo $assetPath; ?>images/artist/nishaad.webp" alt="Nishaad" loading="lazy">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+									<h3><a href="<?php echo $basePath; ?>artists/singer/nishaad/">Nishaad</a></h3>
+									<span class="location">Haryana, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card reveal">
+								<img src="<?php echo $assetPath; ?>images/artist/sitara.webp" alt="Sitara" loading="lazy">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/reels-stars/" class="person-tag">Reel Star</a>
+									<h3><a href="<?php echo $basePath; ?>artists/reels-stars/sitara/">Sitara</a></h3>
+									<span class="location">Noida, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card">
+								<img src="<?php echo $assetPath; ?>images/artist/gunjan-jha.webp" alt="Gunjan Jha">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/singer/" class="person-tag">Singer</a>
+									<h3><a href="<?php echo $basePath; ?>artists/singer/gunjan-jha/">Gunjan Jha</a></h3>
+									<span class="location">Delhi, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card">
+								<img src="<?php echo $assetPath; ?>images/artist/amit-sati.webp" alt="Amit Sati">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
+									<h3><a href="<?php echo $basePath; ?>artists/director/amit-sati/">Amit Sati</a></h3>
+									<span class="location">Uttarakhand, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card">
+								<img src="<?php echo $assetPath; ?>images/artist/rajendra-rajawat.webp" alt="Rajendra Rajawat">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/actor/" class="person-tag">Actor</a>
+									<h3><a href="<?php echo $basePath; ?>artists/actor/rajendra-rajawat/">Rajendra Rajawat</a></h3>
+									<span class="location">Delhi, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card">
+								<img src="<?php echo $assetPath; ?>images/artist/lalit-thakur.webp" alt="Lalit Thakur">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/director/" class="person-tag">Director</a>
+									<h3><a href="<?php echo $basePath; ?>artists/director/lalit-thakur/">Lalit Thakur</a></h3>
+									<span class="location">Delhi, India</span>
+								</div>
+							</div>
+						</div>
+						<div class="swiper-slide">
+							<div class="person-card">
+								<img src="<?php echo $assetPath; ?>images/artist/vishal-kumar.webp" alt="Vishal Kumar">
+								<div class="person-content">
+									<a href="<?php echo $basePath; ?>artists/instrument-player/" class="person-tag">Guitarist</a>
+									<h3><a href="<?php echo $basePath; ?>artists/instrument-player/vishal-kumar/">Vishal Kumar</a></h3>
+									<span class="location">Delhi, India</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="swiper-pagination"></div>
+				</div>
+			</div>
+		</section>
 
-        <section class="academy pt-0 py-9" id="academy">
+		<section class="academy pt-0 py-9" id="academy">
 			<div class="container">
 				<div class="section-heading reveal">
 					<span class="heading-tag">Education hub</span>
@@ -382,7 +382,7 @@
 			</div>
 		</section>
 
-        <section class="testimonials" id="testimonials">
+		<section class="testimonials" id="testimonials">
 
 			<span class="testimonial-label">
 				Artist Voices
@@ -472,53 +472,53 @@
 		</section>
 
 
-        <section class="home-page faq pt-0" id="faq" style="background: #f7f7f7;">
-            <div class="container">
-                <div class="section-heading reveal">
-                    <span class="heading-tag">FAQ</span>
-                    <h2>Frequently asked questions</h2>
-                    <p>Everything artists want to know before joining BDC Music.</p>
-                </div>
-                <div class="faq-wrapper">
-                    <details class="faq-item reveal" open>
-                        <summary class="faq-question">What services does BDC Music provide?<i class="fa-solid fa-plus"></i></summary>
-                        <div class="faq-answer">
-                            <p>We offer artist management, music production, distribution, promotion, online education and creative networking for independent artists.</p>
-                        </div>
-                    </details>
-                    <details class="faq-item reveal">
-                        <summary class="faq-question">Which platforms do you distribute to?<i class="fa-solid fa-plus"></i></summary>
-                        <div class="faq-answer">
-                            <p>We support leading streaming platforms such as Spotify, Apple Music, YouTube Music, Amazon Music, JioSaavn and Gaana.</p>
-                        </div>
-                    </details>
-                    <details class="faq-item reveal">
-                        <summary class="faq-question">Do I keep ownership of my music?<i class="fa-solid fa-plus"></i></summary>
-                        <div class="faq-answer">
-                            <p>Yes. Artists keep ownership of their work while we support release, visibility and career growth.</p>
-                        </div>
-                    </details>
-                    <details class="faq-item reveal">
-                        <summary class="faq-question">Can beginners join the academy?<i class="fa-solid fa-plus"></i></summary>
-                        <div class="faq-answer">
-                            <p>Absolutely. Our academy is designed for beginners, intermediate learners and experienced creators.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-        </section>
+		<section class="home-page faq pt-0" id="faq" style="background: #f7f7f7;">
+			<div class="container">
+				<div class="section-heading reveal">
+					<span class="heading-tag">FAQ</span>
+					<h2>Frequently asked questions</h2>
+					<p>Everything artists want to know before joining BDC Music.</p>
+				</div>
+				<div class="faq-wrapper">
+					<details class="faq-item reveal" open>
+						<summary class="faq-question">What services does BDC Music provide?<i data-lucide="plus"></i></summary>
+						<div class="faq-answer">
+							<p>We offer artist management, music production, distribution, promotion, online education and creative networking for independent artists.</p>
+						</div>
+					</details>
+					<details class="faq-item reveal">
+						<summary class="faq-question">Which platforms do you distribute to?<i data-lucide="plus"></i></summary>
+						<div class="faq-answer">
+							<p>We support leading streaming platforms such as Spotify, Apple Music, YouTube Music, Amazon Music, JioSaavn and Gaana.</p>
+						</div>
+					</details>
+					<details class="faq-item reveal">
+						<summary class="faq-question">Do I keep ownership of my music?<i data-lucide="plus"></i></summary>
+						<div class="faq-answer">
+							<p>Yes. Artists keep ownership of their work while we support release, visibility and career growth.</p>
+						</div>
+					</details>
+					<details class="faq-item reveal">
+						<summary class="faq-question">Can beginners join the academy?<i data-lucide="plus"></i></summary>
+						<div class="faq-answer">
+							<p>Absolutely. Our academy is designed for beginners, intermediate learners and experienced creators.</p>
+						</div>
+					</details>
+				</div>
+			</div>
+		</section>
 
-        <section class="cta cta-modern py-9">
-            <div class="container">
-                <div class="cta-copy reveal">
-                    <h2>Ready To Build Your Music Career?</h2>
-                    <p>Join BDC Music and access a complete creative ecosystem built for independent artists.</p>
-                </div>
-                <div class="cta-actions reveal">
-                    <a href="<?php echo $basePath; ?>services/bdc-artists-marketplace" class="btn">Join BDC Music</a>
-                    <a href="mailto:info@bdcmusic.in" class="btn btn-outline-light">Talk to BDC</a>
-                </div>
-            </div>
-        </section>
-    </main>
+		<section class="cta cta-modern py-9">
+			<div class="container">
+				<div class="cta-copy reveal">
+					<h2>Ready To Build Your Music Career?</h2>
+					<p>Join BDC Music and access a complete creative ecosystem built for independent artists.</p>
+				</div>
+				<div class="cta-actions reveal">
+					<a href="<?php echo $basePath; ?>services/bdc-artists-marketplace" class="btn">Join BDC Music</a>
+					<a href="mailto:info@bdcmusic.in" class="btn btn-outline-light">Talk to BDC</a>
+				</div>
+			</div>
+		</section>
+	</main>
 <?php include_once 'footer.php'; ?>
