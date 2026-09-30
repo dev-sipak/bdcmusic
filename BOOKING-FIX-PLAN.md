@@ -12,15 +12,25 @@
    block and the `form=packages` handler are all gone. The review step states
    `You can book one service at a time.` instead, so the constraint is explained
    rather than merely enforced.
-2. **Service Category is the first step for A/V only.** `booking_steps()` puts
-   `category` ahead of `details` for `audio-video` and leaves every other
-   service's step list untouched. The answer is stored in
-   `$_SESSION['booking_draft']['details']['service_category']`, and it decides the
-   upload label, the accepted file types and the delivery formats in one pass.
-   The step is enforced server-side, and a hand-crafted `?step=details` cannot
-   skip past it: `booking_furthest_reachable()` clamps to the first unanswered
-   step, and the details handler merges the stored category back over any posted
-   value so a client cannot contradict what was already answered.
+2. **Service Category is decided by the package, not asked separately.** The
+   Audio & Video service page has an Audio/Video switch above the package
+   comparison, and each side publishes its own four bookable studio bundles plus
+   its own reference rate card. A customer's click on a bundle carries its
+   `plan_id` into the booking, and that plan is the only thing that decides the
+   category: `booking_plan_category()` maps the `audio-bundles` and
+   `video-bundles` group keys to `Audio` and `Video`, and `booking.php` seeds
+   `$_SESSION['booking_draft']['details']['service_category']` from it before the
+   first step renders. Because the answer is already known, `booking_steps()`
+   omits the `category` step for `audio-video` and leaves every other service's
+   step list untouched. The stored value drives the upload label, the accepted
+   file types and the delivery formats in one pass, and it is authoritative: the
+   details handler replaces the posted `service_category` with the stored one
+   (booking.php), so the `option_groups` filter in `booking_validate_details()`
+   and a hand-crafted form both resolve against the package, not the request. The
+   Details step states the package the category came from and links back to the
+   service page to change it. A bare `booking.php?service=audio-video` with no
+   `plan_id` still falls back to the audio default bundle, so the category is
+   never empty.
 2. **Drop the add-ons concept entirely.** The step, the label, the summary row, the
    review row, the four add-on query helpers, `booking_addons()`,
    `booking_addons_meta()` and the `booking_addons` write are gone. The
@@ -84,8 +94,17 @@
   it, so a hand-crafted post could restate it as the other value and have the
   stored booking, its upload rules and its delivery formats all disagree with the
   answer the customer gave. The draft is now authoritative: the stored value is
-  written back over the request before validation, and again over the result, so
-  the choice made on the category step is the one that is kept.
+  written back over the request before validation, and again over the result. This
+  matters more now that the category is derived rather than asked — the filter
+  behind `option_groups` reads `$_POST['service_category']`, so without the
+  overwrite a video package could be handed `service_category=Audio` and then
+  keep the audio delivery formats that answer permits.
+- **A rejected CSRF token answered 500 instead of 403.** The four handlers called
+  `http_response_code( 419 )`. 419 is not a registered HTTP status, and the Apache
+  build on this host rewrites it to 500, so every expired-session submission
+  reported as a server fault and asked the customer to retry a request that could
+  never succeed. They now answer 403, the standard code for a rejected request.
+  The page copy and the draft were already correct; only the status was wrong.
 
 ## Later work in this pass
 
@@ -139,28 +158,44 @@ Server-side option filtering was also checked directly: a Video order posting
 `MP3` stores only `MP4`, and an Audio order posting `MP4` stores only the audio
 formats.
 
-The Service Category step was then driven end to end, as a guest, over HTTP:
+The Service Category was then driven end to end, once per package, over HTTP
+and in a real browser:
 
-- A fresh session lands on **Choose a Service Category** for A/V, and a
-  hand-crafted `?step=details`, `?step=contact`, `?step=review` or
-  `?step=payment` is clamped back to it.
-- An empty category post returns `Please select service Category.`
-- Answering `Video` moves to Details; posting `MP4` *and* `MP3` stores only
-  `MP4`.
-- The review page reads `Video` / `MP4`, carries no "Change your package" link,
-  and does carry `You can book one service at a time.`
-- **Tamper check:** with `Video` already stored, posting
-  `service_category=Audio` on the details form leaves the stored category as
-  `Video` and the formats as `MP4`, so the request cannot restate an answer
-  already given.
+- A guest who picks the Video **Basic** bundle lands on Details with the progress
+  reading Details / Contact / Review / Payment — there is no Category step, because
+  the package has already answered it. Details names the package the category came
+  from and links back to the service page to change it.
+- Plan 139 (Video Basic) and 141 (Video Premium) and 142 (Video Enterprise) all
+  store category `Video` and read `Basic (Video) Rs. 10,000`,
+  `Premium (Video) Rs. 50,000` and `Enterprise (Video) Rs. 100,000` on the review.
+  The `group_label` is what tells the two `Basic` bundles apart, since the Audio
+  and Video bundles share their names.
+- Plan 1 (Audio Basic) stores category `Audio` and reads
+  `Basic (Audio) Rs. 11,500`.
+- In the browser the service-page switch opens Audio by default, swaps both the
+  bundle cards and the rate card on click, and keeps `aria-pressed` on the open
+  side. A Video package shows `.mp4,.mov` on the upload input, a Video upload
+  label and only the four video format cards; plan 1 shows `.wav,.mp3,.flac` and
+  only the three audio ones.
+- **Tamper check:** with a Video package stored, posting `service_category=Audio`
+  together with `delivery_formats[]=WAV` leaves the stored category as `Video` and
+  stores no format at all, because the `option_groups` filter resolves against the
+  draft. The same post against the audio package is likewise ignored. The request
+  cannot restate what the package decided.
+- A bare `booking.php?service=audio-video` with no `plan_id` starts on Details with
+  the audio default bundle, so the category is never empty and the step list is
+  never broken.
 - Every other service still starts on Details with its previous step list:
   IPRS and Distribution / Marketplace / Classes are Details / Contact / Review /
   Payment, and Promotion (a quote service) is Details / Contact / Review.
+- A rejected CSRF token now answers 403, and the session is otherwise left intact.
 
 The booking was also placed against the live database to prove the values are
 persisted, not just rendered: order `BDCM-5CCDFF` stored category `Audio`,
 formats `["MP3"]`, service type `Audio` and plan `Basic`. The test rows and the
-test account were deleted afterwards, leaving the bookings table empty.
+test account were deleted afterwards. The bookings table is not empty afterwards
+because it holds 44 seed rows that predate this work; only the rows these tests
+created were removed.
 
 The contact-step skip was then driven through a real browser, which is how the
 dead `contact` redirect surfaced. On a signed-in customer, for every service, the

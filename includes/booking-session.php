@@ -164,12 +164,39 @@ function booking_draft_reset() {
 }
 
 /**
+ * The Service Category the draft's chosen package settles, or '' when it does not.
+ *
+ * A package that belongs to one side of Audio & Video has already answered the
+ * question, so the step asking it is dropped rather than shown with one option
+ * greyed out. Every other service, and a draft with no package yet, returns '' and
+ * keeps asking.
+ *
+ * @param array $draft The current draft.
+ * @param PDO   $pdb   Connection.
+ * @return string 'Audio', 'Video', or ''.
+ */
+function booking_draft_plan_category( array $draft, $pdb ) {
+	$planId = (int) ( $draft['plan_id'] ?? 0 );
+
+	if ( $planId < 1 ) {
+		return '';
+	}
+
+	$plan = booking_plan_by_id( $pdb, $planId );
+
+	return $plan ? booking_plan_category( $plan ) : '';
+}
+
+/**
  * The steps that actually apply to a service, in order.
  *
  * A service that sells two different jobs under one listing (Audio & Video)
  * puts the choice between them first, so the details form is never asked about
  * a job the customer has not settled on. A quote-mode service then runs details
  * -> contact -> review; a package-mode service adds payment.
+ *
+ * The category step disappears once a package has answered it for us, the same
+ * way the contact step disappears for a signed-in customer.
  *
  * @param PDO   $pdb     Connection.
  * @param array $service A row from booking_service().
@@ -185,7 +212,8 @@ function booking_steps( $pdb, $service, $draft ) {
 
 	$steps = array();
 
-	if ( booking_has_category_step( (string) $service['slug'] ) ) {
+	if ( booking_has_category_step( (string) $service['slug'] )
+		&& '' === booking_draft_plan_category( $draft, $pdb ) ) {
 		$steps[] = 'category';
 	}
 

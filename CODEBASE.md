@@ -296,10 +296,11 @@ service page  ──booking_plan_grid()──►  renders plan cards from servic
 booking.php?service=…  ──(no service/package step)──►  default plan auto-selected
       │  booking_steps() computes which steps apply for THIS service:
       │  details | contact | review | payment   (quote mode drops payment,
-      │  a signed-in customer with an account email drops contact;
-      │  audio-video inserts a leading "category" step)
+      │  a signed-in customer with an account email drops contact)
       │  there is no package picker here: the plan is chosen on the service
       │  page and the review step states the one-service-at-a-time rule
+      │  audio-video has no "category" step either: the chosen A/V bundle
+      │  decides the category (see booking_plan_category())
       │  each POST → booking_draft_set() ; files → data/uploads/_draft/<token>/
       ▼
 payment step → assets/js/booking-checkout.js
@@ -345,7 +346,7 @@ direct `.php` URLs are also live and indexable — there is no canonical redirec
 | `/contact` | `contact.php` | Contact | 0 queries |
 | `/privacy-policy`, `/terms-and-conditions` | `privacy-policy.php`, `terms-and-conditions.php` | Legal | 0 queries; **unused `policy-checkbox.php` component exists** |
 | `/services/bdc-artists-marketplace` | `services/bdc-artists-marketplace.php` | Membership packages | `booking_plan_grid('artists-marketplace')` |
-| `/services/audio-video-services` | `services/audio-video-services.php` | Audio/video | `booking_plan_grid('audio-video')` + 4 hand-written video tiers |
+| `/services/audio-video-services` | `services/audio-video-services.php` | Audio/video, split by an Audio/Video switch | `booking_rate_card()` per side + `booking_plan_grid(..., 'group_key'=>'audio-bundles'\|'video-bundles')` |
 | `/services/digital-music-distribution` | `services/digital-music-distribution.php` | Distribution | `booking_plan_grid('digital-distribution')` |
 | `/services/iprs-services` | `services/iprs-services.php` | IPRS | `booking_plan_grid('iprs')` |
 | `/services/online-offline-classes` | `services/online-offline-classes.php` | Classes, grouped plans | `booking_service()` + 4× `booking_plans()` in a loop |
@@ -490,7 +491,7 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 |---|---|---|
 | `users` | Accounts | `id` **varchar(20)** PK (values like `CUST-A1B2C3D4`; admin is `CUST-ADMIN0001`), `email` UNIQUE, `password_hash`, `role enum('customer','admin')`, `mobile`, `profile_picture`, `source` |
 | `services` | Service catalogue | `slug` (UNIQUE), `name`, `booking_mode enum('packages','quote')`, `price_note`, `is_active` |
-| `service_plans` | Packages | `service_id`, `group_key`, `group_label`, `price`, `price_note` (e.g. `Custom Quote`), `features` (JSON), `sort_order`, `is_default`, `is_enquiry`, `is_orderable` |
+| `service_plans` | Packages | `service_id`, `group_key` (empty for a standalone plan; `audio-bundles` / `video-bundles` for the A/V studio packages, which is what `booking_plan_category()` keys off), `group_label`, `price`, `price_note` (e.g. `Custom Quote`), `features` (JSON), `sort_order`, `is_default`, `is_enquiry`, `is_orderable` |
 | `bookings` | An order | `booking_id` varchar PK `BDCM-XXXXXX` (3 random bytes hex), `customer_id` varchar **nullable** (NULL = guest), `customer_type enum('registered','guest')`, snapshot columns (`customer_name/email/phone/whatsapp`), `status enum`, `payment_status`, `payment_provider` (`razorpay`/`manual`), `razorpay_order_id`, `razorpay_signature`, `payment_failure_reason`, `plan_*` snapshots, `subtotal`, `addons_total` (kept NOT NULL for old orders; new orders write 0), `price`, `meta` JSON, `invoice_no`, `service_slug`, `service_name` |
 | `booking_items` | One package line per order | `booking_id`, `plan_id`, `plan_name`, `plan_group`, `plan_group_label`, `unit_price`, `qty` (always 1), `line_total`; UNIQUE (`booking_id`,`plan_id`) |
 | `booking_payments` | Payment attempts | `booking_id`, `provider`, `razorpay_order_id/payment_id/signature`, `amount`, `status`, `method`, `failure_reason` |
@@ -697,15 +698,24 @@ service" section: the other-services carousel was removed.
 `booking_furthest_reachable()` gates forward navigation;
 `booking_step_satisfied()` decides whether a step may be left.
 
-**Service Category step (`audio-video` only):** `booking_steps()` puts `category`
-ahead of `details` for this one service; every other service's list is unchanged.
-The answer lives in `$_SESSION['booking_draft']['details']['service_category']`
-and is written by the `case 'category'` handler. It is authoritative: the
-`case 'details'` handler copies it back over `$_POST` before validating, and again
-over the cleaned result, so a hand-crafted post cannot restate an answer the
-customer already gave. `booking_furthest_reachable()` clamps a deep link such as
-`?step=payment` back to this step until it is answered, and the same clamp keeps a
-second visit from skipping it.
+**Service Category is derived from the package (`audio-video` only):** there is no
+`category` step. `booking_av_bundle_groups()` is the single source of truth for the
+two bundle group keys, `audio-bundles` → `Audio` and `video-bundles` → `Video`, and
+`booking_plan_category()` reads a plan row through it; every other service, and
+every rate-card row, returns `''` and keeps its original step list. `booking.php`
+resolves the plan and seeds
+`$_SESSION['booking_draft']['details']['service_category']` from it before the
+first step renders, and `booking_steps()` omits `category` once the draft already
+carries a value, so a bundle always starts on Details. Details states the package
+the category came from and links back to the service page to change it.
+
+The stored value stays authoritative: the `case 'details'` handler copies it back
+over `$_POST` before validating, and again over the cleaned result, so a
+hand-crafted post cannot restate what the package decided. That overwrite is what
+`option_groups` depends on, because the filter reads the posted value — without it
+a video package handed `service_category=Audio` would keep the audio delivery
+formats that answer permits. A bare `booking.php?service=audio-video` with no
+`plan_id` falls back to the audio default bundle, so the category is never empty.
 
 **Draft reset:** `booking_draft_reset()` is called when a booking is created. It
 also discards staged uploads. Switching service goes through
@@ -1349,6 +1359,14 @@ id and a working `booking_preselect_url()` link. The `service_type` select for
 `audio-video` was dropped from `includes/booking-registry.php`, and the page
 includes `includes/plan-enquiry-modal.php` for the non-bookable enquiry plan.
 
+The four delivery tiers later became the four **bookable video bundles** rather
+than reference rows, at the same ₹10k/25k/50k/1,00,000 prices, so the figures this
+finding called unchargeable are now the ones a customer actually pays. The audio
+bundles moved out of the empty `group_key` at the same time, so both sides now sit
+in named `audio-bundles` / `video-bundles` groups that `booking_plan_category()`
+can key off. The enquiry modal the page includes still has no trigger anywhere in
+the repo (see the dead-code table).
+
 ### S-22 · `catch (Exception)` cannot catch `TypeError` on two admin endpoints — CONFIRMED · MEDIUM
 
 **Evidence:** `includes/admin/enquiry-reply.php:21-23` and
@@ -1465,7 +1483,8 @@ Remove or anonymise seed rows before the dump is shared anywhere.
 | `dashboard/customer.php`, `dashboard/provider.php` | Publicly reachable placeholder dashboards, no guard, no query, linked from nowhere — they look like the real portal one path away |
 | `$allCats` | `artists/detail.php:10,52` — a dead query on every artist profile view |
 | `$pageTitle` | `artists/index.php:52` and `artists/detail.php:42-43` — assigned **after** `header.php` has already emitted `<title>` |
-| `audio-video-services.js`, `distribution-form.js`, `online-offline-classes-form.js` | Target selectors absent from the current markup |
+| `audio-video-services.js` enquiry modal | The modal markup and `#enquiry-plan-id` are rendered, but **no file in the repo emits `data-plan-enquiry`**, so nothing can open it and the whole enquiry form is unreachable. The Audio/Video switch in the same file is live. |
+| `distribution-form.js`, `online-offline-classes-form.js` | Target selectors absent from the current markup |
 | `admin-dashboard.js:162` `customersSearch` | Never assigned; `customers.php` has no search input although the endpoint supports one |
 | `reply-modal.php:26-29` previous-reply block | Hard-coded hidden, never populated |
 | `artist-modal.php:80` `#artist-modal-close-btn` | `admin-artists.js:161` binds only `#artist-modal-close` — **the Cancel button does nothing** |
@@ -1587,7 +1606,7 @@ implemented without explicit approval.
 | R-12 | `includes/pagination.php` / `shared.js` | Two identical implementations, PHP one dead (TD-16) | Keep the JS one; delete the PHP one and its helpers | Removes ~120 lines of duplication | LOW | Yes — `artists/index.php` is the only PHP caller, so it must be migrated to JS rendering first |
 | R-13 | `header.php:93` | A query on all 22 pages (P-1) | Memoise the category list per request/session, or render it from a cached variable | One fewer round trip per page | LOW | Yes |
 | R-14 | 20+ dead items (§12) | Unused components, endpoints, functions, JS | Delete in reviewable batches; adopt `breadcrumb.php` or delete all 15 hand-written copies | Smaller surface; honest inventory | LOW | Yes, except R-15 |
-| R-15 | `services/audio-video-services.php:176-233` | Four broken CTAs and four unmanageable hand-written price tiers (S-21) | Create real `service_plans` rows and point the CTAs at them | Makes video tiers purchasable and admin-editable | MEDIUM | **Done** — the page is fully DB-driven (`booking_rate_card()`, `booking_plan_grid(..., 'group_key'=>'')`); the hand-written tiers and the broken `video-production` links are gone |
+| R-15 | `services/audio-video-services.php:176-233` | Four broken CTAs and four unmanageable hand-written price tiers (S-21) | Create real `service_plans` rows and point the CTAs at them | Makes video tiers purchasable and admin-editable | MEDIUM | **Done** — the page is fully DB-driven (`booking_rate_card()` for the reference sub-services, `booking_plan_grid()` for the bundles, now split `audio-bundles` / `video-bundles` behind an Audio/Video switch); the hand-written tiers and the broken `video-production` links are gone |
 | R-16 | `includes/booking-registry.php` (~990 lines) | Field definitions, validation and rendering in one file | Split into `booking-fields` (data), `booking-validate`, `booking-render` | Testable units; clearer ownership | MEDIUM | Yes, if the field spec is preserved byte-for-byte |
 | R-17 | `bdc-admin/index.php`, `bdc-admin/orders.php` | Unbounded queries inlined into page JSON (P-6) | `LIMIT 10` + aggregates; drop the dead payload on `orders.php` | Faster admin pages; stops shipping all customer PII in page source | MEDIUM | Yes for the overview; `orders.php` must switch fully to `orders-list.php` |
 | R-18 | 22 pages | A session is started (and a cookie issued) for 13 anonymous content pages (P-11) | Start the session lazily, only where state is used | Enables CDN/proxy caching of content | MEDIUM | **No** — cookies would disappear from content pages, so any analytics/consent assumption must be checked |

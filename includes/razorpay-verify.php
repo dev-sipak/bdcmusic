@@ -102,7 +102,7 @@ $paymentId = isset( $input['razorpay_payment_id'] ) ? clean_text( $input['razorp
 $signature = isset( $input['razorpay_signature'] ) ? (string) $input['razorpay_signature'] : '';
 
 if ( ! verify_csrf_token( $token ) ) {
-	booking_verify_fail( 419, 'Your session has expired. Please try paying again.' );
+		booking_verify_fail( 403, 'Your session has expired. Please try paying again.' );
 }
 
 if ( $bookingId === '' || $orderId === '' || $paymentId === '' || $signature === '' ) {

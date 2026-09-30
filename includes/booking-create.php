@@ -58,8 +58,8 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 }
 
 $token = isset( $_POST['csrf_token'] ) ? (string) $_POST['csrf_token'] : '';
-if ( ! verify_csrf_token( $token ) ) {
-	http_response_code( 419 );
+	if ( ! verify_csrf_token( $token ) ) {
+		http_response_code( 403 );
 	booking_json( array( 'success' => false, 'message' => 'Your session has expired. Please try again.' ) );
 }
 

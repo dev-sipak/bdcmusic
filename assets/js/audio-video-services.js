@@ -1,4 +1,37 @@
 document.addEventListener("DOMContentLoaded", function () {
+	// Audio / Video switch
+	//
+	// One side of the service is shown at a time. This is presentation only: the
+	// package a customer clicks is what decides their Service Category during
+	// booking, so hiding a side cannot change what gets stored.
+	var switchEl = document.querySelector("[data-av-switch]");
+
+	if (switchEl) {
+		var buttons = switchEl.querySelectorAll("[data-av-target]");
+
+		var show = function (category) {
+			buttons.forEach(function (button) {
+				var active = button.getAttribute("data-av-target") === category;
+
+				button.classList.toggle("is-active", active);
+				button.setAttribute("aria-pressed", active ? "true" : "false");
+			});
+
+			document.querySelectorAll("[data-av-panel]").forEach(function (panel) {
+				panel.classList.toggle("d-none", panel.getAttribute("data-av-panel") !== category);
+			});
+		};
+
+		buttons.forEach(function (button) {
+			button.addEventListener("click", function () {
+				show(button.getAttribute("data-av-target"));
+			});
+		});
+
+		// Audio is the default side, and the markup ships with it open.
+		show("Audio");
+	}
+
 	var modal = document.getElementById("plan-enquiry-modal");
 
 	if (!modal) {

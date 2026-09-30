@@ -15,15 +15,16 @@
 	include_once '../header.php';
 
 	// Split the twelve sub-services into the two rate cards the page presents,
-	// keeping the order the catalogue publishes them in. The four bundle plans
-	// live in the group with the empty key and are sold as cards instead.
+	// keeping the order the catalogue publishes them in. The two bundle groups
+	// are sold as cards instead and are left out of the rate cards here.
 	$avPdb      = booking_marketing_pdb();
 	$avService  = booking_service( $avPdb, 'audio-video' );
 	$audioKeys  = array();
 	$videoKeys  = array();
+	$bundleGroups = booking_av_bundle_groups();
 
 	foreach ( $avService ? booking_plan_groups( $avPdb, (int) $avService['id'] ) : array() as $avGroup ) {
-		if ( (string) $avGroup['key'] === '' ) {
+		if ( isset( $bundleGroups[ (string) $avGroup['key'] ] ) ) {
 			continue;
 		}
 
@@ -86,11 +87,22 @@
 					</div>
 				<?php endif; ?>
 
+				<?php
+				// The two sides are shown one at a time. Which one is open is a
+				// presentation choice only: the package a customer picks is what
+				// decides their Service Category later in the booking, so the two
+				// can never disagree.
+				?>
+				<div class="av-switch" data-av-switch>
+					<button type="button" class="av-switch-btn is-active" data-av-target="Audio" aria-pressed="true">Audio</button>
+					<button type="button" class="av-switch-btn" data-av-target="Video" aria-pressed="false">Video</button>
+				</div>
+
 				<div class="comparison-wrap">
 					<!-- ==========================================
 						AUDIO SERVICES
 					=========================================== -->
-					<div class="category-block">
+					<div class="category-block" data-av-panel="Audio">
 						<h3>Audio Production Packages</h3>
 						<p>
 							Professional recording, music production, mixing,
@@ -115,17 +127,16 @@
 						</p>
 
 						<?php
-						// The four bundle plans, which live in the group with the
-						// empty key and are sold as cards rather than as rate-card
-						// rows.
-						echo booking_plan_grid( 'audio-video', $avPdb, array( 'group_key' => '' ) );
+						// The four bundle plans, sold as cards rather than as
+						// rate-card rows.
+						echo booking_plan_grid( 'audio-video', $avPdb, array( 'group_key' => 'audio-bundles' ) );
 						?>
 					</div>
 
 					<!-- ==========================================
 						VIDEO SERVICES
 					=========================================== -->
-					<div class="category-block">
+					<div class="category-block" data-av-panel="Video">
 						<h3>Video Production Packages</h3>
 						<p>
 							Professional video production, editing,
@@ -134,6 +145,16 @@
 						</p>
 
 						<?php echo booking_rate_card( 'audio-video', $videoKeys, $avPdb ); ?>
+
+						<p class="section-intro" style="margin-top:20px;">
+							Prefer one booking for the whole video workflow? The
+							four studio bundles below cover production, editing,
+							motion graphics and delivery together.
+						</p>
+
+						<?php
+						echo booking_plan_grid( 'audio-video', $avPdb, array( 'group_key' => 'video-bundles' ) );
+						?>
 
 						<p class="section-intro" style="margin-top:20px;">
 						Each figure above is our published rate for that

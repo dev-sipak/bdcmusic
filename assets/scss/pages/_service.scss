@@ -89,6 +89,46 @@ SERVICE HERO
 }
 
 /*==================================================
+AUDIO / VIDEO SWITCH
+==================================================*/
+
+.av-switch {
+	display: inline-flex;
+	gap: 4px;
+	margin-bottom: 28px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 4px;
+	background: #fff;
+}
+
+.av-switch-btn {
+	border: 0;
+	border-radius: 999px;
+	padding: 10px 30px;
+	background: transparent;
+	color: var(--muted);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+
+	&:hover {
+		color: var(--primary);
+	}
+
+	&.is-active {
+		background: var(--primary);
+		color: #fff;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--primary);
+		outline-offset: 2px;
+	}
+}
+
+/*==================================================
 SERVICE CARDS
 ==================================================*/
 

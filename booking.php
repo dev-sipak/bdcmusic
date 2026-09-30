@@ -188,6 +188,23 @@ if ( $service && ! booking_is_quote_mode( $service ) && ! booking_draft_plan_ids
 	$draft = booking_draft();
 }
 
+// The chosen package settles the Service Category on the Audio & Video listing,
+// so it is written into the draft here. The step that would have asked the
+// question is dropped by booking_steps() once this has a value, and the details
+// form reads it from the draft rather than from the request, so a package and a
+// category can never end up describing different jobs.
+$planCategory = $service ? booking_draft_plan_category( $draft, $pdb ) : '';
+
+if ( $planCategory && ( $draft['details']['service_category'] ?? '' ) !== $planCategory ) {
+	booking_draft_set( array(
+		'details' => array_merge(
+			(array) ( $draft['details'] ?? array() ),
+			array( 'service_category' => $planCategory )
+		),
+	) );
+	$draft = booking_draft();
+}
+
 // Signed-in customer
 //
 // A signed-in customer has already given us their details, so the account values
@@ -264,7 +281,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 	$token = isset( $_POST['csrf_token'] ) ? (string) $_POST['csrf_token'] : '';
 
 	if ( ! verify_csrf_token( $token ) ) {
-		http_response_code( 419 );
+		http_response_code( 403 );
 		$errors['_general'][] = 'Your session has expired. Please review the details and submit again.';
 	} else {
 		switch ( $step ) {
@@ -541,6 +558,21 @@ include_once __DIR__ . '/header.php';
 							<strong><?php echo booking_esc( $service['name'] ); ?></strong>.
 							Fields marked <span class="required-star">*</span> are required.
 						</p>
+
+						<?php if ( $planCategory ) : ?>
+							<p class="booking-note">
+								<i data-lucide="layers"></i>
+								<span>
+									Service Category: <strong><?php echo booking_esc( $planCategory ); ?></strong>,
+									taken from the
+									<strong><?php echo booking_esc( (string) ( $selection['plan']['name'] ?? 'package' ) ); ?></strong>
+									package you chose, so the upload and delivery options below match it.
+									<?php if ( $service ) : ?>
+										<a href="<?php echo booking_esc( booking_service_page_url( $service['slug'] ) ); ?>">Change package</a>
+									<?php endif; ?>
+								</span>
+							</p>
+						<?php endif; ?>
 
 						<form method="post" enctype="multipart/form-data" novalidate>
 							<?php echo csrf_field(); ?>

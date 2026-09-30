@@ -485,6 +485,17 @@ function csrf_field() {
 	return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars( generate_csrf_token() ) . '">';
 }
 
+/**
+ * Whether a submitted token matches the one held in the session.
+ *
+ * Callers answer a failure with 403. The 419 "Page Expired" code that
+ * frameworks use for this is not a registered HTTP status, and the Apache build
+ * here replaces it with 500, which turns every rejected form into a reported
+ * server fault and a retry that cannot succeed.
+ *
+ * @param string $token
+ * @return bool
+ */
 function verify_csrf_token( $token ) {
 	if ( session_status() === PHP_SESSION_NONE ) {
 require_once __DIR__ . '/session.php';

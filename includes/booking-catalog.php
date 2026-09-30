@@ -143,13 +143,44 @@ function booking_service_allows_multi_plan( $service ) {
  * asked, because the customer already answered it by picking a sub-service that
  * only exists on one side.
  *
+ * The two bundle groups are in here too, which is what lets a chosen package
+ * decide the Service Category rather than the two being able to disagree.
+ *
  * @param string $groupKey service_plans.group_key.
  * @return string 'Audio' or 'Video'.
  */
 function booking_av_group_category( $groupKey ) {
-	static $audio = array( 'recording', 'music-production', 'mixing', 'mastering' );
+	static $audio = array( 'recording', 'music-production', 'mixing', 'mastering', 'audio-bundles' );
 
 	return in_array( (string) $groupKey, $audio, true ) ? 'Audio' : 'Video';
+}
+
+/**
+ * The Audio & Video groups that are sold as bundles and settle the category.
+ *
+ * A bundle is one of the four studio packages on each side, as opposed to the
+ * rate-card sub-services, which are reference prices and never fix the category.
+ *
+ * @return array Map of service_plans.group_key to 'Audio' or 'Video'.
+ */
+function booking_av_bundle_groups() {
+	return array( 'audio-bundles' => 'Audio', 'video-bundles' => 'Video' );
+}
+
+/**
+ * The Service Category a package belongs to, or '' when it decides nothing.
+ *
+ * Only Audio & Video bundles answer this. Every other service returns '' and
+ * keeps its original step list, and the rate-card rows return '' too so a
+ * reference price is never mistaken for something that settles the category.
+ *
+ * @param array $plan A row from booking_service_plans() or booking_default_plan().
+ * @return string 'Audio', 'Video', or ''.
+ */
+function booking_plan_category( array $plan ) {
+	$bundles = booking_av_bundle_groups();
+
+	return $bundles[ (string) ( $plan['group_key'] ?? '' ) ] ?? '';
 }
 
 /**
@@ -259,6 +290,36 @@ function booking_service_plans( $pdb, $serviceId, $orderableOnly = false ) {
 	$stmt->execute( array( ':sid' => (int) $serviceId ) );
 
 	return booking_decode_plan_features( $stmt->fetchAll() );
+}
+
+/**
+ * One package by id, or null when it is not there.
+ *
+ * Used to read which side of Audio & Video a chosen package belongs to, so the
+ * Service Category follows the package rather than being asked again. A plan
+ * published as reference only is still returned: this is a lookup, not a sale,
+ * and booking_resolve_selection() is what refuses to price one.
+ *
+ * @param PDO $pdb    Connection.
+ * @param int  $planId service_plans.id.
+ * @return array|null A plan row, or null.
+ */
+function booking_plan_by_id( $pdb, $planId ) {
+	$stmt = $pdb->prepare(
+		'SELECT id, service_id, group_key, group_label, name, price, price_note,
+                description, features, best_for, is_default, is_enquiry, is_orderable
+         FROM service_plans
+         WHERE id = :id
+         LIMIT 1'
+	);
+	$stmt->execute( array( ':id' => (int) $planId ) );
+	$row = $stmt->fetch();
+
+	if ( ! $row ) {
+		return null;
+	}
+
+	return booking_decode_plan_features( array( $row ) )[0];
 }
 
 /**

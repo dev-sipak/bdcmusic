@@ -54,8 +54,8 @@ if ( ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) !== 'POST' ) {
 }
 
 $token = isset( $_POST['csrf_token'] ) ? (string) $_POST['csrf_token'] : '';
-if ( ! verify_csrf_token( $token ) ) {
-	http_response_code( 419 );
+	if ( ! verify_csrf_token( $token ) ) {
+		http_response_code( 403 );
 	exit( 'Your session has expired. Please reload the page and try again.' );
 }
 
