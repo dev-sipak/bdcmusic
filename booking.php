@@ -560,18 +560,21 @@ include_once __DIR__ . '/header.php';
 						</p>
 
 						<?php if ( $planCategory ) : ?>
-							<p class="booking-note">
-								<i data-lucide="layers"></i>
-								<span>
-									Service Category: <strong><?php echo booking_esc( $planCategory ); ?></strong>,
-									taken from the
+							<div class="booking-category">
+								<span class="booking-category-badge">
+									<i data-lucide="layers"></i>
+									<span><?php echo booking_esc( $planCategory ); ?></span>
+								</span>
+
+								<p class="booking-category-note">
+									Set by your
 									<strong><?php echo booking_esc( (string) ( $selection['plan']['name'] ?? 'package' ) ); ?></strong>
-									package you chose, so the upload and delivery options below match it.
+									package — the upload and delivery options below match it.
 									<?php if ( $service ) : ?>
 										<a href="<?php echo booking_esc( booking_service_page_url( $service['slug'] ) ); ?>">Change package</a>
 									<?php endif; ?>
-								</span>
-							</p>
+								</p>
+							</div>
 						<?php endif; ?>
 
 						<form method="post" enctype="multipart/form-data" novalidate>

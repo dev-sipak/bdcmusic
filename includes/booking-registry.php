@@ -160,15 +160,13 @@ function booking_fields( $slug ) {    static $cache = array();
 
 			array( 'key' => 'delivery_formats', 'label' => 'Delivery Format', 'type' => 'checkbox', 'icon' => 'file-audio', 'cards' => true, 'group_source' => 'service_category', 'option_groups' => array(
 				'Audio' => array( 'WAV', 'MP3', 'FLAC' ),
-				'Video' => array( 'MP4', 'MOV', '4K', 'Full HD' ),
+				'Video' => array( 'MP4', 'MOV' ),
 			), 'options' => array(
 				'WAV' => 'WAV',
 				'MP3' => 'MP3',
 				'FLAC' => 'FLAC',
 				'MP4' => 'MP4',
 				'MOV' => 'MOV',
-				'4K' => '4K',
-				'Full HD' => 'Full HD',
 			) ),
 			array( 'key' => 'deadline', 'label' => 'Deadline', 'type' => 'text', 'required' => true, 'icon' => 'clock', 'half' => true, 'placeholder' => 'Example: 7 working days' ),
 			array( 'key' => 'budget', 'label' => 'Budget', 'type' => 'text', 'required' => true, 'icon' => 'indian-rupee', 'half' => true, 'placeholder' => 'Example: Rs.15,000' ),
