@@ -241,4 +241,75 @@ How that was done, rather than by hardcoding plan ids or a service slug:
 Verified: the A/V page has exactly 4 booking links (ids 1-4), 48 reference
 cells, 0 enquiry buttons and 4 "Get This Package" CTAs; `?plan_id=91` is ignored
 and falls back to the default; IPRS/Classes/Distribution/Marketplace are
-untouched.
+untouched. The count is per side now that the video bundles exist: the Audio side
+links ids 1-4 and the Video side links ids 139-142.
+
+## A/V order history: three video requests sitting on audio packages
+
+Making the category derive from the package exposed a contradiction in the
+seeded order history, which no amount of code could fix because it lives in
+stored rows.
+
+`BDCM-2B0002`, `BDCM-2B0004` and `BDCM-2B0008` all record
+`service_category = Video` while carrying an **audio** bundle (plans 2 and 4).
+Their notes and formats agree with the category and not the package — "Cinematic
+music video. Two shoot days, one drone insert", "Brand film plus six vertical
+cutdowns for social", "Two-camera workshop edit" — and their own
+`service_type` said `Audio`, so the JSON contradicted itself. This is the original
+defect recorded in the data: the page offered one package list, so a video
+enquiry could only be charged at an audio price.
+
+The package was the wrong half of each row, so the orders moved to the same tier
+in `video-bundles` — `BDCM-2B0002` to 140 (Standard, Rs. 25,000),
+`BDCM-2B0004` to 142 (Enterprise, Rs. 100,000) and `BDCM-2B0008` to 140 — along
+with `bookings.plan_id`, `plan_name`, `plan_group`, `plan_group_label`, `price`
+and `subtotal`, the matching `booking_items` row, and `meta.service_type`. The
+amount moved with the package, because a booking that disagrees with its plan
+price is a worse inconsistency than the one being fixed. A/V seed value rises
+from Rs. 227,000 to Rs. 257,500.
+
+Separately, `bookings.plan_group` is a snapshot taken when the order was placed,
+so all five audio A/V orders still carried the empty `group_key` their plans had
+before `audio-bundles` existed, next to a non-empty `plan_group_label`. Nothing
+reads the snapshot to derive behaviour — the category comes from a live join on
+`service_plans` — so this was tidiness rather than a fault, and all five were
+backfilled. A sweep for the same condition across all 44 bookings found the A/V
+orders and nothing else.
+
+Verified with an invariant sweep over all 8 A/V orders: the stored category, the
+plan's own group, both group snapshots, `service_type`, the formats against the
+category, the price against the plan price, and the single `booking_items` row
+agreeing on plan and line total. 8/8 pass, 0 failures.
+
+`database/bdcmusic.sql` was patched for the same 11 rows rather than
+regenerated. The dump is a phpMyAdmin export, and a blanket rewrite re-escaped
+every one of the 44 booking rows for nothing: phpMyAdmin writes bare `"` inside a
+single-quoted SQL string where `mysqldump` writes `\"`. Two attempts at a blanket
+rewrite also broke the file in ways only a round-trip import caught — a
+`VALUES`-line assumption that orphaned the rows, a column list that picked up the
+table name and shifted every value, and a positional row index that put id 8 where
+id 1 belonged and then failed on a duplicate key. The file is now patched in its
+own style, and the proof is a full import: 18 of 18 tables load with no SQL
+errors, and every table compares equal to the live database. The only remaining
+difference anywhere is `artists.updated_at` on 13 rows, left over from earlier
+enquiry tests and out of scope here.
+
+## Delivery format: one list, resolutions included
+
+`delivery_formats` keeps the container and the resolution in the same answer —
+Video offers `MP4`, `MOV`, `4K` and `Full HD` — which does read as if 4K were an
+alternative to MP4 rather than a second thing needed alongside it. Splitting them
+into a `delivery_formats` container plus a `delivery_resolution` field was tried
+and reverted: the separate question was not wanted, and the seeded orders read
+fine as one list. A third option, renaming the label to say both, is available if
+the wording matters more than the grouping.
+
+Two things that split depended on are therefore not in the tree:
+`parentValues()` in `assets/js/booking-checkout.js` only ever read *checked*
+controls, so a `depends_on` whose parent was a hidden carry-forward input could
+never unlock; and the A/V `delivery_formats` field still carries the
+`file-audio` icon on a field that also takes video. The other three
+`depends_on` fields in the registry (`existing_isrc`, `existing_upc`,
+`youtube_link`) all name visible radios on their own step, so the first is inert
+today.
+

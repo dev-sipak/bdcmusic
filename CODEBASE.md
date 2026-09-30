@@ -530,6 +530,12 @@ releases 1─* release_tracks / release_platform_links / release_artists / relea
   and `booking_items` carries the per-package snapshot for every line. The booking
   rows, not a join back to `service_plans`, are the money source of truth — so a
   later price or plan edit never rewrites history. Preserve this.
+- The A/V category is **not** a snapshot, though: `booking_plan_category()` maps the
+  plan's *current* `group_key`, because the whole point is that the package decides
+  the side and a stored answer must not be able to contradict it. So an A/V
+  `bookings.plan_group` snapshot can go stale if a plan is re-grouped. It is
+  tidiness, not a fault — nothing derives behaviour from the snapshot — but a plan
+  re-grouping is the one edit worth backfilling for afterwards.
 - An order is **one service and exactly one of its packages**. `bookings.plan_id` /
   `plan_name` / `plan_group` and the `booking_items` row agree, and a booking is
   never multi-line. The single-package decision is the one assignment
