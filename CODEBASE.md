@@ -379,6 +379,15 @@ direct `.php` URLs are also live and indexable — there is no canonical redirec
 | `/bdc-admin/enquiries` | `bdc-admin/enquiries.php` | Artist enquiries list, status, reply |
 | `/bdc-admin/services` | `bdc-admin/services.php` | Services CRUD + packages CRUD (JS in `assets/js/admin-plans.js`, JSON in `includes/admin/{services,plans}-list.php`, `plan-save/delete`, `service-save/delete`) |
 
+The orders tables name a *package*, not an "Item": the overview's Recent Orders
+column and the order modal's detail field are both labelled `Package`, and the
+modal field (`#modal-package`) is filled from `orderPackageName()` in
+`admin-dashboard.js`, which reads `plan.name` or joins `items[].name` when one
+order carries several packages. `/bdc-admin/orders` deliberately has **no** package
+column — the name is long, it is one line of the modal anyway, and the table is
+for scanning status and money. Its header has 8 columns and
+`renderAdminOrders()` emits exactly 8 cells; the overview table has 7.
+
 ---
 
 ## 5. Components
@@ -689,7 +698,13 @@ their redirect is not read anywhere and cannot be used either: the confirmation
 page is re-reachable later from the dashboard, where no such parameter exists.
 
 The progress `<ol>` is the only step indicator. There is no "STEP n OF m" counter
-and the `h1` is the service name, not the step word.
+and the `h1` is the service name, not the step word. On `audio-video` that name is
+narrowed by the chosen bundle: `$serviceLabel` in `booking.php` is
+`Audio Services` or `Video Services` instead of `Audio & Video Services`, and it
+drives the `h1`, the page title, the meta description, the details intro and the
+payment copy, so the page never presents itself as both jobs at once. Every other
+service has no `$planCategory` and keeps its own name. There is still exactly one
+`h1` per render.
 
 **Package selection:** opening `booking.php?service=<slug>` auto-selects the
 service's default package via `booking_apply_default_plan()` (active, non-enquiry,
@@ -712,8 +727,12 @@ every rate-card row, returns `''` and keeps its original step list. `booking.php
 resolves the plan and seeds
 `$_SESSION['booking_draft']['details']['service_category']` from it before the
 first step renders, and `booking_steps()` omits `category` once the draft already
-carries a value, so a bundle always starts on Details. Details states the package
-the category came from and links back to the service page to change it.
+carries a value, so a bundle always starts on Details. Details shows the category
+as one `.booking-category-badge`: a `var(--primary)` block, `border-radius: 12px`,
+`padding: 10px 14px`, with the icon carrying the side (`mic-vocal` for Audio,
+`video` for Video) so it is read before the word is. The `.booking-category-note`
+paragraph and its "Change package" link are gone, so the package name and the
+route back to the service page are no longer repeated in the form.
 
 The stored value stays authoritative: the `case 'details'` handler copies it back
 over `$_POST` before validating, and again over the cleaned result, so a
@@ -1038,7 +1057,7 @@ the payload can drive the admin APIs directly.
 `users.name` from `trim($_POST['name'])` with no filtering. Sink:
 `assets/js/admin-dashboard.js:190-199` — name, email and phone are concatenated into
 `innerHTML` for the Customers table, even though the same file *does* define and use
-`esc()` for the orders table (`:40-47, :96-108`).
+`esc()` for the orders table (`:36-46, :89-102`).
 
 **Impact:** an anonymous visitor signs up with a payload as their name and it fires
 for every admin who opens Customers. `update-profile.php` lets a logged-in customer
@@ -1452,7 +1471,7 @@ Remove or anonymise seed rows before the dump is shared anywhere.
 - **Large/complex files:** `includes/booking-registry.php` (field definitions +
   validation + renderer, ~850 lines, three responsibilities in one file);
   `booking.php` (multi-step page, ~810 lines); `bdc-admin/includes/order-modal.php`;
-  `assets/js/admin-dashboard.js` (589 lines, 6 features).
+  `assets/js/admin-dashboard.js` (586 lines, 6 features).
 - **Poor separation of concerns:** SQL lives inside the endpoint or partial that needs
   it — `bdc-admin/index.php:17-26` contains a join that belongs in a query module.
   `includes/booking-registry.php` both defines the field spec and renders HTML from it.

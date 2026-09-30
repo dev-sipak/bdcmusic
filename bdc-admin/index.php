@@ -143,7 +143,7 @@ $adminScripts = array( 'admin-dashboard.js' );
 										<th>Order ID</th>
 										<th>Customer</th>
 										<th>Service</th>
-										<th>Item</th>
+										<th>Package</th>
 										<th>Date &amp; Time</th>
 										<th>Amount</th>
 										<th>Status</th>

@@ -27,8 +27,8 @@
 					<span class="panel-value" id="modal-service"></span>
 				</div>
 				<div class="modal-detail-item">
-					<span class="panel-label">Item</span>
-					<span class="panel-value" id="modal-item"></span>
+					<span class="panel-label">Package</span>
+					<span class="panel-value" id="modal-package"></span>
 				</div>
 				<div class="modal-detail-item">
 					<span class="panel-label">Order Date &amp; Time</span>

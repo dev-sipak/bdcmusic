@@ -27,10 +27,13 @@
    details handler replaces the posted `service_category` with the stored one
    (booking.php), so the `option_groups` filter in `booking_validate_details()`
    and a hand-crafted form both resolve against the package, not the request. The
-   Details step states the package the category came from and links back to the
-   service page to change it. A bare `booking.php?service=audio-video` with no
-   `plan_id` still falls back to the audio default bundle, so the category is
-   never empty.
+   Details step shows the category as one badge and nothing else: a `var(--primary)`
+   block, `border-radius: 12px`, `padding: 10px 14px`, with the icon carrying the
+   side (`mic-vocal` for Audio, `video` for Video). The `.booking-category-note`
+   paragraph, which repeated the package name and carried the "Change package"
+   link, is gone, so the only route back to a different package is the service
+   page. A bare `booking.php?service=audio-video` with no `plan_id` still falls
+   back to the audio default bundle, so the category is never empty.
 2. **Drop the add-ons concept entirely.** The step, the label, the summary row, the
    review row, the four add-on query helpers, `booking_addons()`,
    `booking_addons_meta()` and the `booking_addons` write are gone. The
@@ -51,12 +54,23 @@
    the customer nothing: the order is saved `awaiting` with
    `payment_provider = 'manual'` and the checkout sends them to the confirmation
    page with a note instead of opening a payment window that cannot complete.
+7. **A bundle renames the whole A/V page, not just the badge.** "Audio & Video
+   Services" is the catalogue listing, not what anyone booked, so `$serviceLabel`
+   in `booking.php` is `Audio Services` for an `audio-bundles` package and
+   `Video Services` for a `video-bundles` one, falling back to the service's own
+   name for every other service. It drives the `h1`, the `<title>`, the meta
+   description, the details intro ("Tell us what you need for Video Services") and
+   the payment copy, and there is still exactly one `h1` per render. Only the
+   review and payment summaries and the "Back to" link keep the real
+   `services.name`, because those are the stored record rather than prose.
 
 ## Status
 
 - **Phase 1 - DONE.** `STEP n OF m` and the step-word `h1` are gone. The `h1` is
   the service name; the page title is `Book <Service> - BDC Music`.
   `booking_step_position()` and the `.booking-step-count` CSS deleted, CSS rebuilt.
+  On A/V that name is narrowed by the package, so it reads `Audio Services` or
+  `Video Services` rather than the listing; see decision 7.
 - **Phase 2 - DONE (superseded).** Preselect was additive when orders were
    multi-line; it now replaces, matching the one-package rule. The checkout-side
    picker that went with it has since been removed; see decision 1.
@@ -163,8 +177,11 @@ and in a real browser:
 
 - A guest who picks the Video **Basic** bundle lands on Details with the progress
   reading Details / Contact / Review / Payment — there is no Category step, because
-  the package has already answered it. Details names the package the category came
-  from and links back to the service page to change it.
+  the package has already answered it. Details shows the video badge (`mic-vocal`
+  is replaced by `video`) as a single primary block, the intro reads "Tell us what
+  you need for **Video Services**", the `h1` is **Video Services** rather than the
+  listing name, and `booking-category-note` is gone. The page title and meta
+  description name `Video Services` too.
 - Plan 139 (Video Basic) and 141 (Video Premium) and 142 (Video Enterprise) all
   store category `Video` and read `Basic (Video) Rs. 10,000`,
   `Premium (Video) Rs. 50,000` and `Enterprise (Video) Rs. 100,000` on the review.
@@ -312,3 +329,53 @@ never unlock; and the A/V `delivery_formats` field still carries the
 `depends_on` fields in the registry (`existing_isrc`, `existing_upc`,
 `youtube_link`) all name visible radios on their own step, so the first is inert
 today.
+
+## A/V page names the side; badge carries the icon
+
+"Audio & Video Services" is a catalogue listing, so a customer who had already
+clicked a bundle was still reading a heading that claimed both jobs. Four
+changes, all driven off the category the package already settled:
+
+- `booking.php` builds `$serviceLabel` once and uses it for the `h1`, the
+  `<title>`, the meta description, the details intro and the payment copy. The
+  review and payment summaries and the "Back to" link still print
+  `services.name`, because those are the stored record, not prose.
+- The badge icon is now the job (`mic-vocal` for Audio, `video` for Video)
+  instead of `layers`, which named neither.
+- The `.booking-category-note` element and its SCSS block are deleted, so nothing
+  repeats the package name inside the form.
+- `.booking-category-badge` loses the pill (`border-radius: 999px`, `padding:
+  7px 18px`) for `border-radius: 12px`, `padding: 10px 14px`, keeping
+  `var(--primary)`.
+
+Verified in a real browser against the live site, one run per package:
+
+| URL | `h1` | details intro | badge | `h1` count | note |
+|---|---|---|---|---|---|
+| `?service=audio-video&plan_id=2` | Audio Services | for **Audio Services** | `mic-vocal` / Audio | 1 | absent |
+| `?service=audio-video&plan_id=140` | Video Services | for **Video Services** | `video` / Video | 1 | absent |
+| `?service=artists-marketplace` | BDC Artists Marketplace | unchanged | none | 1 | absent |
+
+Computed style on the badge: `background rgb(228, 0, 43)`, i.e. `--primary`,
+`border-radius 12px`, `padding 10px 14px`, text `#fff`. The whole four-step flow
+was walked with a video bundle and no PHP notice or warning appears on any step;
+the payment step reads "Your order for **Video Services** is Rs. 25,000".
+`npm run build` is green and the compiled `assets/dist/main.css` carries no
+`.booking-category-note` rule.
+
+## Admin wording: Item is Package
+
+The same kind of problem one layer over. The Recent Orders column on `/bdc-admin/`
+and the order modal's detail field were labelled `Item`; both are a package, and
+the modal field was filled with `order.service`, so it duplicated the Service field
+directly above it. Both now read `Package`, `#modal-item` is `#modal-package`, and
+it is filled from a new `orderPackageName()` that reads `plan.name` or joins
+`items[].name`. That rule is the one the removed orders-table column used, so the
+logic moved rather than being written twice.
+
+`/bdc-admin/orders` drops the Package column outright: the header is 8 columns
+and `renderAdminOrders()` emits exactly 8 cells (Order ID, Customer, Service,
+Date & Time, Amount, Status, Payment, Action). The package is one click away in
+the modal, and the list is for scanning status and money. The overview table keeps
+its column, which was always correct: `bdc-admin/index.php:51` has aliased
+`b.plan_name` as `item` since it was written.

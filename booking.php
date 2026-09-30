@@ -446,11 +446,20 @@ if ( $service && ! $quoteMode && $selectedPlanIds ) {
 
 // Presentation
 
+// The Audio & Video listing sells both jobs from one page, so a bundle narrows
+// the whole page to the side it belongs to: the h1, the step copy and the
+// category badge all name Audio Services or Video Services rather than the
+// listing. Every other service has no category to narrow by and keeps its own
+// name.
+$serviceLabel = $service
+	? ( $planCategory ? $planCategory . ' Services' : (string) $service['name'] )
+	: '';
+
 $pageTitle = $service
-	? 'Book ' . $service['name'] . ' · BDC Music'
+	? 'Book ' . $serviceLabel . ' · BDC Music'
 	: 'Book a Service';
 $metaDescription = $service
-	? 'Complete your booking for ' . $service['name'] . ' with BDC Music.'
+	? 'Complete your booking for ' . $serviceLabel . ' with BDC Music.'
 	: 'Choose a service and book with BDC Music Studio.';
 
 include_once __DIR__ . '/header.php';
@@ -460,8 +469,8 @@ include_once __DIR__ . '/header.php';
 	<div class="container">
 
 		<?php // The step is named once, by the progress list below, and the h1 is
-		// the service itself. ?>
-		<h1><?php echo $service ? booking_esc( $service['name'] ) : 'Choose a service'; ?></h1>
+		// the service itself — narrowed to Audio or Video when a bundle settled it. ?>
+		<h1><?php echo $serviceLabel !== '' ? booking_esc( $serviceLabel ) : 'Choose a service'; ?></h1>
 
 		<p class="booking-note">
 			<i data-lucide="info"></i>
@@ -555,25 +564,19 @@ include_once __DIR__ . '/header.php';
 						<h2>Tell us about your project</h2>
 						<p class="booking-intro">
 							Tell us what you need for
-							<strong><?php echo booking_esc( $service['name'] ); ?></strong>.
+							<strong><?php echo booking_esc( $serviceLabel ); ?></strong>.
 							Fields marked <span class="required-star">*</span> are required.
 						</p>
 
+						<?php // The side the chosen package settled, as one badge. The icon
+						// is the job it is, so Audio and Video are told apart at a glance
+						// rather than by reading the word. ?>
 						<?php if ( $planCategory ) : ?>
 							<div class="booking-category">
 								<span class="booking-category-badge">
-									<i data-lucide="layers"></i>
+									<i data-lucide="<?php echo $planCategory === 'Audio' ? 'mic-vocal' : 'video'; ?>"></i>
 									<span><?php echo booking_esc( $planCategory ); ?></span>
 								</span>
-
-								<p class="booking-category-note">
-									Set by your
-									<strong><?php echo booking_esc( (string) ( $selection['plan']['name'] ?? 'package' ) ); ?></strong>
-									package — the upload and delivery options below match it.
-									<?php if ( $service ) : ?>
-										<a href="<?php echo booking_esc( booking_service_page_url( $service['slug'] ) ); ?>">Change package</a>
-									<?php endif; ?>
-								</p>
 							</div>
 						<?php endif; ?>
 
@@ -747,7 +750,7 @@ include_once __DIR__ . '/header.php';
 									<?php echo booking_esc( booking_money( $selection['total'] ) ); ?>.
 								<?php else : ?>
 									Your order for
-									<strong><?php echo booking_esc( $service['name'] ); ?></strong>
+									<strong><?php echo booking_esc( $serviceLabel ); ?></strong>
 									is <?php echo booking_esc( booking_money( $selection['total'] ) ); ?>.
 									Place the order now and our team will contact you to take
 									payment.

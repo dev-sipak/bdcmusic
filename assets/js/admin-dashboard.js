@@ -87,21 +87,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		emptyMsg.classList.add('d-none');
 		tbody.innerHTML = ordersList.map(function (o) {
-			var plan    = o.plan || {};
-			var items   = o.items || [];
 			var amounts = o.amounts || {};
-
-			// Several packages on one order are listed together; the plan
-			// snapshot only names the first of them.
-			var planName = items.length > 1
-				? items.map(function (it) { return it.name; }).join(', ')
-				: (plan.name || (items.length === 1 ? items[0].name : '—'));
 
 			return '<tr>' +
 				'<td><strong>' + esc(o.id) + '</strong></td>' +
 				'<td>' + esc(o.customer) + '</td>' +
 				'<td>' + esc(o.service) + '</td>' +
-				'<td>' + esc(planName) + '</td>' +
 				'<td>' + esc(o.date) + '</td>' +
 				'<td>' + money(amounts.total !== undefined ? amounts.total : o.amount) + '</td>' +
 				'<td>' + statusBadgeHtml(o.status) + '</td>' +
@@ -306,6 +297,23 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	/**
+	 * The package name an order is shown under.
+	 *
+	 * booking_items holds one line per package while the bookings row only
+	 * snapshots the first, so a multi-package order is named from its lines.
+	 * @param {object} order
+	 * @returns {string}
+	 */
+	function orderPackageName(order) {
+		var plan  = order.plan || {};
+		var items = order.items || [];
+
+		if (items.length > 1) return items.map(function (it) { return it.name; }).join(', ');
+
+		return plan.name || (items.length === 1 ? items[0].name : '—');
+	}
+
+	/**
 	 * Render the package and money breakdown.
 	 * @param {object} order
 	 */
@@ -426,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				document.getElementById('modal-email').textContent     = order.email;
 				document.getElementById('modal-phone').textContent     = order.phone;
 				document.getElementById('modal-service').textContent   = order.service;
-				document.getElementById('modal-item').textContent      = order.service;
+				document.getElementById('modal-package').textContent   = orderPackageName(order);
 				document.getElementById('modal-date').textContent      = order.date;
 				document.getElementById('modal-amount').textContent    = money(order.amount);
 				document.getElementById('modal-status-select').value   = order.status;
