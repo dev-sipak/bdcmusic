@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  var overview = adminDashboardConfig.overview || { stats: {}, recent: [] };
+  var overview = adminDashboardConfig.overview || { stats: {} };
   var basePath = adminDashboardConfig.basePath;
 
 	function esc(value) {
@@ -15,41 +15,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	initSidebarToggle('.adm-sidebar', '#admin-menu-toggle');
 
-	/* ----- Overview Stats ----- */
-	var recentOrdersTbody = document.getElementById('recent-orders-tbody');
-
+	/* ----- Overview Stats -----
+	   Four figures, each aggregated in SQL on bdc-admin/index.php: what the
+	   studio has taken, what it has given back, how large the artist roster is
+	   and how large the release catalogue is. The recent-orders table that used
+	   to sit below these cards is gone; the Orders page is where an order is
+	   read and acted on. */
 	function updateOverviewStats() {
-		// The counts arrive pre-aggregated from the server, and `recent` holds
-		// only the ten rows the table shows, so neither is derived from a full
-		// list of orders in the browser.
 		var stats = overview.stats || {};
-		var recent = overview.recent || [];
 
-		document.getElementById('stat-total').textContent      = stats.total || 0;
-		document.getElementById('stat-pending').textContent     = stats.pending || 0;
-		document.getElementById('stat-processing').textContent  = stats.processing || 0;
-		document.getElementById('stat-delivered').textContent   = stats.delivered || 0;
-		document.getElementById('stat-customers').textContent   = stats.customers || 0;
+		var salesEl = document.getElementById('stat-sales');
+		var refundedEl = document.getElementById('stat-refunded');
+		var artistsEl = document.getElementById('stat-artists');
+		var releasesEl = document.getElementById('stat-releases');
 
-		if (!recentOrdersTbody) return;
-
-		recentOrdersTbody.innerHTML = recent.map(function (o) {
-			return '<tr>' +
-				'<td><strong>' + esc(o.id) + '</strong></td>' +
-				'<td>' + esc(o.customer) + '</td>' +
-				'<td>' + esc(o.service) + '</td>' +
-				'<td>' + esc(o.item || '\u2014') + '</td>' +
-				'<td>' + esc(o.date) + '</td>' +
-				'<td>' + money(o.amount) + '</td>' +
-				'<td>' + statusBadgeHtml(o.status) + '</td>' +
-			'</tr>';
-		}).join('');
+		if (salesEl) salesEl.textContent = money(stats.sales || 0);
+		if (refundedEl) refundedEl.textContent = money(stats.refunded || 0);
+		if (artistsEl) artistsEl.textContent = stats.artists || 0;
+		if (releasesEl) releasesEl.textContent = stats.releases || 0;
 	}
 
-	if (recentOrdersTbody) {
-		updateOverviewStats();
-	}
-
+	updateOverviewStats();
 
 	/* ----- Orders Management (Paginated) ----- */
 	var ordersPagination = { currentPage: 1, totalPages: 1 };
@@ -89,15 +75,17 @@ document.addEventListener('DOMContentLoaded', function () {
 		tbody.innerHTML = ordersList.map(function (o) {
 			var amounts = o.amounts || {};
 
-			return '<tr>' +
-				'<td><strong>' + esc(o.id) + '</strong></td>' +
+			// A row nobody has opened yet is called out with a dot next to the
+			// order id, which is the same set of orders the sidebar badge counts.
+			return '<tr' + (o.isUnread ? ' class="is-unread"' : '') + '>' +
+				'<td><strong>' + esc(o.id) + '</strong>' + (o.isUnread ? '<span class="adm-unread-dot" title="Not viewed yet"></span>' : '') + '</td>' +
 				'<td>' + esc(o.customer) + '</td>' +
 				'<td>' + esc(o.service) + '</td>' +
 				'<td>' + esc(o.date) + '</td>' +
 				'<td>' + money(amounts.total !== undefined ? amounts.total : o.amount) + '</td>' +
 				'<td>' + statusBadgeHtml(o.status) + '</td>' +
 				'<td>' + paymentBadgeHtml(o.paymentStatus, o.paymentLabel) + '</td>' +
-				'<td><button class="adm-view-btn" data-order-id="' + esc(o.id) + '"><i data-lucide="eye"></i></button></td>' +
+				'<td><button class="adm-view-btn" data-order-id="' + esc(o.id) + '" aria-label="View order ' + esc(o.id) + '"><i data-lucide="eye"></i></button></td>' +
 			'</tr>';
 		}).join('');
 
@@ -346,14 +334,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		pairs.push(detailItem('Package Price', money(amounts.subtotal)));
 		pairs.push(detailItem('Total Charged', money(amounts.total)));
-		pairs.push(detailItem('Currency', amounts.currency || 'INR'));
 
 		var planEl = document.getElementById('modal-plan-fields');
 		if (planEl) planEl.innerHTML = pairs.join('');
 	}
 
 	/**
-	 * Render the payment summary and the per-attempt trail.
+	 * Render the payment summary for one order.
 	 * @param {object} order
 	 */
 	function renderOrderPayment(order) {
@@ -379,33 +366,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		var payEl = document.getElementById('modal-payment-fields');
 		if (payEl) payEl.innerHTML = pairs.join('');
-
-		var attempts = payment.attempts || [];
-		var attEl     = document.getElementById('modal-payment-attempts');
-		var attSection = document.getElementById('modal-payment-attempts-section');
-
-		if (attEl && attSection) {
-			if (attempts.length) {
-				attEl.innerHTML = attempts.map(function (a) {
-					var ref = a.razorpayPaymentId || a.razorpayOrderId || ('Attempt #' + a.id);
-					var note = a.method || a.statusLabel;
-					if (a.failureReason) note += ' — ' + a.failureReason;
-					return '<div class="modal-file-item">' +
-						'<i data-lucide="receipt" class="modal-file-icon"></i>' +
-						'<span class="modal-file-name">' + esc(ref) + '</span>' +
-						'<span class="modal-file-size">' + esc(money(a.amount) + ' · ' + note) + '</span>' +
-					'</div>';
-				}).join('');
-				attSection.classList.remove('d-none');
-			} else {
-				attEl.innerHTML = '';
-				attSection.classList.add('d-none');
-			}
-		}
 	}
 
 	function openOrderModal(orderId) {
 		currentOrderId = orderId;
+		// This endpoint records the viewing, so the sidebar badge has one less
+		// order to show as soon as the details arrive. Announced so
+		// admin-nav-badges.js can recount rather than guess.
+		document.dispatchEvent(new CustomEvent('admin:badge-refresh'));
 		document.getElementById('modal-customer').textContent = '';
 		document.getElementById('modal-status-select').value = 'pending';
 		// Hide the async sections up front so a previous order's package and
@@ -414,7 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			var el = document.getElementById(id);
 			if (el) el.innerHTML = '';
 		});
-		document.getElementById('modal-payment-attempts-section').classList.add('d-none');
 		modal.classList.add('open');
 		document.body.style.overflow = 'hidden';
 
@@ -530,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (data && data.success) {
 				closeModal();
 				loadOrders(ordersPagination.currentPage);
-				if (recentOrdersTbody) updateOverviewStats();
 			}
 		})
 		.catch(function () {

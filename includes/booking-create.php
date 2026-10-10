@@ -30,6 +30,7 @@ require_once __DIR__ . '/booking-session.php';
 require_once __DIR__ . '/booking-registry.php';
 require_once __DIR__ . '/notifications.php';
 require_once __DIR__ . '/customer-accounts.php';
+require_once __DIR__ . '/artist-registrations.php';
 
 // Razorpay SDK.
 $razorpayInclude = dirname( __DIR__ ) . '/vendor/razorpay/razorpay/src/Api.php';
@@ -66,6 +67,14 @@ $token = isset( $_POST['csrf_token'] ) ? (string) $_POST['csrf_token'] : '';
 $pdb    = db_connect();
 $draft  = booking_draft();
 $action = isset( $_POST['action'] ) ? clean_text( $_POST['action'] ) : '';
+
+// A booking cannot be placed without accepting the terms and the privacy
+// policy. The checkboxes ride on whichever form carries the final submit
+// (review for quote-mode, payment for a priced service), and the browser marks
+// them `required`; this is the real gate.
+if ( empty( $_POST['terms_accept'] ) || empty( $_POST['privacy_accept'] ) ) {
+	booking_json( array( 'success' => false, 'message' => 'Please accept the Terms and Conditions and the Privacy Policy to continue.' ) );
+}
 
 // bookings.customer_id points at users.id and is nullable, so a guest booking is
 // a NULL there rather than a row of its own.
@@ -530,6 +539,37 @@ if ( $customerId === null ) {
 	if ( $account ) {
 		booking_link_customer( $pdb, $bookingId, $account['id'] );
 	}
+}
+
+// A BDC Marketplace package creates a registration that the studio verifies
+// before the artist is issued an ID Card and Certificate. It is written after the
+// account above so it can be linked to a customer account, and as its own write
+// rather than inside the booking transaction: the order is already placed by this
+// point, and losing this row must not undo an order the customer has paid for.
+//
+// The booking row is re-read rather than rebuilt from the local variables, so the
+// registration records what was actually stored -- including the customer_id that
+// booking_link_customer() has just written.
+try {
+	$registrationStmt = $pdb->prepare(
+		'SELECT booking_id, customer_id, customer_name, customer_email, customer_phone,
+				service_slug, plan_name, price, currency, meta
+		 FROM bookings
+		 WHERE booking_id = :booking_id
+		 LIMIT 1'
+	);
+	$registrationStmt->execute( array( ':booking_id' => $bookingId ) );
+	$registrationRow = $registrationStmt->fetch();
+
+	if ( $registrationRow ) {
+		// No-ops for every service except the marketplace, which is checked
+		// inside the helper.
+		artist_registration_create( $pdb, $registrationRow );
+	}
+} catch ( Throwable $e ) {
+	// Reported to the log rather than to the customer: the order has succeeded,
+	// and the studio can still open the registration from the order itself.
+	app_log( 'booking-create', 'artist registration not created for ' . $bookingId, $e );
 }
 
 $order = array(

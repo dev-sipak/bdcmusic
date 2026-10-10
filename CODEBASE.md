@@ -1,6 +1,6 @@
-# CODEBASE.md — BDC Music Studio
+# CODEBASE.md — BDC Music
 
-**Living architecture document for the BDC Music Studio web application.**
+**Living architecture document for the BDC Music web application.**
 
 > This file is a map, not the source of truth. If this document conflicts with the
 > source code, **the source code wins**. Update this file whenever architecture,
@@ -114,20 +114,22 @@ both directly web-reachable and called by `fetch()`. Each such file repeats its 
 |---|---|
 | `*.php` (root) | Public marketing pages, `header.php`/`footer.php` shell, `login.php`, `booking.php`, `booking-thank-you.php` |
 | `includes/` | Config, DB, shared helpers, booking engine, and all non-admin endpoints |
-| `includes/admin/` | 13 admin JSON endpoints (order, artist, customer, enquiry, release) |
+| `includes/admin/` | 17 admin JSON endpoints (order, artist, customer, enquiry, release, verification queue, badge counts) |
 | `includes/customer/` | 6 customer JSON endpoints (orders, releases, service overview) |
 | `includes/components/` | Partial components — **all three are currently unused** (see §12) |
 | `bdc-admin/` | Admin screens + `admin-guard`, `admin-header/nav/footer`, modals |
 | `dashboard/` | Customer screens + `panel-guard`, `panel-config`, `panel-nav`, order modal |
 | `services/` | The six service marketing/checkout pages |
 | `artists/` | Artist directory (`index.php`) and artist profile (`detail.php`) |
-| `assets/js/` | 14 vanilla JS files: 4 admin, 3 customer, 3 service-form, `app.js`, `shared.js`, `login.js`, `booking-checkout.js` |
+| `assets/js/` | 17 vanilla JS files: 6 admin, 4 customer, 4 service-form, `app.js`, `shared.js`, `login.js`, `booking-checkout.js` |
 | `assets/scss/` | SCSS sources: `abstracts/`, `base/`, `components/`, `layout/`, `pages/`, entry `main.scss` |
 | `assets/dist/` | Generated `main.css` — **git-ignored**; the committed tree has no stylesheet |
 | `assets/images/` | Static imagery, including ~4.6 MB of unreferenced files (§13) |
 | `assets/src/scss-entry.js` | Webpack entry that pulls in `main.scss` |
-| `database/bdcmusic.sql` | Full schema **and** seed data. No migration framework exists |
+| `database/bdcmusic.sql` | Full schema **and** seed data |
+| `database/migrations/` | The one migration that exists, `2026_10_artist_verification.sql`. Idempotent, `information_schema`-guarded; run once against an existing database |
 | `data/uploads/` | Customer-uploaded files at runtime. `profile/`, `_draft/`, per-booking dirs |
+| `data/documents/` | Generated artist ID Cards and Certificates (`data/documents/<code>/*.html`). Web-denied by `.htaccess`, reachable only through `includes/artist-document.php`, git-ignored |
 | `prompt.txt` | The standing engineering brief governing how changes are made |
 | `CODEBASE.md` | This document |
 
@@ -365,19 +367,29 @@ direct `.php` URLs are also live and indexable — there is no canonical redirec
 | `/dashboard/orders` | `orders.php` | Order history + order detail modal + invoice/payment |
 | `/dashboard/releases` | `releases.php` | Releases list + create/edit form, platform links |
 | `/dashboard/service` | `service.php` | Per-service progress and files for the purchased service |
+| `/dashboard/artist-verification` | `artist-verification.php` | Marketplace registrations for this customer, review outcome, and Artist ID Card / Certificate view + download links (see §9) |
 | `/dashboard/customer`, `/dashboard/provider` | `customer.php`, `provider.php` | **Unauthenticated placeholder pages, not linked from anywhere** — see §12 |
 
 ### Admin panel — all require `user_role === 'admin'`
 
 | Route | File | Purpose |
 |---|---|---|
-| `/bdc-admin/` | `bdc-admin/index.php` | Overview stats + 10 recent orders |
-| `/bdc-admin/orders` | `bdc-admin/orders.php` | Orders list, filters, order modal, status/progress update |
+| `/bdc-admin/` | `bdc-admin/index.php` | Four stat cards (total sales, total refunded, total artists registered, total music released). **No Recent Orders section** — the orders list is the place to work through orders |
+| `/bdc-admin/orders` | `bdc-admin/orders.php` | Orders list, filters, order modal, status/progress update. Opening an order marks it read (`bookings.admin_read_at`) |
 | `/bdc-admin/releases` (+`?status=`) | `bdc-admin/releases.php` | Releases list + release editor (status, tracks, platform links) |
 | `/bdc-admin/customers` | `bdc-admin/customers.php` | Customers, order counts, lifetime spend |
 | `/bdc-admin/artists` | `bdc-admin/artists.php` | Artists CRUD + pricing editor + image upload |
 | `/bdc-admin/enquiries` | `bdc-admin/enquiries.php` | Artist enquiries list, status, reply |
 | `/bdc-admin/services` | `bdc-admin/services.php` | Services CRUD + packages CRUD (JS in `assets/js/admin-plans.js`, JSON in `includes/admin/{services,plans}-list.php`, `plan-save/delete`, `service-save/delete`) |
+| `/bdc-admin/artist-verifications` | `bdc-admin/artist-verifications.php` | Marketplace registration queue: status filter, search, review modal, verify/reject/reopen (JS in `assets/js/admin-verifications.js`, JSON in `includes/admin/artist-registrations-list.php` + `artist-registration-detail.php`, decisions in `artist-registration-update.php`) |
+
+The sidebar carries two live badges, both counted server-side on first paint and
+then polled by `assets/js/admin-nav-badges.js` every 60s (also on tab visibility
+and on the `admin:badge-refresh` event): **Orders** counts bookings with
+`admin_read_at IS NULL`, and **Verifications** counts `artist_registrations` rows
+at status `pending`. Counts live in `includes/admin/badge-counts.php` and are
+computed in `admin-nav.php` inside a try/catch, so a database failure shows zero
+badges instead of taking the whole sidebar down.
 
 The orders tables name a *package*, not an "Item": the overview's Recent Orders
 column and the order modal's detail field are both labelled `Package`, and the
@@ -414,6 +426,12 @@ for scanning status and money. Its header has 8 columns and
 | `includes/booking-session.php` | Session draft, `booking_steps()` dynamic step machine, `booking_step_satisfied`, `booking_furthest_reachable`, staging dir, upload discard | **High** — the checkout state machine |
 | `includes/booking-registry.php` | Per-service field definitions (`booking_fields`), visibility rules, validation (`booking_validate_details`, `booking_validate_contact`), field rendering (`booking_render_field`), `booking_esc` | **High** — declarative form spec + renderer |
 | `includes/service-fields.php` | Per-service metadata: nav label/icon, meta fields, arrangement fields, `service_progress_options`, status→unlock map, `service_meta_pairs` | Medium-high |
+| `includes/artist-registrations.php` | The marketplace verification data model: create on order, look up by order, list for a customer, status/category labels, submitted-field pairs | Medium — `artist_registration_category_label()` reads its options from `booking-registry.php`, not from `service-fields.php` |
+| `includes/artist-documents.php` | Artist code allocation (`BDCA-YYYY-NNNN`), ID Card and Certificate HTML, write / regenerate-on-demand / discard | Medium — self-contained printable HTML, no PDF library |
+| `includes/artist-document.php` | The only reader of the generated documents. Authorises admin / owning customer / confirmed guest; refuses an unverified registration | Low |
+| `assets/js/admin-verifications.js` | Verification queue: status filter, debounced search, pagination, review panel, verify / reject / reopen | Medium |
+| `assets/js/admin-nav-badges.js` | Polls the Orders + Verifications sidebar badges (60s, plus visibility change and `admin:badge-refresh`) | Low |
+| `assets/js/classes-section-nav.js` | Instrument Cloud chips ↔ course sections: click, smooth scroll, scroll-spy, hash/history, reduced-motion aware | Low |
 | `includes/booking-marketing.php` | `booking_plan_card`, `booking_plan_grid`, `booking_cta`, `booking_quote_note` — server-rendered plan marketing blocks | Medium |
 | `includes/razorpay-verify.php` | Payment settlement: CSRF, session ownership via `hash_equals`, HMAC verify, amount match, replay guard, single transaction, notification mail | **High** — best-written file in the project |
 | `includes/file-upload.php` | MIME allow-lists per service, size caps, per-service directories, `process_file_upload`/`process_multiple_uploads` (content-sniffed via `finfo`, server-generated names) | Medium |
@@ -466,7 +484,7 @@ for scanning status and money. Its header has 8 columns and
 | `includes/customer/release-save.php` | POST | `UPDATE` only; child `DELETE`/`INSERT` unscoped and non-transactional | **none** |
 | `includes/customer/release-submit.php`, `release-takedown.php` | POST | owner-scoped + `rowCount()` checked | **none** |
 
-### Admin endpoints (all require `user_role === 'admin'`, none have CSRF)
+### Admin endpoints (all require `user_role === 'admin'`)
 
 `artist-save.php`, `artist-delete.php`, `artists-list.php`, `categories-list.php`,
 `customers-list.php`, `enquiries-list.php`, `enquiry-reply.php`,
@@ -474,9 +492,23 @@ for scanning status and money. Its header has 8 columns and
 `order-update.php`, `release-save.php`, `releases-list.php`, plus
 `includes/upload-artist-image.php`.
 
+The verification queue adds three more, all admin-only:
+
+| Endpoint | Method | Purpose | CSRF |
+|---|---|---|---|
+| `includes/admin/badge-counts.php` | GET | Orders + Verifications sidebar badge counts | n/a |
+| `includes/admin/artist-registrations-list.php` | GET | Queue rows, `status`/`search` filters, SQL pagination, per-status counts | n/a |
+| `includes/admin/artist-registration-detail.php` | GET | One registration in full: submitted fields, order, uploads, review history | n/a |
+| `includes/admin/artist-registration-update.php` | POST | `verify` / `reject` / `reopen`; `reject` requires a reason, `verify` allocates the code and issues the documents | `require_csrf()` |
+
+`includes/artist-document.php` is the document endpoint shared by all three roles:
+admin, the owning customer, or the guest who placed the order while that order is
+the one this browser confirmed. It refuses any registration that is not `verified`.
+
 CSRF helpers already exist and are correct — `helpers.php:73-92`
 (`generate_csrf_token`, `csrf_field`, `verify_csrf_token` with `hash_equals`) — and
-are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
+are used only in `booking.php`, `booking-create.php`, `razorpay-verify.php` and
+`includes/admin/artist-registration-update.php`.
 
 ### External integrations
 
@@ -491,8 +523,10 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 
 ## 7. Database / Data Model
 
-18 tables, no foreign keys, no migrations framework. Schema + seed live in one dump
-(`database/bdcmusic.sql`).
+19 tables, no foreign keys, no migrations framework. Schema + seed live in one dump
+(`database/bdcmusic.sql`). `database/migrations/` holds the one migration that
+exists (`2026_10_artist_verification.sql`, applied to the local database); it is
+idempotent, guarded by `information_schema` checks, and safe to re-run.
 
 ### Tables
 
@@ -501,7 +535,7 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 | `users` | Accounts | `id` **varchar(20)** PK (values like `CUST-A1B2C3D4`; admin is `CUST-ADMIN0001`), `email` UNIQUE, `password_hash`, `role enum('customer','admin')`, `mobile`, `profile_picture`, `source` |
 | `services` | Service catalogue | `slug` (UNIQUE), `name`, `booking_mode enum('packages','quote')`, `price_note`, `is_active` |
 | `service_plans` | Packages | `service_id`, `group_key` (empty for a standalone plan; `audio-bundles` / `video-bundles` for the A/V studio packages, which is what `booking_plan_category()` keys off), `group_label`, `price`, `price_note` (e.g. `Custom Quote`), `features` (JSON), `sort_order`, `is_default`, `is_enquiry`, `is_orderable` |
-| `bookings` | An order | `booking_id` varchar PK `BDCM-XXXXXX` (3 random bytes hex), `customer_id` varchar **nullable** (NULL = guest), `customer_type enum('registered','guest')`, snapshot columns (`customer_name/email/phone/whatsapp`), `status enum`, `payment_status`, `payment_provider` (`razorpay`/`manual`), `razorpay_order_id`, `razorpay_signature`, `payment_failure_reason`, `plan_*` snapshots, `subtotal`, `addons_total` (kept NOT NULL for old orders; new orders write 0), `price`, `meta` JSON, `invoice_no`, `service_slug`, `service_name` |
+| `bookings` | An order | `booking_id` varchar PK `BDCM-XXXXXX` (3 random bytes hex), `customer_id` varchar **nullable** (NULL = guest), `customer_type enum('registered','guest')`, snapshot columns (`customer_name/email/phone/whatsapp`), `status enum`, `payment_status`, `payment_provider` (`razorpay`/`manual`), `razorpay_order_id`, `razorpay_signature`, `payment_failure_reason`, `plan_*` snapshots, `subtotal`, `addons_total` (kept NOT NULL for old orders; new orders write 0), `price`, `meta` JSON, `invoice_no`, `service_slug`, `service_name`, `admin_read_at DATETIME NULL` (NULL = no admin has opened the order; drives the Orders badge) |
 | `booking_items` | One package line per order | `booking_id`, `plan_id`, `plan_name`, `plan_group`, `plan_group_label`, `unit_price`, `qty` (always 1), `line_total`; UNIQUE (`booking_id`,`plan_id`) |
 | `booking_payments` | Payment attempts | `booking_id`, `provider`, `razorpay_order_id/payment_id/signature`, `amount`, `status`, `method`, `failure_reason` |
 | `bookings.created_at` | Order timestamp | Stored DATETIME, but **every** reader now selects it as `DATE_FORMAT(b.created_at, '%Y-%m-%d %H:%i')` under the label "Date & Time" (admin list/detail, customer list/detail, `service-overview.php` paid_at, and both order modals). Formatting is done in SQL, not in JS, so the value is identical in the table and the modal |
@@ -517,6 +551,7 @@ are used only in `booking.php`, `booking-create.php` and `razorpay-verify.php`.
 | `release_tracks` | Track list | UNIQUE `(release_id, track_no)` |
 | `release_platform_links` | Store links | UNIQUE `(release_id, platform)`, `url`, `is_active` |
 | `release_history` | Audit trail | `release_id`, `action`, `message`, `reviewer_note` — written on every admin change |
+| `artist_registrations` | Marketplace verification queue — **one row per marketplace order**, not per artist | UNIQUE `booking_id`, UNIQUE `artist_code` (`BDCA-YYYY-NNNN`), `customer_id` (NULL for guests), `artist_name/email/phone`, `category_slug`, `experience`, `city`, `goal`, `about`, `portfolio_url`, `details` JSON (the order-time form submission), `plan_name`/`plan_price`/`currency` snapshots, `status enum('pending','verified','rejected')`, `review_note`, `reviewed_by`, `reviewed_at`, `id_card_path`, `certificate_path`, `documents_generated_at`. Generated documents live in `data/documents/<code>/`, which `.htaccess` denies; they are only reachable through `includes/artist-document.php`. UNIQUE `booking_id` is deliberate: an artist may buy more than one package and each purchase is reviewed on its own |
 
 ### Relationships (enforced only in application code)
 
@@ -530,8 +565,13 @@ users   1─* bookings            (NULL customer_id = guest)
 users   1─* releases
 artist_categories 1─* artists 1─* artist_pricing
 artists 1─* artist_enquiries
+bookings 1─1 artist_registrations   (marketplace orders only)
 releases 1─* release_tracks / release_platform_links / release_artists / release_history
 ```
+
+`artist_registrations` is **not** a child of `artists`. `artists` is the public
+directory the Artists admin page edits; a paid registration only enters it if
+somebody later promotes it by hand.
 
 ### Important business fields
 
@@ -785,6 +825,51 @@ The selected indicator is a `::after` tick drawn as a CSS mask from Lucide's
 `check` glyph (see `assets/scss/base/_icons.scss`); selected state comes from
 `input:checked + ...` / `:has()`, not from a JS-added class, so it cannot desync.
 
+### Declarative conditional behaviour
+
+Besides the A/V cards, the registry carries two more behaviours that the renderer
+and the validator share, so the browser and the server can never disagree about
+whether a field applies or what it may hold.
+
+- **Conditional visibility** — a field with
+  `depends_on => ['key' => <parent>, 'equals' => <accepted answers>]` is only
+  shown while the parent control's value is one of the accepted answers.
+  `equals` is pipe-separated, so a single rule can unlock a field from several
+  answers (the marketplace State field lists every country code). While hidden,
+  the validator skips the field and drops a stale value if one was posted.
+  `booking_field_visible()` implements the rule; `booking_dependency_values()`
+  splits the `equals` string the same way `booking-checkout.js` does
+  (`applyConditionals()` toggles visibility and restores `required`); the
+  renderer draws the column `d-none` with `data-booking-depends` /
+  `data-booking-equals`. Used by `digital-distribution` (Existing ISRC / Existing
+  UPC / YouTube Link appear only after the matching radio answer) and the
+  marketplace State field.
+- **Country → State cascade** — the `artists-marketplace` details step collects
+  `address`, `pincode`, `country` and `state` as two half-width rows (address +
+  pincode, then country + state). `country` is an ordinary select fed by
+  `booking_country_options()` (India first, then US, GB, AE, CA, AU, DE, SG).
+  `state` is a select whose options come from `booking_country_states()` for the
+  **chosen country only**; it is conditional on `country`, so it stays hidden
+  until a country exists. Singapore has no states, so its list is empty and the
+  State select then only offers its placeholder.
+  - The renderer rebuilds the options on a return visit from the submitted
+    `$values` and carries `data-booking-cascade` plus the whole map as
+    `data-booking-states` (JSON) on the `<select>`; `populateCascadeSelects()` in
+    `booking-checkout.js` repopulates the options when `country` changes and
+    keeps the previous choice while it still belongs to the new country.
+  - The validator rebuilds the option set from the **submitted** country and
+    refuses a state that is not in it, so a hand-edited request cannot store
+    `state=Bavaria` against `country=IN`.
+  - The same step also renamed the profile question to **"Your Expertise Area"**
+    and switched `experience` to a `number` field.
+
+The select renderer takes a `placeholder` for its empty option, so the cascade
+reads "Select country" / "Select state" instead of the generic "Select ...".
+`number` fields (`experience`, `age`) render `type="number"` with `step="any"`,
+`inputmode="decimal"` and the declared `min`, and the validator rejects anything
+non-numeric. `online-offline-classes` renders `level` as a select
+(Beginner / Intermediate / Advanced) beside the `age` field.
+
 ### Pricing — the authority chain
 
 `booking_resolve_selection( $pdb, $slug, $groupKey, $planId, $addonIds, $planIds )`
@@ -857,6 +942,32 @@ so credentials can sit in `.env` on a machine that must not take money yet.
 half-configured or mis-set deploy can never hand out a confirmed-but-unpaid
 booking.
 
+### Review and payment steps
+
+The review step leads with the answers to **the first step the customer
+answered** (`$steps[0]`) rather than a hard-coded block: "Service Category" when
+that step is the A/V category question, "Your details" otherwise. The package
+selection sits in its own block with its own Change link back to the service
+page, and when the first step is the category question the details form's answers
+are shown once more below it. Every block's `<dl>` rows render through one
+closure (`$reviewRows` in `booking.php`), so the blocks can never drift, and a
+details block that produced no rows says "No additional details provided."
+
+Closing the booking requires **two consent checkboxes**, both rendered
+`required` on whichever form carries the final submit (the quote form on Review
+for `promotion`, the payment form for every priced service): **Terms and
+Conditions** and **Privacy Policy**. `includes/booking-create.php` is the real
+gate — either of `terms_accept` / `privacy_accept` being empty refuses the order
+with one combined message — and the browser `required` attribute is only the
+first line of defence.
+
+The payment step's intro copy names what is being paid for, not just the
+service: `$serviceLabel` (already narrowed to Audio/Video Services for the A/V
+studio) followed by the package line names with their group labels in
+parentheses, e.g. "BDC Artists Marketplace — Basic (Membership)". The same naming
+that builds the review block's package rows builds the intro, so the two can
+never disagree about what the order holds.
+
 ### Booking id format
 
 `BDCM-` + 6 uppercase hex chars = 3 random bytes (`helpers.php:96-98`). Only
@@ -887,6 +998,53 @@ Public form posts to `includes/artist-enquiry-submit.php` (no auth, no CSRF, no
 rate limit) → `artist_enquiries` row. Admin replies from the Enquiries screen, which
 sets `status='replied'` **and then** calls `@mail()`; the mail result is ignored.
 
+### Artist registration → verification → documents
+
+Buying a BDC Marketplace package creates an `artist_registrations` row at status
+`pending`. The row is written by `artist_registration_create()`, called from
+`includes/booking-create.php` **immediately after the booking and its customer
+account exist**, not after payment settles — the studio's queue should show the
+order the moment it exists, and the queue shows the payment state beside it. A
+failure to create the row is logged and does not fail the order. The one-time
+migration backfilled the rows that were missing for existing paid marketplace
+orders.
+
+Decisions are made in `includes/admin/artist-registration-update.php`
+(`verify` / `reject` / `reopen`, all `require_csrf()`-protected):
+
+- **verify** — allocates an `artist_code` (`BDCA-YYYY-NNNN`), stamps
+  `reviewed_at`/`reviewed_by`, writes the ID Card and Certificate, stores their
+  paths, then emails the artist. The documents are written **before** the row is
+  updated, so a disk failure leaves the registration `pending` rather than
+  `verified` with nothing to hand over. Code allocation counts existing codes and
+  retries around the `artist_code` unique key, so two admins verifying at the same
+  moment cannot mint the same ID. Re-verifying a registration reuses its code and
+  rewrites the same two files, so an artist never ends up with two IDs.
+- **reject** — requires a reason (it is emailed to the artist; a rejection with no
+  explanation leaves them nothing to act on), stores it in `review_note`, and
+  withdraws any issued documents from disk via `artist_documents_discard()`.
+- **reopen** — returns a rejected registration to the queue, clearing the note,
+  reviewer and document paths while keeping the code.
+
+Documents are self-contained printable HTML (`data/documents/<code>/`), with a
+"Print / Save as PDF" control in the page itself, so no PDF library is involved.
+`includes/artist-document.php` is the only way to read them: admin, the owning
+customer, or the guest who placed the order while that order is the one this
+browser confirmed. It refuses a registration that is not `verified`, and
+`artist_documents_ensure()` regenerates a file that has gone missing instead of
+returning a broken link.
+
+The customer's own view is `dashboard/artist-verification.php`: one card per
+package they bought, each with its status in plain words, and — once verified —
+view and download links for both documents. The sidebar entry appears only for a
+customer who actually bought a marketplace package (`panel-nav.php`).
+
+Labels come from the booking registry, not the display definition:
+`artist_registration_category_label()` reads the option list from
+`booking_field( 'artists-marketplace', 'artist_category' )`, because that is the
+form the artist filled in. `service-fields.php` still describes this service with
+six text fields, so reading options from it would print the raw key (`singer`).
+
 ### Customer accounts and notifications
 
 Two new include files carry the outbound mail and the account that a paid order
@@ -905,6 +1063,8 @@ admin address comes from config. Wired into:
 | Admin status change | `includes/admin/order-update.php` | status update to the customer |
 | Artist enquiry | `includes/artist-enquiry-submit.php` | admin notification |
 | Plan enquiry | `includes/plan-enquiry-submit.php` | admin notification |
+| Registration verified | `includes/admin/artist-registration-update.php` | artist ID, category, package, and where the documents are |
+| Registration rejected | `includes/admin/artist-registration-update.php` | the recorded reason, and the contact page to send more details |
 
 `includes/customer-accounts.php` normalises the submitted contact (trim, lower-case
 email, digits-only phone), looks for a `user` with `user_role = 'customer'` and that

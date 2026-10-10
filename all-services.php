@@ -1,9 +1,9 @@
 <?php
 
-$pageTitle       = 'Services | BDC Music Studio';
-$metaDescription = 'Explore BDC Music Studio services including artist marketplace, audio and video production, online and offline classes, digital music distribution, promotion, and IPRS services.';
-$ogTitle         = 'Services | BDC Music Studio';
-$ogDescription   = 'Discover complete music services at BDC Music Studio, from artist discovery and production to distribution, promotion, education, and music rights support.';
+$pageTitle       = 'Services | BDC Music';
+$metaDescription = 'Explore BDC Music services including artist marketplace, audio and video production, online and offline classes, digital music distribution, promotion, and IPRS services.';
+$ogTitle         = 'Services | BDC Music';
+$ogDescription   = 'Discover complete music services at BDC Music, from artist discovery and production to distribution, promotion, education, and music rights support.';
 
 include_once 'header.php';
 
@@ -32,7 +32,7 @@ include_once 'header.php';
 
 			<p>
 				From discovering opportunities and producing music to learning,
-				distribution, promotion and rights support, BDC Music Studio
+				distribution, promotion and rights support, BDC Music
 				provides a complete ecosystem for artists and music professionals.
 			</p>
 

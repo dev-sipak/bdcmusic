@@ -19,10 +19,14 @@
  *               cannot reach the details form until it is answered.
  *   required    bool
  *   options     value => label, for select/radio/checkbox
+ *   min / max   numeric bounds for a `number` field; the value must be a
+ *               number, and decimals such as 2.5 are accepted
  *   placeholder input placeholder
  *   icon        Lucide icon name
  *   accept      file extension filter
  *   multiple    allow more than one file
+ *   datepicker  render a `date` field as a Flatpickr calendar instead of the
+ *               browser's own date control
  *   help        hint text under the control
  *   depends_on  array( 'key' => ..., 'equals' => ... ) - shown only when the
  *               named field currently holds that value
@@ -69,6 +73,84 @@ function booking_upload_service( $slug ) {
 }
 
 /**
+ * The countries offered by the Artist Marketplace address step, ordered with
+ * the local market first.
+ *
+ * @return array ISO 3166-1 alpha-2 code => country name.
+ */
+function booking_country_options() {
+	return array(
+		'IN' => 'India',
+		'US' => 'United States',
+		'GB' => 'United Kingdom',
+		'AE' => 'United Arab Emirates',
+		'CA' => 'Canada',
+		'AU' => 'Australia',
+		'DE' => 'Germany',
+		'SG' => 'Singapore',
+	);
+}
+
+/**
+ * The sub-region list per country for the State cascade.
+ *
+ * The registry's `state` field reads this to render its options and validate
+ * what was posted, and the markup carries the whole map so booking-checkout.js
+ * can repopulate the select when the country changes. Singapore has no states,
+ * so its list is empty and the State select then only offers its placeholder.
+ *
+ * @return array Country code => plain list of state / province names.
+ */
+function booking_country_states() {
+	return array(
+		'IN' => array(
+			'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh',
+			'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Goa', 'Gujarat',
+			'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand',
+			'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh',
+			'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland',
+			'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+			'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+		),
+		'US' => array(
+			'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+			'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia',
+			'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
+			'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan',
+			'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada',
+			'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
+			'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon',
+			'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota',
+			'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington',
+			'West Virginia', 'Wisconsin', 'Wyoming',
+		),
+		'GB' => array( 'England', 'Northern Ireland', 'Scotland', 'Wales' ),
+		'AE' => array(
+			'Abu Dhabi', 'Ajman', 'Dubai', 'Fujairah', 'Ras Al Khaimah',
+			'Sharjah', 'Umm Al Quwain',
+		),
+		'CA' => array(
+			'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
+			'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia',
+			'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
+			'Saskatchewan', 'Yukon',
+		),
+		'AU' => array(
+			'Australian Capital Territory', 'New South Wales', 'Northern Territory',
+			'Queensland', 'South Australia', 'Tasmania', 'Victoria',
+			'Western Australia',
+		),
+		'DE' => array(
+			'Baden-Württemberg', 'Bavaria', 'Berlin', 'Brandenburg', 'Bremen',
+			'Hamburg', 'Hesse', 'Lower Saxony', 'Mecklenburg-Vorpommern',
+			'North Rhine-Westphalia', 'Rhineland-Palatinate', 'Saarland', 'Saxony',
+			'Saxony-Anhalt', 'Schleswig-Holstein', 'Thuringia',
+		),
+		'SG' => array(),
+	);
+}
+
+/**
  * Every field definition for a service, in display order.
  *
  * @param string $slug services.slug.
@@ -86,90 +168,70 @@ function booking_fields( $slug ) {    static $cache = array();
 		// both dashboards display (includes/service-fields.php:66-72).
 
 		'artists-marketplace' => array(
-			array( 'key' => 'artist_category', 'label' => 'Category', 'type' => 'select', 'required' => true, 'icon' => 'table', 'half' => true, 'options' => array(
-				'singer' => 'Singer',
-				'music-producer' => 'Music Producer',
-				'lyricist' => 'Lyricist',
+			array( 'key' => 'artist_category', 'label' => 'Your Expertise Area', 'type' => 'select', 'required' => true, 'icon' => 'table', 'half' => true, 'options' => array(
+				'actor-model' => 'Actor / Model',
 				'composer' => 'Composer',
-				'instrumentalist' => 'Instrumentalist',
+				'dancer-choreographer' => 'Dancer / Choreographer',
+				'digital-marketing-expert' => 'Digital Marketing Expert',
 				'dj' => 'DJ',
+				'graphic-designer' => 'Graphic Designer',
+				'instrumentalist' => 'Instrumentalist',
+				'live-band-artist' => 'Live Band Artist',
+				'lyricist' => 'Lyricist',
 				'mixing-mastering-engineer' => 'Mixing & Mastering Engineer',
+				'music-producer' => 'Music Producer',
+				'music-video-director' => 'Music Video Director',
+				'photographer' => 'Photographer',
+				'podcast-editor' => 'Podcast Editor',
+				'session-musician' => 'Session Musician',
+				'singer' => 'Singer',
+				'social-media-manager' => 'Social Media Manager',
 				'video-editor' => 'Video Editor',
 				'videographer' => 'Videographer',
-				'photographer' => 'Photographer',
-				'graphic-designer' => 'Graphic Designer',
-				'actor-model' => 'Actor / Model',
-				'dancer-choreographer' => 'Dancer / Choreographer',
 				'voice-over-artist' => 'Voice Over Artist',
-				'podcast-editor' => 'Podcast Editor',
-				'social-media-manager' => 'Social Media Manager',
-				'digital-marketing-expert' => 'Digital Marketing Expert',
-				'music-video-director' => 'Music Video Director',
-				'live-band-artist' => 'Live Band Artist',
-				'session-musician' => 'Session Musician',
 			) ),
-			array( 'key' => 'experience', 'label' => 'Experience', 'type' => 'text', 'icon' => 'building-2', 'half' => true, 'placeholder' => 'e.g. 3 Years, Senior Level' ),
+			array( 'key' => 'experience', 'label' => 'Experience (Years)', 'type' => 'number', 'icon' => 'building-2', 'half' => true, 'min' => 0, 'placeholder' => 'e.g. 2 or 2.5' ),
+			array( 'key' => 'address', 'label' => 'Address', 'type' => 'text', 'icon' => 'map-pin', 'half' => true, 'placeholder' => 'Street and building' ),
+			array( 'key' => 'pincode', 'label' => 'Pincode', 'type' => 'text', 'icon' => 'hash', 'half' => true, 'placeholder' => 'e.g. 110001' ),
+			array( 'key' => 'country', 'label' => 'Country', 'type' => 'select', 'icon' => 'globe', 'half' => true, 'placeholder' => 'Select country', 'options' => booking_country_options() ),
+		// The State options are filled from the chosen Country: the renderer
+		// reads them and the script repopulates them on change. The `equals`
+		// rule is every country code so the field counts as visible - and is
+		// validated - once any country has been picked.
+
+			array( 'key' => 'state', 'label' => 'State', 'type' => 'select', 'icon' => 'map', 'half' => true, 'placeholder' => 'Select state', 'cascade' => 'country', 'depends_on' => array( 'key' => 'country', 'equals' => implode( '|', array_keys( booking_country_options() ) ) ) ),
 			array( 'key' => 'artist_goal', 'label' => 'Artist Goal', 'type' => 'textarea', 'icon' => 'target', 'placeholder' => 'What do you want to achieve through the marketplace?' ),
-			array( 'key' => 'event_type', 'label' => 'Event Type', 'type' => 'select', 'icon' => 'calendar-days', 'half' => true, 'options' => array(
-				'Wedding' => 'Wedding',
-				'Corporate Event' => 'Corporate Event',
-				'Concert / Live Show' => 'Concert / Live Show',
-				'Festival' => 'Festival',
-				'Private Party' => 'Private Party',
-				'Film / Theatre' => 'Film / Theatre',
-				'Other' => 'Other',
-			) ),
-			array( 'key' => 'event_date', 'label' => 'Event Date', 'type' => 'date', 'icon' => 'calendar', 'half' => true ),
-			array( 'key' => 'event_location', 'label' => 'Event Location', 'type' => 'text', 'icon' => 'map-pin', 'placeholder' => 'City or venue' ),
-			array( 'key' => 'budget', 'label' => 'Budget', 'type' => 'text', 'icon' => 'indian-rupee', 'placeholder' => 'Example: Rs.25,000' ),
-			array( 'key' => 'portfolio', 'label' => 'Portfolio Link', 'type' => 'url', 'icon' => 'link', 'placeholder' => 'https://yourportfolio.com' ),
-			array( 'key' => 'portfolio_file', 'label' => 'Upload Portfolio', 'type' => 'file', 'icon' => 'cloud-upload', 'accept' => '.jpg,.jpeg,.png,.pdf' ),
-			array( 'key' => 'about', 'label' => 'About Yourself', 'type' => 'textarea', 'icon' => 'menu', 'placeholder' => 'Tell us a little about your background and achievements...' ),
+			array( 'key' => 'portfolio_file', 'label' => 'Upload your Image', 'type' => 'file', 'icon' => 'cloud-upload', 'accept' => '.jpg,.jpeg,.png,.pdf' ),
+			array( 'key' => 'about', 'label' => 'About Yourself', 'type' => 'textarea', 'icon' => 'menu', 'placeholder' => 'Tell us about your background and achievements. Share links to your portfolio, projects, or other work you\'d like us to see.' ),
 		),
 
-		// Source: services/audio-video-services.php:428-500.
-		//
-		// There is deliberately no `service_type` field here. The sub-service is
-		// chosen on the package step, where it is also priced, and
-		// booking-create.php writes meta['service_type'] from the groups on the
-		// order. Asking again on this form would let a customer pay for Mixing
-		// and type "Mastering", and the dashboards would report the typed answer
-		// rather than the one that was charged.
-		//
-		// Audio and Video are sold as two different jobs, so the side is settled
-		// first, on its own step, and the details form is only reachable once it
-		// has been answered.
+
 		'audio-video' => array(
 			array( 'key' => 'service_category', 'label' => 'Service Category', 'type' => 'radio', 'required' => true, 'step' => 'category', 'icon' => 'layers', 'cards' => true, 'options' => array(
 				'Audio' => 'Audio Service',
 				'Video' => 'Video Service',
 			) ),
-		// The upload is relabelled and re-filtered by the answer to Service
-		// Category, so the same field serves both sides. The `accept` below is
-		// the union, and is what the server still checks.
 
 			array( 'key' => 'project_upload', 'label' => 'Upload Audio / Video', 'type' => 'files', 'icon' => 'cloud-upload', 'half' => true, 'multiple' => true, 'accept' => '.wav,.mp3,.flac,.mp4,.mov', 'media_source' => 'service_category', 'media_labels' => array(
 				'Audio' => 'Upload Audio',
-				'Video' => 'Upload Video',
+				'Video' => 'Upload Audio',
 			), 'media_accept' => array(
 				'Audio' => '.wav,.mp3,.flac',
 				'Video' => '.mp4,.mov',
 			) ),
+			array( 'key' => 'deadline', 'label' => 'Deadline', 'type' => 'date', 'required' => true, 'icon' => 'calendar', 'half' => true, 'datepicker' => true ),
 		// The page posted delivery_format[]; both dashboards label
 		// delivery_formats, so that is the key stored in meta.
 
 			array( 'key' => 'delivery_formats', 'label' => 'Delivery Format', 'type' => 'checkbox', 'icon' => 'file-audio', 'cards' => true, 'group_source' => 'service_category', 'option_groups' => array(
-				'Audio' => array( 'WAV', 'MP3', 'FLAC' ),
+				'Audio' => array( 'WAV', 'MP3' ),
 				'Video' => array( 'MP4', 'MOV' ),
 			), 'options' => array(
 				'WAV' => 'WAV',
 				'MP3' => 'MP3',
-				'FLAC' => 'FLAC',
 				'MP4' => 'MP4',
 				'MOV' => 'MOV',
 			) ),
-			array( 'key' => 'deadline', 'label' => 'Deadline', 'type' => 'text', 'required' => true, 'icon' => 'clock', 'half' => true, 'placeholder' => 'Example: 7 working days' ),
-			array( 'key' => 'budget', 'label' => 'Budget', 'type' => 'text', 'required' => true, 'icon' => 'indian-rupee', 'half' => true, 'placeholder' => 'Example: Rs.15,000' ),
 			array( 'key' => 'notes', 'label' => 'Notes', 'type' => 'textarea', 'icon' => 'message-square', 'placeholder' => 'Anything else we should know about the project?' ),
 		),
 
@@ -182,8 +244,12 @@ function booking_fields( $slug ) {    static $cache = array();
 				'Online' => 'Online',
 				'Offline' => 'Offline',
 			) ),
-			array( 'key' => 'level', 'label' => 'Level', 'type' => 'text', 'icon' => 'signal', 'half' => true, 'placeholder' => 'Beginner / Intermediate / Advanced' ),
-			array( 'key' => 'age', 'label' => 'Age', 'type' => 'text', 'icon' => 'user', 'half' => true, 'placeholder' => 'Student age' ),
+			array( 'key' => 'level', 'label' => 'Level', 'type' => 'select', 'icon' => 'signal', 'half' => true, 'options' => array(
+				'Beginner' => 'Beginner',
+				'Intermediate' => 'Intermediate',
+				'Advanced' => 'Advanced',
+			) ),
+			array( 'key' => 'age', 'label' => 'Age', 'type' => 'number', 'icon' => 'user', 'half' => true, 'min' => 0, 'placeholder' => 'e.g. 12' ),
 		),
 
 		// Source: services/digital-music-distribution.php:440-660.
@@ -224,7 +290,6 @@ function booking_fields( $slug ) {    static $cache = array();
 			array( 'key' => 'notes', 'label' => 'Notes', 'type' => 'textarea', 'icon' => 'message-square', 'placeholder' => 'Anything else about the release?' ),
 			array( 'key' => 'audio_file', 'label' => 'Audio File', 'type' => 'file', 'required' => true, 'icon' => 'cloud-upload', 'accept' => '.wav,.mp3' ),
 			array( 'key' => 'cover_artwork', 'label' => 'Cover Artwork', 'type' => 'file', 'required' => true, 'icon' => 'image', 'accept' => '.jpg,.jpeg,.png' ),
-			array( 'key' => 'metadata_file', 'label' => 'Metadata File', 'type' => 'file', 'icon' => 'file-spreadsheet', 'accept' => '.csv,.xls,.xlsx' ),
 		),
 
 		// Source: services/promotion-services.php:200-380 plus the meta keys
@@ -348,6 +413,29 @@ function booking_fields_for_step( $slug, $step = '' ) {
  */
 function booking_has_category_step( $slug ) {
 	return (bool) booking_fields_for_step( $slug, 'category' );
+}
+
+/**
+ * The heading above a service's details form.
+ *
+ * Each service asks its own set of questions, so one shared heading read as a
+ * generic label on half of them. The wording lives here beside the fields it
+ * introduces, and an unknown slug falls back to the neutral wording.
+ *
+ * @param string $slug services.slug.
+ * @return string
+ */
+function booking_details_heading( $slug ) {
+	$headings = array(
+		'artists-marketplace'    => 'Tell us about your profile',
+		'audio-video'            => 'Tell us about your project',
+		'online-offline-classes' => 'Tell us about yourself',
+		'digital-distribution'   => 'Tell us about your release',
+		'promotion'              => 'Tell us about your campaign',
+		'iprs'                   => 'Tell us about your application',
+	);
+
+	return isset( $headings[ (string) $slug ] ) ? $headings[ (string) $slug ] : 'Tell us about your project';
 }
 
 /**
@@ -646,8 +734,21 @@ function booking_validate_details( $slug, array $input, array $files, array $alr
 				continue;
 			}
 
+			// A cascade select (State) is validated against the sub-regions that
+			// belong to the parent value (Country) that was posted with it.
+			$options = isset( $field['options'] ) ? $field['options'] : array();
+
+			if ( ! empty( $field['cascade'] ) ) {
+				$parentValue = isset( $input[ $field['cascade'] ] )
+					? clean_text( is_scalar( $input[ $field['cascade'] ] ) ? $input[ $field['cascade'] ] : '' )
+					: '';
+				$stateMap = booking_country_states();
+				$states   = isset( $stateMap[ $parentValue ] ) ? $stateMap[ $parentValue ] : array();
+				$options  = array_combine( $states, $states ) ?: array();
+			}
+
 			// A value the registry never offered is discarded, not stored.
-			if ( ! isset( $field['options'] ) || ! array_key_exists( $raw, $field['options'] ) ) {
+			if ( ! array_key_exists( $raw, $options ) ) {
 				$errors[ $key ][] = 'Please select a valid option for ' . lcfirst( $field['label'] ) . '.';
 				continue;
 			}
@@ -688,6 +789,27 @@ function booking_validate_details( $slug, array $input, array $files, array $alr
 				continue;
 			}
 			$clean = $digits;
+		}
+
+		// A number field must be numeric, decimals included, and honour the
+		// registry's min/max when it sets them.
+		if ( $type === 'number' ) {
+			if ( ! is_numeric( $clean ) ) {
+				$errors[ $key ][] = 'Please enter ' . lcfirst( $field['label'] ) . ' as a number.';
+				continue;
+			}
+
+			$number = (float) $clean;
+
+			if ( isset( $field['min'] ) && $number < (float) $field['min'] ) {
+				$errors[ $key ][] = 'Please enter a valid ' . lcfirst( $field['label'] ) . '.';
+				continue;
+			}
+
+			if ( isset( $field['max'] ) && $number > (float) $field['max'] ) {
+				$errors[ $key ][] = 'Please enter a valid ' . lcfirst( $field['label'] ) . '.';
+				continue;
+			}
 		}
 
 		$values[ $key ] = $clean;
@@ -813,7 +935,7 @@ function booking_esc( $value ) {
  *                       controlling answer does not currently unlock it).
  * @return string HTML.
  */
-function booking_render_field( array $field, $value = null, array $uploads = array(), array $errors = array(), $hidden = false ) {
+function booking_render_field( array $field, $value = null, array $uploads = array(), array $errors = array(), $hidden = false, array $values = array() ) {
 	$key   = $field['key'];
 	$type  = $field['type'];
 	$label = $field['label'];
@@ -921,7 +1043,27 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 
 	if ( $type === 'select' ) {
 		$current = (string) $value;
-		$options = '<option value="">Select ...</option>';
+
+		// A cascade select (State) fills its options from whichever parent value
+		// (Country) is posted: the server renders the matching states, and the
+		// script is given the whole map so it can rebuild the set on change.
+		$cascadeAttrs = '';
+		if ( ! empty( $field['cascade'] ) ) {
+			$cascadeAttrs = ' data-booking-cascade="' . booking_esc( $field['cascade'] ) . '"'
+				. ' data-booking-states="'
+				. booking_esc( json_encode( booking_country_states(), JSON_UNESCAPED_UNICODE ) ) . '"';
+
+			$parentValue = isset( $values[ $field['cascade'] ] ) && is_scalar( $values[ $field['cascade'] ] )
+				? (string) $values[ $field['cascade'] ]
+				: '';
+			$stateMap = booking_country_states();
+			$states   = isset( $stateMap[ $parentValue ] ) ? $stateMap[ $parentValue ] : array();
+			$field['options'] = array_combine( $states, $states ) ?: array();
+		}
+
+		$options = '<option value="">'
+			. booking_esc( ! empty( $field['placeholder'] ) ? $field['placeholder'] : 'Select ... ' )
+			. '</option>';
 
 		foreach ( $field['options'] as $optionValue => $optionLabel ) {
 			$selected = (string) $optionValue === $current ? ' selected' : '';
@@ -931,7 +1073,7 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 
 		$control = '<div class="input-icon has-chevron">'
 			. '<i data-lucide="' . booking_esc( $icon ) . '"></i>'
-			. '<select id="' . booking_esc( $id ) . '" name="' . booking_esc( $key ) . '"' . ( $req ? ' required' : '' ) . '>'
+			. '<select id="' . booking_esc( $id ) . '" name="' . booking_esc( $key ) . '"' . ( $req ? ' required' : '' ) . $cascadeAttrs . '>'
 			. $options . '</select></div>';
 	} elseif ( $type === 'textarea' ) {
 		$control = '<div class="input-icon textarea-icon">'
@@ -991,11 +1133,42 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 			$depAttrs .= $mediaAttrs;
 		}
 	} else {
-		$inputType = in_array( $type, array( 'text', 'email', 'tel', 'url', 'date' ), true ) ? $type : 'text';
+		$inputType = in_array( $type, array( 'text', 'email', 'tel', 'url', 'date', 'number' ), true ) ? $type : 'text';
+
+		// A calendar field is rendered as text and enhanced by booking-checkout.js
+		// with Flatpickr. A native `date` input would show the browser's own
+		// picker on top of the calendar, so the type is swapped here while the
+		// registry keeps `date` and the validator keeps checking the same ISO
+		// format Flatpickr fills in. Without JavaScript the field is still a
+		// text box the server validates.
+		$datepickerAttr = '';
+		$numberAttrs    = '';
+
+		if ( $type === 'date' && ! empty( $field['datepicker'] ) ) {
+			$inputType      = 'text';
+			$datepickerAttr = ' data-flatpickr';
+		}
+
+		// A number field takes decimals (2.5), so the step is `any` rather than
+		// the browser default of 1. min/max are emitted when the registry sets
+		// them; the validator enforces the same bounds.
+		if ( $inputType === 'number' ) {
+			$numberAttrs = ' step="any" inputmode="decimal"';
+
+			if ( isset( $field['min'] ) ) {
+				$numberAttrs .= ' min="' . booking_esc( $field['min'] ) . '"';
+			}
+
+			if ( isset( $field['max'] ) ) {
+				$numberAttrs .= ' max="' . booking_esc( $field['max'] ) . '"';
+			}
+		}
 
 		$control = '<div class="input-icon">'
 			. '<i data-lucide="' . booking_esc( $icon ) . '"></i>'
 			. '<input id="' . booking_esc( $id ) . '" type="' . $inputType . '" name="' . booking_esc( $key ) . '"'
+			. $datepickerAttr
+			. $numberAttrs
 			. ' value="' . booking_esc( is_scalar( $value ) ? (string) $value : '' ) . '"'
 			. ( isset( $field['placeholder'] ) ? ' placeholder="' . booking_esc( $field['placeholder'] ) . '"' : '' )
 			. ( $req ? ' required' : '' ) . '></div>';
@@ -1068,7 +1241,8 @@ function booking_render_fields( $slug, array $values = array(), array $uploads =
 			isset( $values[ $key ] ) ? $values[ $key ] : null,
 			$uploads,
 			$errors,
-			! booking_field_visible( $field, $values )
+			! booking_field_visible( $field, $values ),
+			$values
 		);
 	}
 

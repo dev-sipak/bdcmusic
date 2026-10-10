@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../../includes/config.php';
 
-$pageTitle       = isset( $pageTitle ) ? $pageTitle : 'Admin Dashboard - BDC Music Studio';
+$pageTitle       = isset( $pageTitle ) ? $pageTitle : 'Admin Dashboard - BDC Music';
 $metaDescription = isset( $metaDescription ) ? $metaDescription : 'Admin management panel.';
 
 header( 'Cache-Control: no-cache, no-store, must-revalidate' );

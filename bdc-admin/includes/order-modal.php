@@ -55,11 +55,6 @@
 				<div class="detail-grid" id="modal-payment-fields"></div>
 			</div>
 
-			<div class="modal-files-section d-none" id="modal-payment-attempts-section">
-				<label class="panel-label">Payment Attempts</label>
-				<div class="modal-files-list" id="modal-payment-attempts"></div>
-			</div>
-
 			<div class="modal-files-section" id="modal-meta-section">
 				<label class="panel-label">Details Submitted by Customer</label>
 				<div class="detail-grid" id="modal-meta-fields"></div>

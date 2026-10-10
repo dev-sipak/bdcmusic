@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/brand-icons.php';
-$pageTitle = 'Terms and Conditions | BDC Music Studio';
-$metaDescription = 'Review our terms and conditions for using the BDC Music Studio website and services.';
-$ogTitle = 'Terms and Conditions | BDC Music Studio';
-$ogDescription = 'Review our terms and conditions for using the BDC Music Studio website and services.';
+$pageTitle = 'Terms and Conditions | BDC Music';
+$metaDescription = 'Review our terms and conditions for using the BDC Music website and services.';
+$ogTitle = 'Terms and Conditions | BDC Music';
+$ogDescription = 'Review our terms and conditions for using the BDC Music website and services.';
 include_once "header.php";
 ?>
 <!-- TERMS AND CONDITIONS -->

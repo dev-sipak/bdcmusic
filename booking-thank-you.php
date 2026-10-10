@@ -88,8 +88,8 @@ if ( $booking && $slug !== '' ) {
 
 $pageTitle       = $isQuote ? 'Quote Request Received' : 'Booking Confirmed';
 $metaDescription = $isQuote
-	? 'Your request to BDC Music Studio. Our team will review your brief and send a quote.'
-	: 'Your booking with BDC Music Studio.';
+	? 'Your request to BDC Music. Our team will review your brief and send a quote.'
+	: 'Your booking with BDC Music.';
 
 include_once __DIR__ . '/header.php';
 ?>

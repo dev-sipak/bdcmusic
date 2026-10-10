@@ -1,6 +1,6 @@
 <?php
-$pageTitle = 'Artist | BDC Music Studio';
-$metaDescription = 'Artist profile and details on BDC Music Studio.';
+$pageTitle = 'Artist | BDC Music';
+$metaDescription = 'Artist profile and details on BDC Music.';
 include_once '../header.php';
 
 $artist = null;
@@ -39,7 +39,7 @@ try {
 		if ( $artist ) {
 			$categoryName = $artist['category_name'];
 			$categorySlug = $artist['category_slug'];
-			$pageTitle = $artist['name'] . ' | BDC Music Studio';
+			$pageTitle = $artist['name'] . ' | BDC Music';
 			$metaDescription = $artist['bio'] ? mb_substr( $artist['bio'], 0, 160 ) : $artist['name'] . ' - ' . $categoryName;
 
 			$pStmt = $pdo->prepare( 'SELECT service_type, price FROM artist_pricing WHERE artist_id = :aid ORDER BY sort_order' );

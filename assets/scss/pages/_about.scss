@@ -18,7 +18,11 @@ ABOUT
 	position: relative;
 	padding: 22px 18px 18px 18px;
 	border-radius: 30px;
-	background: linear-gradient(135deg, rgba(228, 0, 43, 0.06), rgba(255, 255, 255, 0.85));
+	background: linear-gradient(
+		135deg,
+		rgba(228, 0, 43, 0.06),
+		rgba(255, 255, 255, 0.85)
+	);
 }
 
 .about-images img {
@@ -32,7 +36,7 @@ ABOUT
 	color: var(--primary);
 	font-weight: 700;
 	letter-spacing: 2px;
-	font-size: .8rem;
+	font-size: 0.8rem;
 }
 
 .about-content h2 {
@@ -49,6 +53,10 @@ ABOUT
 .about-content .features p {
 	margin-bottom: 0;
 }
+
+/*==================================================
+FEATURES
+==================================================*/
 
 .features {
 	display: grid;
@@ -67,11 +75,13 @@ ABOUT
 	border-radius: 18px;
 	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
 
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	transition:
+		box-shadow 0.3s ease,
+		border-color 0.3s ease;
 }
 
 .feature:hover {
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 .feature i {
@@ -79,13 +89,16 @@ ABOUT
 	height: 40px;
 	display: grid;
 	place-items: center;
+
 	background: var(--primary);
 	border-radius: 50%;
+
 	font-size: 22px;
 	color: var(--dark);
+
 	flex-shrink: 0;
 
-	box-shadow: 0 0 0 8px rgba(228, 0, 43, 0.10);
+	box-shadow: 0 0 0 8px rgba(228, 0, 43, 0.1);
 }
 
 .feature h4 {
@@ -99,32 +112,27 @@ ABOUT
 	font-size: 0.85rem;
 }
 
-/* Tablet */
-@include respond(lg) {
-	.features {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
-/* Mobile */
-@include respond(md) {
-	.features {
-		grid-template-columns: 1fr;
-	}
-}
-
+/*==================================================
+BRAND IMAGE STACK
+==================================================*/
 
 .brand-image-stack {
 	position: relative;
 	padding: 18px 18px 60px 18px;
 	border-radius: 30px;
-	background: linear-gradient(145deg, rgba(228, 0, 43, 0.06), rgba(255, 255, 255, 0.85));
+
+	background: linear-gradient(
+		145deg,
+		rgba(228, 0, 43, 0.06),
+		rgba(255, 255, 255, 0.85)
+	);
 }
 
 .brand-image-stack img {
 	border-radius: 24px;
 	aspect-ratio: 4 / 5;
 	object-fit: cover;
+
 	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
 }
 
@@ -132,12 +140,16 @@ ABOUT
 	position: absolute;
 	bottom: 18px;
 	right: 18px;
+
 	padding: 20px 22px;
 	max-width: 260px;
+
 	border-radius: 20px;
+
 	background: rgba(255, 255, 255, 0.84);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
+
 	border: 1px solid var(--border);
 }
 
@@ -176,20 +188,31 @@ ABOUT
 	height: 44px;
 	display: grid;
 	place-items: center;
+
 	border-radius: 50%;
 	background: rgba(228, 0, 43, 0.1);
 	color: var(--primary);
+
 	flex-shrink: 0;
 }
 
 .brand-point h3 {
 	font-size: 1.06rem;
 	margin-bottom: 4px;
-	color: var(--text);
+	color: var(--small-heading);
 }
 
+/*==================================================
+SECTION DARK
+==================================================*/
+
 .section-dark {
-	background: linear-gradient(180deg, #f9f9f9 0%, #f4f4f4 100%);
+	background: linear-gradient(
+		180deg,
+		#f9f9f9 0%,
+		#f4f4f4 100%
+	);
+
 	color: var(--text);
 }
 
@@ -204,12 +227,394 @@ ABOUT
 	color: var(--muted);
 }
 
+/*==================================================
+SECTION HEADING
+==================================================*/
+
+.section-heading {
+	max-width: 760px;
+	margin: 0 auto 55px;
+	text-align: center;
+}
+
+.section-heading .section-tag {
+	margin-bottom: 14px;
+}
+
+.section-heading h2 {
+	font-size: clamp(2rem, 3.5vw, 3rem);
+	line-height: 1.1;
+	margin-bottom: 18px;
+	color: var(--text);
+}
+
+.section-heading p {
+	color: var(--muted);
+	margin-bottom: 0;
+}
+
+/*==================================================
+MORE THAN MUSIC
+==================================================*/
+
+.music-purpose {
+	position: relative;
+	overflow: hidden;
+
+	padding: 110px 0;
+
+	background: var(--primary);
+	color: #fff;
+}
+
+/*
+ * Decorative background circles.
+ * These create subtle movement without
+ * moving the actual content/cards.
+ */
+
+.music-purpose::before,
+.music-purpose::after {
+	content: "";
+	position: absolute;
+
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.music-purpose::before {
+	width: 520px;
+	height: 520px;
+
+	top: -280px;
+	right: -180px;
+
+	background: rgba(255, 255, 255, 0.08);
+
+	animation: purposeFloat 8s ease-in-out infinite;
+}
+
+.music-purpose::after {
+	width: 380px;
+	height: 380px;
+
+	bottom: -230px;
+	left: -160px;
+
+	border: 1px solid rgba(255, 255, 255, 0.12);
+
+	animation: purposeFloatReverse 10s ease-in-out infinite;
+}
+
+.purpose-layout {
+	position: relative;
+	z-index: 1;
+
+	display: grid;
+	grid-template-columns: 0.8fr 1.2fr;
+
+	gap: 90px;
+	align-items: start;
+}
+
+.purpose-heading {
+	position: sticky;
+	top: 120px;
+}
+
+.music-purpose .section-tag {
+	color: rgba(255, 255, 255, 0.75);
+	margin-bottom: 18px;
+}
+
+.purpose-heading h2 {
+	max-width: 450px;
+	margin: 0;
+
+	color: #fff;
+
+	font-size: clamp(2.5rem, 5vw, 4.5rem);
+	line-height: 0.98;
+	letter-spacing: -2px;
+}
+
+.purpose-content {
+	max-width: 700px;
+}
+
+.purpose-lead {
+	max-width: 620px;
+
+	margin: 0 0 50px;
+
+	color: rgba(255, 255, 255, 0.9);
+
+	font-size: clamp(1.2rem, 2vw, 1.5rem);
+	line-height: 1.7;
+}
+
+/*==================================================
+PURPOSE POINTS
+==================================================*/
+
+.purpose-points {
+	display: grid;
+	gap: 0;
+}
+
+.purpose-point {
+	position: relative;
+
+	display: grid;
+	grid-template-columns: 70px 1fr;
+	gap: 24px;
+
+	padding: 30px 0;
+
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+
+	opacity: 0;
+
+	animation: purposeReveal 0.7s ease forwards;
+}
+
+.purpose-point:nth-child(1) {
+	animation-delay: 0.1s;
+}
+
+.purpose-point:nth-child(2) {
+	animation-delay: 0.25s;
+}
+
+.purpose-point:nth-child(3) {
+	animation-delay: 0.4s;
+}
+
+.purpose-point:last-child {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.purpose-number {
+	position: relative;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 58px;
+	height: 58px;
+
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	border-radius: 50%;
+
+	color: #fff;
+
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+
+	transition:
+		background-color 0.35s ease,
+		border-color 0.35s ease,
+		color 0.35s ease,
+		box-shadow 0.35s ease;
+}
+
+.purpose-point:hover .purpose-number {
+	background: #fff;
+	border-color: #fff;
+
+	color: var(--primary);
+
+	box-shadow:
+		0 0 0 8px rgba(255, 255, 255, 0.08),
+		0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.purpose-point h3 {
+	margin: 2px 0 8px;
+
+	color: #fff;
+
+	font-size: 1.35rem;
+}
+
+.purpose-point p {
+	max-width: 560px;
+
+	margin: 0;
+
+	color: rgba(255, 255, 255, 0.78);
+
+	line-height: 1.7;
+}
+
+/*==================================================
+PURPOSE ANIMATIONS
+==================================================*/
+
+@keyframes purposeReveal {
+	from {
+		opacity: 0;
+		transform: translateX(25px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes purposeFloat {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+
+	50% {
+		transform: translate3d(-25px, 25px, 0);
+	}
+}
+
+@keyframes purposeFloatReverse {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+
+	50% {
+		transform: translate3d(20px, -20px, 0);
+	}
+}
+
+/*==================================================
+WHY ARTISTS TRUST BDC MUSIC
+==================================================*/
+
+.artist-trust {
+	padding: 100px 0;
+}
+
+.trust-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 22px;
+}
+
+.trust-card {
+	padding: 30px 25px;
+
+	text-align: center;
+
+	background: #fff;
+
+	border: 1px solid var(--border);
+	border-radius: 22px;
+
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+
+	transition:
+		box-shadow 0.3s ease,
+		border-color 0.3s ease;
+}
+
+.trust-card:hover {
+	border-color: rgba(228, 0, 43, 0.2);
+
+	box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.trust-icon {
+	width: 58px;
+	height: 58px;
+
+	display: grid;
+	place-items: center;
+
+	margin: 0 auto 20px;
+
+	border-radius: 50%;
+
+	background: rgba(228, 0, 43, 0.1);
+	color: var(--primary);
+}
+
+.trust-icon svg {
+	width: 25px;
+	height: 25px;
+}
+
+.trust-card h3 {
+	margin-bottom: 10px;
+	font-size: 1.15rem;
+	color: var(--small-heading);
+}
+
+.trust-card p {
+	color: var(--muted);
+	line-height: 1.65;
+	margin-bottom: 0;
+}
+
+/*==================================================
+WHO WE SUPPORT
+==================================================*/
+
+.who-we-support {
+	padding: 100px 0;
+	background: #fff;
+}
+
+.creator-grid {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.creator-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 22px 25px;
+	background: #fff;
+	border: 1px solid var(--border);
+	border-radius: 18px;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+	transition:
+		box-shadow 0.3s ease,
+		border-color 0.3s ease;
+}
+
+.creator-card:hover {
+	border-color: rgba(228, 0, 43, 0.2);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+}
+
+.creator-card > svg {
+	width: 25px;
+	height: 25px;
+	color: var(--primary);
+	flex-shrink: 0;
+}
+
+.creator-card h3 {
+	margin-bottom: 0;
+	font-size: 1.05rem;
+	color: var(--small-heading);
+}
+
+/*==================================================
+ABOUT RESPONSIVE
+==================================================*/
+
+/* Large desktop */
 @media (max-width: 1400px) {
 	.about-grid {
 		gap: 60px;
 	}
 }
 
+/* XL */
 @include respond(xl) {
 	.about-grid {
 		grid-template-columns: 1fr;
@@ -231,8 +636,45 @@ ABOUT
 	.features {
 		text-align: left;
 	}
+
+	.purpose-layout {
+		gap: 60px;
+	}
+
+	.trust-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.creator-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
 }
 
+/* LG */
+@include respond(lg) {
+	.features {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.purpose-layout {
+		grid-template-columns: 1fr;
+		gap: 55px;
+	}
+
+	.purpose-heading {
+		position: static;
+	}
+
+	.purpose-heading h2 {
+		max-width: 600px;
+	}
+
+	.creator-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+/* MD */
 @include respond(md) {
 	.about-images {
 		grid-template-columns: 1fr;
@@ -243,22 +685,127 @@ ABOUT
 	}
 
 	.features {
+		grid-template-columns: 1fr;
 		gap: 18px;
 	}
 
 	.feature {
 		flex-direction: column;
+
 		text-align: center;
+
 		padding: 25px 15px 25px 25px;
 	}
 
 	.feature i {
 		margin-inline: auto;
 	}
+
+	.music-purpose {
+		padding: 75px 0;
+	}
+
+	.purpose-layout {
+		gap: 40px;
+	}
+
+	.purpose-lead {
+		margin-bottom: 35px;
+	}
+
+	.purpose-point {
+		grid-template-columns: 58px 1fr;
+		gap: 18px;
+
+		padding: 25px 0;
+	}
+
+	.purpose-number {
+		width: 48px;
+		height: 48px;
+	}
+
+	.artist-trust,
+	.who-we-support {
+		padding: 75px 0;
+	}
+
+	.section-heading {
+		margin-bottom: 40px;
+	}
+
+	.trust-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.creator-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
+/* SM */
 @include respond(sm) {
 	.about-content h2 {
 		font-size: 2rem;
+	}
+
+	.music-purpose {
+		padding: 60px 0;
+	}
+
+	.purpose-heading h2 {
+		font-size: 2.6rem;
+		letter-spacing: -1px;
+	}
+
+	.purpose-point {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
+
+	.purpose-number {
+		width: 45px;
+		height: 45px;
+	}
+
+	.purpose-point h3 {
+		font-size: 1.2rem;
+	}
+
+	.purpose-point p {
+		font-size: 0.95rem;
+	}
+
+	.artist-trust,
+	.who-we-support {
+		padding: 60px 0;
+	}
+
+	.creator-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.trust-card {
+		padding: 28px 22px;
+	}
+
+	.creator-card {
+		justify-content: center;
+	}
+}
+
+/*==================================================
+REDUCED MOTION
+==================================================*/
+
+@media (prefers-reduced-motion: reduce) {
+	.music-purpose::before,
+	.music-purpose::after,
+	.purpose-point {
+		animation: none;
+	}
+
+	.purpose-point {
+		opacity: 1;
 	}
 }

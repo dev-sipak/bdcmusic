@@ -328,16 +328,16 @@ ARTIST CATEGORY PAGE
 
 /* CTA Section ─────────────────────────────── */
 
-.artist-cta {
+.call-to-action {
 	text-align: center;
 	padding: 60px 40px;
-	margin: 3rem 0;
-	background: var(--secondary);
+	margin: 5rem 0;
+	background: linear-gradient(145deg, rgba(228, 0, 43, 0.06), rgba(255, 255, 255, 0.85));
 	border-radius: $radius-2xl;
 	border: 1px solid var(--border);
 }
 
-.artist-cta h2 {
+.call-to-action h2 {
 	font-family: $font-heading;
 	font-size: clamp(1.6rem, 3vw, 2.2rem);
 	font-weight: 800;
@@ -345,7 +345,7 @@ ARTIST CATEGORY PAGE
 	margin-bottom: 12px;
 }
 
-.artist-cta p {
+.call-to-action p {
 	font-size: 1rem;
 	color: var(--muted);
 	margin-bottom: 24px;
@@ -399,7 +399,7 @@ ARTIST CATEGORY PAGE
 		min-width: 0;
 	}
 
-	.artist-cta {
+	.call-to-action {
 		padding: 40px 24px;
 		margin: 2rem 0;
 	}

@@ -1,7 +1,7 @@
 <?php
-$pageTitle = 'Digital Music Distribution Services | BDC Music Studio';
-$metaDescription = 'Release your music worldwide on Spotify, Apple Music, YouTube Music and major streaming platforms with BDC Music Studio.';
-$ogTitle = 'Digital Music Distribution Services | BDC Music Studio';
+$pageTitle = 'Digital Music Distribution Services | BDC Music';
+$metaDescription = 'Release your music worldwide on Spotify, Apple Music, YouTube Music and major streaming platforms with BDC Music.';
+$ogTitle = 'Digital Music Distribution Services | BDC Music';
 $ogDescription = 'Distribute your songs globally with professional music release support.';
 
 // The distribution plans and their prices used to be hand-written here. They now
@@ -36,7 +36,7 @@ include_once '../header.php';
 		<!-- About -->
 		<section class="section-block">
 			<h2> About Digital Music Distribution </h2>
-			<p class="section-intro"> BDC Music Studio helps independent artists distribute their music worldwide. From release preparation, metadata management, artwork, audio checks, and platform delivery, we support every step of your music release journey. </p>
+			<p class="section-intro"> BDC Music helps independent artists distribute their music worldwide. From release preparation, metadata management, artwork, audio checks, and platform delivery, we support every step of your music release journey. </p>
 		</section>
 	 
 	</div><!-- /.container -->

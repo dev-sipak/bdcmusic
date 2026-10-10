@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/admin-guard.php';
 
 $adminPage = 'customers';
 
-$pageTitle       = 'Customers - BDC Music Studio';
-$metaDescription = 'View all registered customers and their order history from the BDC Music Studio admin panel.';
+$pageTitle       = 'Customers - BDC Music';
+$metaDescription = 'View all registered customers and their order history from the BDC Music admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminScripts = array( 'admin-dashboard.js' );

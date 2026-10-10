@@ -1,7 +1,7 @@
 <?php
-$pageTitle = 'BDC Artist Marketplace | BDC Music Studio';
+$pageTitle = 'BDC Artist Marketplace | BDC Music';
 $metaDescription = 'Join the BDC Artist Marketplace to showcase your talent, connect with clients, receive bookings, and grow your creative career.';
-$ogTitle = 'BDC Artist Marketplace | BDC Music Studio';
+$ogTitle = 'BDC Artist Marketplace | BDC Music';
 $ogDescription = 'Register as an artist, get verified, receive bookings and connect with clients through the BDC Artist Marketplace.';
 
 // The membership cards and the price they quote used to be hand-written here.

@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/panel-guard.php';
 
 $panelPage = 'orders';
 
-$pageTitle       = 'My Orders - BDC Music Studio';
-$metaDescription = 'View and manage your active BDC Music Studio orders.';
+$pageTitle       = 'My Orders - BDC Music';
+$metaDescription = 'View and manage your active BDC Music orders.';
 $currentPage     = 'dashboard/orders';
 include_once __DIR__ . '/../header.php';
 ?>

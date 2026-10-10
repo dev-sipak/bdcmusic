@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/admin-guard.php';
 
 $adminPage = 'artists';
 
-$pageTitle       = 'Artists Management - BDC Music Studio';
-$metaDescription = 'Manage artists, categories, and pricing for the marketplace from the BDC Music Studio admin panel.';
+$pageTitle       = 'Artists Management - BDC Music';
+$metaDescription = 'Manage artists, categories, and pricing for the marketplace from the BDC Music admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminScripts = array( 'admin-artists.js' );

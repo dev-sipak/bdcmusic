@@ -214,90 +214,140 @@ img.red-svg {
 }
 
 .eco-card {
-  padding: 28px;
-  border-radius: 24px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.72);
-  transition: border-color 0.35s ease, background 0.35s ease;
-  box-shadow: 0 12px 28px rgba(17, 17, 17, 0.04);
-  overflow: hidden;
-  position: relative;
+	padding: 28px;
+	border-radius: 24px;
+	border: 1px solid var(--border);
+	background: rgba(255, 255, 255, 0.72);
+	transition:
+		border-color 0.35s ease,
+		background 0.35s ease;
+	box-shadow: 0 12px 28px rgba(17, 17, 17, 0.04);
+	overflow: hidden;
+	position: relative;
+
+	&:before {
+		content: "";
+		position: absolute;
+		width: 220px;
+		height: 220px;
+		border-radius: 50%;
+		background: radial-gradient(
+			circle,
+			rgba(228, 0, 43, 0.12),
+			transparent 70%
+		);
+		right: -80px;
+		top: -80px;
+		opacity: 0;
+		transition: 0.45s ease;
+		pointer-events: none;
+	}
+
+	i {
+		font-size: 1.6rem;
+		color: var(--primary);
+		margin-bottom: 16px;
+	}
+
+	h3 {
+		font-size: 1.2rem;
+		margin-bottom: 8px;
+		color: var(--small-heading);
+	}
+
+	.eco-arrow {
+		position: absolute;
+		right: -15px;
+		bottom: -15px;
+
+		width: 60px;
+		height: 60px;
+
+		padding-top: 12px;
+		padding-left: 15px;
+
+		border-radius: 50%;
+		background: var(--primary);
+		color: #fff;
+
+		opacity: 0;
+		transform: translate(10px, 10px) scale(0.7) rotate(-20deg);
+
+		transition:
+			opacity 0.3s ease,
+			transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+
+		i,
+		svg {
+			width: 19px;
+			height: 19px;
+			margin: 0;
+			color: #fff;
+			stroke-width: 2.2;
+		}
+	}
 }
 
-.eco-card:before {
-	content: "";
-	position: absolute;
-	width: 220px;
-	height: 220px;
-	border-radius: 50%;
-	background: radial-gradient(circle, rgba(228, 0, 43, .12), transparent 70%);
-	right: -80px;
-	top: -80px;
-	opacity: 0;
-	transition: .45s;
-}
-.eco-card:hover:before {
-	opacity: 1;
-}
 .eco-card:hover {
-  border-color: rgba(228, 0, 43, 0.28);
-  background: rgba(255, 255, 255, 0.95);
+	border-color: rgba(228, 0, 43, 0.28);
+	background: rgba(255, 255, 255, 0.95);
+
+	&:before {
+		opacity: 1;
+	}
+
+	.eco-arrow {
+		opacity: 1;
+		transform: translate(0, 0) scale(1) rotate(0deg);
+	}
+
+	.eco-icon {
+		background: #e4002b;
+		box-shadow: 0 12px 30px rgba(228, 0, 43, 0.25);
+
+		svg {
+			color: #fff;
+		}
+	}
+
+	h3 {
+		color: var(--primary);
+	}
 }
 
-.eco-card i {
-  font-size: 1.6rem;
-  color: var(--primary);
-  margin-bottom: 16px;
-}
+.craeteive-categories {
+	.eco-card {
+		i {
+			margin-bottom: 0;
+		}
+	}
 
-.craeteive-categories .eco-card i{
-	margin-bottom: 0px;
-}
-
-.craeteive-categories .eco-card:hover i{
-	color: var(--secondary) !important;
+	.eco-card:hover {
+		i {
+			color: var(--secondary) !important;
+		}
+	}
 }
 
 .eco-icon {
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 22px;
-  border-radius: 18px;
-  background: rgba(228, 0, 43, .08);
-  border: 1px solid rgba(228, 0, 43, .18);
-  transition: .35s ease;
-}
+	width: 64px;
+	height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 22px;
+	border-radius: 23px;
+	background: rgba(228, 0, 43, 0.08);
+	border: 1px solid rgba(228, 0, 43, 0.18);
+	transition: 0.35s ease;
 
-.eco-icon svg {
-  width: 30px;
-  height: 30px;
-  fill: none;
-  stroke: #E4002B;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.eco-card:hover .eco-icon {
-  background: #E4002B;
-  box-shadow: 0 20px 40px rgba(228, 0, 43, .25);
-}
-
-.eco-card:hover img.red-svg {
-  filter: brightness(0) invert(1);
-}
-
-.eco-card:hover .eco-icon svg {
-  stroke: #fff;
-}
-
-.eco-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
-  color: var(--text);
+	svg {
+		width: 30px;
+		height: 30px;
+		color: #e4002b;
+		stroke-width: 1.8;
+		transition: 0.35s ease;
+	}
 }
 
 /* Shared card-grid transitions. Page styles should only define grids that are

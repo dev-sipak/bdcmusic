@@ -1,8 +1,8 @@
 <?php
-$pageTitle = 'Privacy Policy | BDC Music Studio';
-$metaDescription = 'Learn about our privacy practices and how we collect and use your information at BDC Music Studio.';
-$ogTitle = 'Privacy Policy | BDC Music Studio';
-$ogDescription = 'Learn about our privacy practices and how we collect and use your information at BDC Music Studio.';
+$pageTitle = 'Privacy Policy | BDC Music';
+$metaDescription = 'Learn about our privacy practices and how we collect and use your information at BDC Music.';
+$ogTitle = 'Privacy Policy | BDC Music';
+$ogDescription = 'Learn about our privacy practices and how we collect and use your information at BDC Music.';
 include_once "header.php";
 ?>
 <!-- PRIVACY POLICY -->

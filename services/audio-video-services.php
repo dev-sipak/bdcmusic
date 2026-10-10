@@ -1,22 +1,16 @@
 	<?php
-	$pageTitle = 'Audio & Video Services | BDC Music Studio';
+	$pageTitle = 'Audio & Video Services | BDC Music';
 	$metaDescription = 'Book professional audio and video services for recording, music production, mixing, mastering, editing, music videos, reels, events, and corporate videos.';
 	$ogTitle = $pageTitle;
 	$ogDescription = $metaDescription;
 
-	// Everything priced on this page comes from service_plans, the same table the
-	// checkout charges from, so a sub-service cannot be advertised at one price
-	// and charged at another. The two arrays of prices this page used to carry
-	// are gone; the twelve rows below are rendered by booking_rate_card().
 	require_once __DIR__ . '/../includes/config.php';
 	require_once __DIR__ . '/../includes/database.php';
 	require_once __DIR__ . '/../includes/booking-marketing.php';
 
 	include_once '../header.php';
 
-	// Split the twelve sub-services into the two rate cards the page presents,
-	// keeping the order the catalogue publishes them in. The two bundle groups
-	// are sold as cards instead and are left out of the rate cards here.
+
 	$avPdb      = booking_marketing_pdb();
 	$avService  = booking_service( $avPdb, 'audio-video' );
 	$audioKeys  = array();
@@ -157,21 +151,10 @@
 						?>
 
 						<p class="section-intro" style="margin-top:20px;">
-						Each figure above is our published rate for that
-						sub-service. Booking is done through the studio bundles
-						on this page, so pick the bundles that cover the work you
-						need, or contact us to scope something these tables do
-						not cover.
+						These are our prices for each service. To book, choose the studio packages that cover your needs. If you need something different, <a href="mailto:info@bdcmusic.in" style="color: var(--primary); text-decoration: underline;">contact us</a> for a custom quote.
 						</p>
 					</div>
 				</div>
-
-				<p class="section-intro" style="margin-top:40px;">
-					A tier marked <strong>Custom Quote</strong> is scoped to the
-					project rather than sold at a fixed price. Use
-					<strong>Enquire Now</strong> and our team will come back to you
-					with a quote for that piece of work.
-				</p>
 			</section>
 
 	</div>

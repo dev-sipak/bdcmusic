@@ -185,6 +185,63 @@ INSERT INTO `artist_pricing` (`id`, `artist_id`, `service_type`, `price`, `sort_
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `artist_registrations`
+--
+-- A BDC Marketplace package purchase, waiting to be checked by the studio.
+--
+-- This is deliberately NOT the `artists` table. `artists` is the public
+-- directory the Artists admin page edits, and a registration that has just been
+-- paid for must not appear there until somebody has verified it. One row is
+-- created per marketplace order, so an artist may hold several registrations;
+-- booking_id is therefore unique rather than customer_id.
+--
+
+DROP TABLE IF EXISTS `artist_registrations`;
+CREATE TABLE IF NOT EXISTS `artist_registrations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `booking_id` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `artist_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `artist_email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `artist_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  -- Assigned by the studio when a registration is verified. NULL while the
+  -- registration is pending or rejected, and unique across the table so a code
+  -- can identify one artist unambiguously.
+  `artist_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  -- The columns below are the order-time values from the marketplace form,
+  -- denormalised so the queue can be listed and searched without decoding JSON.
+  -- The raw submission is kept in `details` as well, so a field added to the
+  -- form later still reaches the admin review and the documents.
+  `category_slug` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `goal` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `about` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `portfolio_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `plan_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `plan_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `currency` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'INR',
+  `details` json DEFAULT NULL,
+  `status` enum('pending','verified','rejected') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `review_note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `reviewed_by` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `id_card_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `certificate_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `documents_generated_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_registration_booking` (`booking_id`),
+  UNIQUE KEY `uq_registration_code` (`artist_code`),
+  KEY `idx_registration_customer` (`customer_id`),
+  KEY `idx_registration_status` (`status`),
+  KEY `idx_registration_created` (`created_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `bookings`
 --
 
@@ -225,6 +282,11 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `paid_at` datetime DEFAULT NULL,
+  -- Set the first time an admin opens the order in the admin modal. NULL means
+  -- nobody has looked at it yet, which is what the Orders badge in the sidebar
+  -- counts. Left NULL deliberately rather than defaulting to created_at, which
+  -- would mark every order as already seen.
+  `admin_read_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_booking_id` (`booking_id`),
   KEY `idx_customer` (`customer_id`),
@@ -232,6 +294,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   KEY `idx_status` (`status`),
   KEY `idx_payment_status` (`payment_status`),
   KEY `idx_created` (`created_at`),
+  KEY `idx_admin_read` (`admin_read_at`),
   KEY `fk_bookings_plan` (`plan_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

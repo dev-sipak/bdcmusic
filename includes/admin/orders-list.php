@@ -57,9 +57,10 @@ try {
                        COALESCE(NULLIF(b.customer_name, ""), u.name) AS customer_name,
                        s.name AS service, s.name AS item, b.status,
                        b.customer_type, b.plan_id, b.plan_name, b.plan_group, b.plan_group_label,
-                       b.subtotal, b.addons_total, b.price AS amount, b.currency,
-                       b.payment_status, b.payment_method,
-                       DATE_FORMAT(b.created_at, "%Y-%m-%d %H:%i") AS date
+b.subtotal, b.addons_total, b.price AS amount, b.currency,
+						b.payment_status, b.payment_method,
+						b.admin_read_at,
+						DATE_FORMAT(b.created_at, "%Y-%m-%d %H:%i") AS date
                 FROM bookings b
                 LEFT JOIN users u ON b.customer_id = u.id
                 JOIN services s ON b.service_id = s.id
@@ -90,6 +91,9 @@ try {
 			'item'           => $row['item'],
 			'date'           => $row['date'],
 			'status'         => $row['status'],
+			// No admin has opened this order yet. The list marks the row, and the
+			// sidebar badge counts the same rows.
+			'isUnread'       => $row['admin_read_at'] === null,
 			'paymentStatus'  => $row['payment_status'],
 			'paymentLabel'   => booking_payment_status_label( $row['payment_status'] ),
 			'paymentMethod'  => (string) ( $row['payment_method'] ?? '' ),

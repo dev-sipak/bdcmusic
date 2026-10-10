@@ -53,7 +53,7 @@ try {
 	$updateStmt = $pdo->prepare( 'UPDATE artist_enquiries SET status = :status WHERE id = :id' );
 
 	$adminEmail  = getenv( 'BOOKING_OWNER_EMAIL' ) ?: 'bdcmusic37@gmail.com';
-	$siteName    = 'BDC Music Studio';
+	$siteName    = 'BDC Music';
 	$enquiryEmail = sanitize_email( $enquiry['email'] );
 	$enquiryName  = clean_text( $enquiry['name'] );
 

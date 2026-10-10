@@ -9,8 +9,8 @@
  * tables actually carry (bookings.status, bookings.payment_status), so the
  * wording a customer reads matches what the admin panel shows them.
  */
-$pageTitle = 'Cancellation & Refund Policy | BDC Music Studio';
-$metaDescription = 'How cancellations, refunds and chargebacks work for bookings, studio sessions, classes, distribution and marketplace services at BDC Music Studio.';
+$pageTitle = 'Cancellation & Refund Policy | BDC Music';
+$metaDescription = 'How cancellations, refunds and chargebacks work for bookings, studio sessions, classes, distribution and marketplace services at BDC Music.';
 $ogTitle = $pageTitle;
 $ogDescription = $metaDescription;
 include_once "header.php";
@@ -45,7 +45,7 @@ include_once "header.php";
 				<h3><i data-lucide="info"></i> Scope and Agreement</h3>
 				<p>
 					Placing a booking and paying for it forms an agreement between
-					you and BDC Music Studio to deliver the service you selected at
+					you and BDC Music to deliver the service you selected at
 					the price you paid. This policy is part of that agreement, and
 					it sits alongside our Terms and Conditions and Privacy Policy.
 					Where this policy and the Terms conflict, the Terms govern.
@@ -102,7 +102,7 @@ include_once "header.php";
 					<li>
 						<span class="list-icon"><i data-lucide="check"></i></span>
 						<span><strong>If we cancel.</strong>
-						If BDC Music Studio cancels your booking for any reason other
+						If BDC Music cancels your booking for any reason other
 						than a breach of these terms by you, you receive a full
 						refund of everything you paid, or a free rescheduled
 						equivalent at your choice.</span>

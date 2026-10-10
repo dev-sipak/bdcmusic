@@ -116,6 +116,30 @@ ADMIN SIDEBAR
 	font-size: 0.95rem;
 }
 
+// The label is a span so the badge can sit after it in the flex row; a plain
+// text node would not have been laid out next to it.
+.adm-nav-label {
+	flex: 1;
+}
+
+// Count of items still waiting on an admin, on the Orders and Verifications
+// links. Hidden entirely at zero rather than shown as "0", which would read as a
+// notification and shift the label sideways.
+.adm-nav-badge {
+	flex-shrink: 0;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 7px;
+	border-radius: 11px;
+	background: var(--primary);
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 22px;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
 .adm-nav-logout {
 	margin-top: 12px;
 	border-top: 1px solid var(--border);
@@ -329,9 +353,31 @@ STATS GRID
 
 .adm-stats-grid {
 	display: grid;
-	grid-template-columns: repeat(5, minmax(0, 1fr));
+	// Four cards: sales, refunds, artists registered and music released. The
+	// old fifth column belonged to the count that used to sit on this page.
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 16px;
 	margin-bottom: 32px;
+}
+
+// An order no admin has opened yet. Marked here as well as by a dot on the id,
+// so the row is findable when the id column is read on its own.
+.adm-table tbody tr.is-unread {
+	background: rgba(228, 0, 43, .03);
+}
+
+.adm-table tbody tr.is-unread td strong {
+	color: var(--primary);
+}
+
+.adm-unread-dot {
+	display: inline-block;
+	width: 7px;
+	height: 7px;
+	margin-left: 8px;
+	border-radius: 50%;
+	background: var(--primary);
+	vertical-align: middle;
 }
 
 .adm-stat-card {
@@ -361,6 +407,26 @@ STATS GRID
 }
 
 .stat-icon-total {
+	background: rgba(59, 130, 246, .1);
+	color: #3b82f6;
+}
+
+.stat-icon-sales {
+	background: rgba(16, 185, 129, .1);
+	color: #10b981;
+}
+
+.stat-icon-refunded {
+	background: rgba(245, 158, 11, .1);
+	color: #f59e0b;
+}
+
+.stat-icon-artists {
+	background: rgba(139, 92, 246, .1);
+	color: #8b5cf6;
+}
+
+.stat-icon-releases {
 	background: rgba(59, 130, 246, .1);
 	color: #3b82f6;
 }
@@ -446,10 +512,9 @@ ADMIN TABLE
 }
 
 .adm-table td {
-	padding: 6px 13px;
+	padding: 10px 13px;
 	border-top: 1px solid var(--border);
 	color: var(--text);
-	font-size: 0.76rem;
 }
 
 .adm-table tbody tr:hover {
@@ -520,25 +585,27 @@ ADMIN FILTER BAR
 	border-color: var(--primary);
 	outline: none;
 }
-
 .adm-search-wrap {
 	position: relative;
 	flex: 1;
 	min-width: 200px;
 }
 
-.adm-search-wrap i {
+.adm-search-wrap svg {
 	position: absolute;
-	left: 14px;
+	left: 12px;
 	top: 50%;
+	width: 20px;
+	height: 20px;
 	transform: translateY(-50%);
-	color: var(--muted);
-	font-size: 0.85rem;
+	pointer-events: none;
+	color: #6b7280;
+	z-index: 1;
 }
 
 .adm-search-wrap input {
 	width: 100%;
-	padding: 10px 14px 10px 38px;
+	padding: 10px 14px 10px 42px;
 	border: 1px solid var(--border);
 	border-radius: 10px;
 	background: #fff;
@@ -546,6 +613,7 @@ ADMIN FILTER BAR
 	font: inherit;
 	font-size: 0.88rem;
 	transition: var(--transition);
+	box-sizing: border-box;
 }
 
 .adm-search-wrap input:focus {

@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/admin-guard.php';
 
 $adminPage = 'enquiries';
 
-$pageTitle       = 'Artist Enquiries - BDC Music Studio';
-$metaDescription = 'View and manage all artist enquiries from the BDC Music Studio admin panel.';
+$pageTitle       = 'Artist Enquiries - BDC Music';
+$metaDescription = 'View and manage all artist enquiries from the BDC Music admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminScripts = array( 'admin-enquiries.js' );

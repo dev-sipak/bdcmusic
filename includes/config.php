@@ -50,7 +50,7 @@ define( 'DB_CHARSET', env( 'DB_CHARSET', 'utf8mb4' ) );
 define( 'DB_PORT', env( 'DB_PORT', '3306' ) );
 
 // Site
-define( 'SITE_NAME', env( 'SITE_NAME', 'BDC Music Studio' ) );
+define( 'SITE_NAME', env( 'SITE_NAME', 'BDC Music' ) );
 
 // Where this is running. An unset APP_ENV is treated as production, so a
 // deployment that forgets to set it still refuses to take a payment rather than
@@ -124,7 +124,11 @@ if ( strpos( $currentPage, 'bdcmusic' ) !== false ) {
 }
 $currentPage = trim( $currentPage, '/' );
 
+// all-services.php is the standalone Services overview page. It is not under
+// /services/, but it is still the Services section, so the header toggle has to
+// light up there too.
 $isServicesPage = $currentPage === 'services'
+	|| $currentPage === 'all-services'
 	|| strpos( $currentPage, 'services/' ) === 0;
 
 $isArtistsPage = $currentPage === 'artists'

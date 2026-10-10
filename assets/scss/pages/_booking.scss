@@ -23,6 +23,10 @@
 	font-size: clamp(3.4rem,4vw,6.5rem);
 }
 
+.booking-page h1, .booking-progress{
+	display: none !important;
+}
+
 // A payment that the server refused. booking-checkout.js adds .is-error to the
 // status line; the step itself stays put so the customer can try again.
 .booking-intro.is-error {
@@ -38,16 +42,16 @@
 // A standing caveat on the page rather than a step of its own.
 .booking-note {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 10px;
-	margin-bottom: 28px;
-	border: 1px solid var(--border);
-	border-radius: 14px;
-	padding: 12px 16px;
-	background: #fff;
-	color: var(--muted);
+	margin: 18px 0;
+	border: 1px solid #ff8a8a;
+	border-radius: 10px;
+	padding: 6px 11px;
+	background: #fff4f2;
+	color: #ff3838;
 	font-size: 0.9rem;
-
+	font-weight: 700;
 	i {
 		flex-shrink: 0;
 		margin-top: 2px;
@@ -55,10 +59,7 @@
 	}
 }
 
-// The Service Category the package settled, shown as a badge rather than a
-// paragraph of explanation: a rounded primary block keeps the one-word answer
-// scannable, and its icon is the job itself, so the side is read before the
-// word is.
+
 .booking-category {
 	display: flex;
 	align-items: center;
@@ -85,8 +86,7 @@
 	}
 }
 
-// An invalid control is tinted, so it is obvious on a long form without
-// hunting for the message.
+
 .form-field:has(.field-error) {
 	input,
 	select,
@@ -164,6 +164,7 @@
 			color: var(--text);
 			font-size: 0.72rem;
 			font-weight: 700;
+			padding-top: 2px;
 		}
 	}
 
@@ -246,7 +247,7 @@
 
 	h3 {
 		margin-bottom: 14px;
-		font-size: 1.05rem;
+		font-size: 2.05rem;
 	}
 }
 
@@ -410,9 +411,8 @@
 		gap: 12px;
 		margin-bottom: 12px;
 		font-size: 0.95rem;
-		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		color: var(--muted);
+		color: #1b1b1b;
 	}
 }
 
@@ -437,29 +437,27 @@
 // A "Change" link back to the step that owns this block.
 .booking-review-edit {
 	border: 0;
-	padding: 0;
-	background: none;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: #ffe6eb;
 	color: var(--primary);
 	font: inherit;
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: capitalize;
 	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
 
 	&:hover {
-		text-decoration: underline;
+		background:  var(--primary);
+		color: #fff;
 	}
 }
 
-// Quote notice
-//
-// Promotion is quote mode: nothing is charged here, so the panel says so
-// plainly rather than showing a payment total of zero as if it were real.
 
 .booking-quote-note {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 12px;
 	margin-bottom: 22px;
 	border-radius: 16px;
@@ -476,6 +474,34 @@
 		margin: 0;
 		font-size: 0.9rem;
 	}
+}
+
+// Terms acceptance
+
+.booking-terms {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin-top: 22px;
+	font-size: 0.9rem;
+	cursor: pointer;
+
+	input {
+		flex-shrink: 0;
+		width: 18px;
+		height: 18px;
+		margin: 1px 0 0;
+		accent-color: var(--primary);
+	}
+
+	a {
+		color: var(--primary);
+		font-weight: 600;
+	}
+}
+
+.booking-terms + .booking-terms {
+	margin-top: 10px;
 }
 
 // Navigation
@@ -498,5 +524,130 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 12px;
+		margin-left: auto;
+	}
+}
+
+// Flatpickr calendar
+//
+// The audio/video deadline is a Flatpickr field. The vendor stylesheet is
+// loaded before main.css on the booking page, so these rules, built from the
+// brand tokens, take over its defaults.
+
+.flatpickr-calendar {
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-md);
+	font-family: var(--font-body);
+}
+
+.flatpickr-months {
+	.flatpickr-month {
+		height: 44px;
+		background: var(--primary);
+		color: #fff;
+		border-radius: var(--radius-md) var(--radius-md) 0 0;
+	}
+
+	.flatpickr-prev-month,
+	.flatpickr-next-month {
+		svg {
+			fill: #fff;
+		}
+
+		&:hover svg {
+			fill: #fff;
+		}
+	}
+}
+
+.flatpickr-current-month {
+	padding-top: 10px;
+	font-size: 0.95rem;
+
+	.cur-month,
+	.numInput.cur-year {
+		font-weight: 700;
+	}
+
+	.numInput.cur-year {
+		color: #fff;
+	}
+
+	// The month is a native select. Its closed state sits on the brand header,
+	// so it stays white there, but the option list it opens gets a readable
+	// dark-on-light treatment instead of inheriting the header's white text.
+	.flatpickr-monthDropdown-months {
+		background: transparent;
+		color: #fff;
+
+		option {
+			background: var(--card);
+			color: var(--text);
+		}
+	}
+}
+
+span.flatpickr-weekday {
+	background: var(--primary);
+	color: rgba(255, 255, 255, 0.85);
+	font-weight: 600;
+}
+
+.flatpickr-day {
+	border-radius: var(--radius-sm);
+	color: var(--text);
+
+	&:hover,
+	&:focus {
+		background: rgba($primary, 0.1);
+		border-color: transparent;
+		color: var(--text);
+	}
+
+	&.today {
+		border-color: var(--primary);
+
+		// The vendor's own hover/focus states are a grey-blue outside the
+		// palette; they need overriding at matching specificity.
+		&:hover,
+		&:focus {
+			background: rgba($primary, 0.1);
+			border-color: var(--primary);
+			color: var(--text);
+		}
+	}
+
+	&.selected,
+	&.startRange,
+	&.endRange {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: #fff;
+
+		// Same reason as `.today`: the vendor turns a hovered or focused
+		// selection blue.
+		&:hover,
+		&:focus {
+			background: var(--primary);
+			border-color: var(--primary);
+			color: #fff;
+		}
+	}
+
+	&.inRange {
+		background: rgba($primary, 0.12);
+		border-color: transparent;
+	}
+
+	&.prevMonthDay,
+	&.nextMonthDay {
+		color: var(--muted);
+	}
+
+	&.flatpickr-disabled,
+	&.flatpickr-disabled:hover {
+		background: transparent;
+		color: rgba($primary, 0.25);
 	}
 }

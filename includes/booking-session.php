@@ -377,18 +377,27 @@ function booking_start_url( $slug ) {
 /**
  * The URL that starts a booking with a package already chosen.
  *
- * The id is validated against the service before use, so a hand-edited URL
- * cannot carry a plan from another service into this one.
+ * The package is named by its readable slug when the caller hands over the plan
+ * row, so a link reads as the package it sells ("audio-bundles-standard"). A
+ * caller that only has the id still gets a working link, and the id is
+ * validated against the service either way, so a hand-edited URL cannot carry a
+ * plan from another service into this one.
  *
- * @param string $slug    services.slug.
- * @param int    $planId  service_plans.id, 0 for none.
+ * @param string     $slug    services.slug.
+ * @param int        $planId  service_plans.id, 0 for none.
+ * @param array|null $plan    The plan row, when the caller has it; enables the
+ *                            slug form. Falls back to the id when omitted.
  * @return string
  */
-function booking_preselect_url( $slug, $planId = 0 ) {
+function booking_preselect_url( $slug, $planId = 0, $plan = null ) {
 	$url = booking_start_url( $slug );
 
 	if ( (int) $planId > 0 ) {
-		$url .= '&plan_id=' . (int) $planId;
+		$package = is_array( $plan ) ? booking_plan_slug( $plan ) : '';
+
+		$url .= $package !== ''
+			? '&package=' . rawurlencode( $package )
+			: '&plan_id=' . (int) $planId;
 	}
 
 	return $url;

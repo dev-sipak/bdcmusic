@@ -35,6 +35,22 @@ foreach ( $purchasedServices as $purchasedSlug => $purchasedService ) {
 			: $panelBase . 'service?service=' . rawurlencode( $purchasedSlug ),
 	);
 }
+// The Marketplace package carries a verification step of its own, so it gets a
+// dedicated page rather than being folded into the generic service section: the
+// artist needs to see the review outcome and the documents issued for it, which
+// is not something the generic service page shows.
+//
+// The slug comes from the registration model when it has been loaded, so this
+// nav cannot drift from the workflow it links into.
+$verificationSlug = defined( 'ARTIST_REGISTRATION_SLUG' ) ? ARTIST_REGISTRATION_SLUG : 'artists-marketplace';
+
+if ( ! empty( $purchasedServices[ $verificationSlug ] ) ) {
+	$panelNavItems['verification'] = array(
+		'label' => 'Artist Verification',
+		'icon'  => 'badge-check',
+		'url'   => $panelBase . 'artist-verification',
+	);
+}
 
 $panelNavItems['orders'] = array( 'label' => 'My Orders', 'icon' => 'box', 'url' => $panelBase . 'orders' );
 ?>
@@ -50,9 +66,7 @@ $panelNavItems['orders'] = array( 'label' => 'My Orders', 'icon' => 'box', 'url'
 	</div>
 	<nav class="panel-nav">
 		<?php foreach ( $panelNavItems as $panelNavKey => $panelNavItem ) : ?>
-			<a class="panel-nav-btn<?php echo $panelPage === $panelNavKey ? ' active' : ''; ?><?php
-				echo ! empty( $panelNavItem['locked'] ) ? ' is-locked' : ''; ?>"
-				href="<?php echo htmlspecialchars( $panelNavItem['url'] ); ?>">
+			<a class="panel-nav-btn<?php echo $panelPage === $panelNavKey ? ' active' : ''; ?><?php echo ! empty( $panelNavItem['locked'] ) ? ' is-locked' : ''; ?>" href="<?php echo htmlspecialchars( $panelNavItem['url'] ); ?>">
 				<i data-lucide="<?php echo htmlspecialchars( $panelNavItem['icon'] ); ?>"></i>
 				<?php echo htmlspecialchars( $panelNavItem['label'] ); ?>
 				<?php if ( ! empty( $panelNavItem['locked'] ) ) : ?>

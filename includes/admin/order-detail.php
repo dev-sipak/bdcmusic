@@ -14,6 +14,11 @@
  * Admin-only. See includes/customer/order-detail.php for the customer-facing
  * counterpart, which returns the same order-time shape for a single
  * customer's own order but deliberately omits every payment internal.
+ *
+ * Opening an order is what marks it as seen, so this endpoint also records the
+ * first viewing in bookings.admin_read_at. That is what the Orders badge in the
+ * sidebar counts, and it is done here because this endpoint is only ever called
+ * when an admin has the order on screen.
  */
 
 require_once __DIR__ . '/../session.php';
@@ -21,6 +26,7 @@ require_once __DIR__ . '/../../includes/config.php';
 require_once __DIR__ . '/../../includes/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/service-fields.php';
+require_once __DIR__ . '/../../includes/orders-read-state.php';
 
 header( 'Content-Type: application/json' );
 
@@ -66,6 +72,11 @@ try {
 
 	$slug = $order['service_slug'];
 
+	// The order is on screen now, so it is no longer unread. Recorded after the
+	// 404 check above, so a request for an order that does not exist cannot
+	// write anything, and the helper ignores an order already marked.
+	admin_mark_order_read( $pdo, $bookingId );
+
 	// Fields the customer submitted when placing the order, labelled by the
 	// same helper the customer-facing endpoint uses so both agree.
 	$metaPairs = service_meta_pairs( $slug, $order['meta'] ? json_decode( $order['meta'], true ) : array() );
@@ -76,10 +87,6 @@ try {
 	$itemsByBooking = booking_order_items( $pdo, [ $bookingId ] );
 	$items = $itemsByBooking[ $bookingId ] ?? [];
 	$amounts = booking_order_amounts( $order );
-
-	// Every payment attempt, so an admin can see a failed charge that was
-	// retried rather than only the final state on the booking.
-	$payments = booking_order_payments( $pdo, $bookingId );
 
 	// Admin-managed arrangement, if one has been saved for this booking.
 	$rStmt = $pdo->prepare(
@@ -145,7 +152,6 @@ try {
 				'paymentId'       => (string) ( $order['payment_id'] ?? '' ),
 				'hasSignature'    => ! empty( $order['razorpay_signature'] ),
 				'failureReason'   => (string) ( $order['payment_failure_reason'] ?? '' ),
-				'attempts'        => $payments,
 			],
 			'arrangement'        => $record,
 			'arrangementFields'  => service_arrangement_fields( $slug ),

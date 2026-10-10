@@ -1,7 +1,7 @@
 <?php
-$pageTitle = 'IPRS Services | BDC Music Studio';
+$pageTitle = 'IPRS Services | BDC Music';
 $metaDescription = 'Get professional IPRS services for music registration, rights management, and royalty support for artists, composers, and lyricists.';
-$ogTitle = 'IPRS Services | BDC Music Studio';
+$ogTitle = 'IPRS Services | BDC Music';
 $ogDescription = 'Get assistance with IPRS registration, music rights protection, and royalty management for your original works.';
 
 // The membership prices used to live only in <option> labels inside a form that
@@ -54,7 +54,7 @@ include_once '../header.php';
 
 		</div>
 
-		<section class="section-block">
+		<section class="section-block pb-0">
 
 			<h2>About the Service</h2>
 
@@ -68,7 +68,7 @@ include_once '../header.php';
 
 		<div class="section-block pt-0">
 
-			<h2>Benefits</h2>
+			<h2 class="pb-3">Benefits</h2>
 
 			<div class="card-grid-2">
 
@@ -159,22 +159,19 @@ include_once '../header.php';
    
 		<!-- IPRS Membership -->
 
-<section class="section-block pt-0 iprs-package" id="choose-package">
+		<section class="section-block pt-0 iprs-package" id="choose-package">
 
 			<h2>
 				IPRS Membership
 			</h2>
 
-			<p class="section-intro">
+			<p class="section-intro  pb-4 ">
 				Choose the membership that matches how you earn from your work.
 				Both include our full registration and documentation support.
 			</p>
 
 			<?php
-			// The membership prices used to appear only as <option> labels inside
-			// the form below, so a visitor had to open a dropdown to find out what
-			// anything cost. They are now shown as cards and rendered from
-			// service_plans, the same table the checkout charges from.
+
 			echo booking_plan_grid( 'iprs' );
 			?>
 

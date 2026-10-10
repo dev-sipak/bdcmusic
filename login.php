@@ -13,8 +13,8 @@ if ( isset( $_SESSION['user_id'] ) && isset( $_SESSION['user_role'] ) ) {
 	exit;
 }
 
-$pageTitle       = 'Sign In - BDC Music Studio';
-$metaDescription = 'Sign in or create your BDC Music Studio account to manage orders, track services, and access your dashboard.';
+$pageTitle       = 'Sign In - BDC Music';
+$metaDescription = 'Sign in or create your BDC Music account to manage orders, track services, and access your dashboard.';
 $currentPage     = 'login';
 include_once __DIR__ . '/header.php';
 ?>

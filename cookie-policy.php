@@ -15,8 +15,8 @@
  * claim that analytics is running now, because it is not. The gtag snippet is
  * meant to be added in header.php and is marked there and in includes/config.php.
  */
-$pageTitle = 'Cookie Policy | BDC Music Studio';
-$metaDescription = 'Which cookies BDC Music Studio sets, what each one is for, how to control them in your browser, and how analytics cookies will be used.';
+$pageTitle = 'Cookie Policy | BDC Music';
+$metaDescription = 'Which cookies BDC Music sets, what each one is for, how to control them in your browser, and how analytics cookies will be used.';
 $ogTitle = $pageTitle;
 $ogDescription = $metaDescription;
 include_once "header.php";
@@ -155,7 +155,7 @@ include_once "header.php";
 				</p>
 				<p>
 					Two things worth knowing. First, clearing your cookies signs you
-					out of BDC Music Studio, because the session lives in one. Second,
+					out of BDC Music, because the session lives in one. Second,
 					blocking cookies in your browser is not the same as deleting them:
 					some browsers still send the blocked cookies with the requests that
 					are essential to a page, which is why the session cookie may

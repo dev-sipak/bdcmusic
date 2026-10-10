@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/panel-guard.php';
 
 $panelPage = 'profile';
 
-$pageTitle       = 'Customer Dashboard - BDC Music Studio';
-$metaDescription = 'Manage your BDC Music Studio profile, password, and the services you have purchased from your customer dashboard.';
+$pageTitle       = 'Customer Dashboard - BDC Music';
+$metaDescription = 'Manage your BDC Music profile, password, and the services you have purchased from your customer dashboard.';
 $currentPage     = 'dashboard/customer-dashboard';
 include_once __DIR__ . '/../header.php';
 

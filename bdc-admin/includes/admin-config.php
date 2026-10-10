@@ -4,7 +4,7 @@
  *
  * Requires: $adminOverview (supplied by bdc-admin/index.php only; pages that
  * do not render the overview cards pass nothing and get empty stats). It holds
- * server-side counts plus the ten most recent orders, not the booking history.
+ * the four headline counts for the dashboard, not the booking history.
  * Emits adminDashboardConfig, which admin-dashboard.js, admin-artists.js and
  * admin-enquiries.js all read for basePath, and adminReleasesConfig, which
  * admin-releases.js reads.
@@ -19,7 +19,7 @@ require_once __DIR__ . '/../../includes/helpers.php';
 ?>
 <script>
   var adminDashboardConfig = {
-	  overview: <?php echo json_encode( isset( $adminOverview ) ? $adminOverview : array( 'stats' => array(), 'recent' => array() ) ); ?>,
+	  overview: <?php echo json_encode( isset( $adminOverview ) ? $adminOverview : array( 'stats' => array() ) ); ?>,
 	  basePath: <?php echo json_encode( $basePath ); ?>,
 	  csrfToken: <?php echo json_encode( generate_csrf_token() ); ?>
   };

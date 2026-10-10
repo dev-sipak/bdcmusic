@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/session.php';
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/database.php';
 
-$pageTitle       = isset( $pageTitle ) ? $pageTitle : 'BDC Music Studio';
+$pageTitle       = isset( $pageTitle ) ? $pageTitle : 'BDC Music';
 $metaDescription = isset( $metaDescription ) ? $metaDescription : 'Professional Recording Studio';
 $canonicalPath   = $currentPage !== '' ? $currentPage . '/' : '';
 $canonicalUrl    = isset( $canonicalUrl ) ? $canonicalUrl : $basePath . $canonicalPath;
@@ -34,6 +34,11 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
 	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 	<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,706,53.5;1,9..144,706,53.5&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+	<?php // A page can name one extra stylesheet, loaded before main.css so the
+	// compiled theme can override it. Vendored libraries use this rather than a CDN. ?>
+	<?php if ( ! empty( $extraStylesheet ) ) : ?>
+		<link rel="stylesheet" href="<?php echo $assetPath . htmlspecialchars( $extraStylesheet ); ?>">
+	<?php endif; ?>
 	<link rel="stylesheet" href="<?php echo $assetPath; ?>dist/main.css">
 	<link rel="icon" href="<?php echo $assetPath; ?>images/favicon.png" type="image/png">
 
@@ -63,7 +68,7 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
 <header class="header">
 	<div class="container">
 		<a href="<?php echo $basePath; ?>" class="logo">
-			<img src="<?php echo $assetPath; ?>images/logo.svg" alt="BDC Music Studio">
+			<img src="<?php echo $assetPath; ?>images/logo.svg" alt="BDC Music">
 		</a>
 		<nav class="nav">
 			<ul>
@@ -88,12 +93,25 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
 						<i data-lucide="chevron-down" aria-hidden="true"></i>
 					</button>
 					<ul class="dropdown-menu" id="services-dropdown">
-						<li><a href="<?php echo $basePath; ?>services/bdc-artists-marketplace/">BDC Artists Marketplace</a></li>
-						<li><a href="<?php echo $basePath; ?>services/audio-video-services/">Audio & Video Services</a></li>
-						<li><a href="<?php echo $basePath; ?>services/online-offline-classes/">Online/Offline Classes</a></li>
-						<li><a href="<?php echo $basePath; ?>services/digital-music-distribution/">Digital Music Distribution</a></li>
-						<li><a href="<?php echo $basePath; ?>services/promotion-services/">Promotion Services</a></li>
-						<li><a href="<?php echo $basePath; ?>services/iprs-services/">IPRS Services</a></li>
+						<?php
+						// The child links are rendered from a list so the entry that
+						// matches the open route can be marked active and announced
+						// with aria-current. Static markup cannot know which service
+						// page is being viewed, which is why the dropdown never lit up.
+						$serviceNavItems = [
+							'services/bdc-artists-marketplace'  => 'BDC Artists Marketplace',
+							'services/audio-video-services'      => 'Audio & Video Services',
+							'services/online-offline-classes'    => 'Online/Offline Classes',
+							'services/digital-music-distribution' => 'Digital Music Distribution',
+							'services/promotion-services'        => 'Promotion Services',
+							'services/iprs-services'             => 'IPRS Services',
+						];
+
+						foreach ( $serviceNavItems as $servicePath => $serviceNavLabel ) :
+							$isCurrentService = ( $currentPage === $servicePath );
+							?>
+							<li><a href="<?php echo $basePath . $servicePath . '/'; ?>" class="<?php echo $isCurrentService ? 'active' : ''; ?>"<?php echo $isCurrentService ? 'aria-current="page"' : ''; ?>><?php echo htmlspecialchars( $serviceNavLabel ); ?></a></li>
+						<?php endforeach; ?>
 					</ul>
 				</li>
 				<li class="nav-item has-dropdown">
@@ -115,8 +133,21 @@ $ogDescription   = isset( $ogDescription ) ? $ogDescription : $metaDescription;
 							app_log( 'header', 'artist categories unavailable', $e );
 							$artistCats = [];
 						}
-						foreach ( $artistCats as $ac ) : ?>
-							<li><a href="<?php echo $basePath; ?>artists/<?php echo htmlspecialchars( $ac['slug'] ); ?>/"><?php echo htmlspecialchars( $ac['name'] ); ?></a></li>
+
+						// /artists/<category>/ and the artist detail page below it
+						// (/artists/<category>/<artist>/) both belong to that category,
+						// so the category link stays current on the detail page too.
+						$artistCategorySlug = '';
+
+						if ( strpos( $currentPage, 'artists/' ) === 0 ) {
+							$artistPathParts    = array_values( array_filter( explode( '/', $currentPage ) ) );
+							$artistCategorySlug = $artistPathParts[1] ?? '';
+						}
+
+						foreach ( $artistCats as $ac ) :
+							$isCurrentCategory = ( $artistCategorySlug === $ac['slug'] );
+							?>
+							<li><a href="<?php echo $basePath; ?>artists/<?php echo htmlspecialchars( $ac['slug'] ); ?>/" class="<?php echo $isCurrentCategory ? 'active' : ''; ?>"<?php echo $isCurrentCategory ? 'aria-current="page"' : ''; ?>><?php echo htmlspecialchars( $ac['name'] ); ?></a></li>
 						<?php endforeach; ?>
 					</ul>
 				</li>

@@ -9,6 +9,8 @@ $adminScripts = isset( $adminScripts ) && is_array( $adminScripts ) ? $adminScri
 ?>
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.48.0/dist/umd/lucide.min.js"></script>
 <script src="<?php echo $assetPath; ?>js/shared.js"></script>
+<?php // Keeps the Orders and Verifications badges current on every admin page. ?>
+<script src="<?php echo $assetPath; ?>js/admin-nav-badges.js"></script>
 <?php foreach ( $adminScripts as $adminScript ) : ?>
 	<script src="<?php echo $assetPath; ?>js/<?php echo htmlspecialchars( $adminScript ); ?>"></script>
 <?php endforeach; ?>

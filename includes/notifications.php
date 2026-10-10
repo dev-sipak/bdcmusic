@@ -34,7 +34,7 @@ if ( ! function_exists( 'notification_site_name' ) ) {
 	 * @return string
 	 */
 	function notification_site_name() {
-		return defined( 'SITE_NAME' ) ? SITE_NAME : 'BDC Music Studio';
+		return defined( 'SITE_NAME' ) ? SITE_NAME : 'BDC Music';
 	}
 }
 
@@ -368,6 +368,70 @@ if ( ! function_exists( 'notify_admin_new_enquiry' ) ) {
 			notification_admin_email(),
 			'New enquiry from ' . $enquiry['name'],
 			notification_body( 'New enquiry', $content )
+		);
+	}
+}
+
+if ( ! function_exists( 'notify_artist_registration_verified' ) ) {
+	/**
+	 * Tell an artist their marketplace registration was verified.
+	 *
+	 * Sent after the code and the documents have been issued, because the message
+	 * quotes the code and tells the artist where the documents are.
+	 *
+	 * @param array $registration Fields: artist_name, artist_email, artist_code,
+	 *                             category_label, plan_name.
+	 * @return bool
+	 */
+	function notify_artist_registration_verified( array $registration ) {
+		$name = (string) ( $registration['artist_name'] ?? '' );
+
+		$content = '<p>Hi ' . htmlspecialchars( $name ) . ',</p>'
+			. '<p>Your BDC Artists Marketplace registration has been verified by the studio.</p>'
+			. notification_details_table(
+				array(
+					'Artist ID'    => $registration['artist_code'] ?? '',
+					'Category'     => $registration['category_label'] ?? '',
+					'Package'      => $registration['plan_name'] ?? '',
+				)
+			)
+			. '<p>Your Artist ID Card and Certificate of Registration are ready. Sign in to your '
+			. 'dashboard and open Artist Verification to view or download them.</p>';
+
+		return notification_send(
+			$registration['artist_email'] ?? '',
+			'Your BDC artist registration is verified - ' . ( $registration['artist_code'] ?? '' ),
+			notification_body( 'Artist registration verified', $content )
+		);
+	}
+}
+
+if ( ! function_exists( 'notify_artist_registration_rejected' ) ) {
+	/**
+	 * Tell an artist their marketplace registration was rejected, and why.
+	 *
+	 * The reason the admin recorded is included, because a rejection with no
+	 * explanation leaves the artist with nothing to act on.
+	 *
+	 * @param array $registration Fields: artist_name, artist_email, review_note.
+	 * @return bool
+	 */
+	function notify_artist_registration_rejected( array $registration ) {
+		$name = (string) ( $registration['artist_name'] ?? '' );
+
+		$content = '<p>Hi ' . htmlspecialchars( $name ) . ',</p>'
+			. '<p>We are sorry, but we could not verify your BDC Artists Marketplace '
+			. 'registration at this time.</p>'
+			. '<p style="background:#f5f5f5;padding:12px;border-radius:8px;"><strong>Reason given:</strong><br>'
+			. nl2br( htmlspecialchars( (string) ( $registration['review_note'] ?? '' ) ) ) . '</p>'
+			. '<p>If you would like us to take another look, send us the missing details '
+			. 'through the <a href="' . htmlspecialchars( url( 'contact/' ) ) . '">contact page</a> '
+			. 'quoting your order number, and we will review it again.</p>';
+
+		return notification_send(
+			$registration['artist_email'] ?? '',
+			'Update on your BDC artist registration',
+			notification_body( 'Artist registration not verified', $content )
 		);
 	}
 }

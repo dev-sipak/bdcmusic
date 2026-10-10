@@ -64,10 +64,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	const menuToggle = document.querySelector(".menu-toggle");
 	const nav = document.querySelector(".nav");
-	const dropdownItem = document.querySelector(".has-dropdown");
-	const dropdownToggle = document.querySelector(".dropdown-toggle");
 
 	if (menuToggle && nav) {
+
+		const dropdownItems = Array.from(
+			document.querySelectorAll(".nav .has-dropdown")
+		);
+
+		// Every dropdown is wired the same way. querySelector() used to pick only
+		// the first one, so the Artists menu could not be opened at all.
+		const closeDropdowns = (exceptItem = null) => {
+
+			dropdownItems.forEach((item) => {
+
+				if (item === exceptItem) return;
+
+				item.classList.remove("dropdown-open");
+				const toggle = item.querySelector(".dropdown-toggle");
+				if (toggle) toggle.setAttribute("aria-expanded", "false");
+
+			});
+
+		};
+
+		const closeMenu = () => {
+
+			nav.classList.remove("nav-open");
+			menuToggle.setAttribute("aria-expanded", "false");
+			menuToggle.innerHTML = '<i data-lucide="menu"></i>';
+
+		};
 
 		menuToggle.addEventListener("click", function () {
 
@@ -78,90 +104,72 @@ document.addEventListener("DOMContentLoaded", function () {
 				? '<i data-lucide="x"></i>'
 				: '<i data-lucide="menu"></i>';
 
+			if (isOpen) closeDropdowns();
+
 		});
 
-		if (dropdownItem && dropdownToggle) {
+		dropdownItems.forEach((item) => {
 
-	 // Mobile click dropdown
-	dropdownToggle.addEventListener("click", function (event) {
+			const toggle = item.querySelector(".dropdown-toggle");
 
-		if (window.innerWidth <= 992) {
+			if (!toggle) return;
 
-			event.preventDefault();
-			event.stopPropagation();
+			toggle.addEventListener("click", function (event) {
 
-			const isOpen = dropdownItem.classList.toggle("dropdown-open");
+				event.preventDefault();
+				event.stopPropagation();
 
-			dropdownToggle.setAttribute(
-				"aria-expanded",
-				isOpen ? "true" : "false"
+				const isOpen = item.classList.toggle("dropdown-open");
+
+				// Only one panel is open at a time.
+				closeDropdowns(item);
+				toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+			});
+
+		});
+
+		// Clicking anywhere else on the page closes any open panel.
+		document.addEventListener("click", function (event) {
+
+			const clickedInside = dropdownItems.some((item) =>
+				item.contains(event.target)
 			);
-		}
 
-	});
+			if (!clickedInside) closeDropdowns();
 
+		});
 
-   
-	// Close dropdown when clicking outside (mobile only)
-	document.addEventListener("click", function (event) {
+		// Escape closes the open panel first and the mobile menu second, so a
+		// visitor inside a dropdown is not asked twice to press the same key.
+		document.addEventListener("keydown", function (event) {
 
-		if (window.innerWidth <= 992) {
+			if (event.key !== "Escape") return;
 
-			if (!dropdownItem.contains(event.target)) {
+			closeDropdowns();
+			closeMenu();
 
-				dropdownItem.classList.remove("dropdown-open");
+		});
 
-				dropdownToggle.setAttribute(
-					"aria-expanded",
-					"false"
-				);
+		// The mobile menu is a panel inside the header; when the viewport grows
+		// past the breakpoint it becomes a desktop bar that is always visible, so
+		// leaving nav-open set would hide the toggle's real state.
+		window.addEventListener("resize", function () {
+
+			if (window.innerWidth > 992) {
+
+				closeDropdowns();
+				closeMenu();
 
 			}
 
-		}
-
-	});
-
-
-	// Escape close
-	document.addEventListener("keydown", function (event) {
-
-		if (event.key === "Escape") {
-
-			dropdownItem.classList.remove("dropdown-open");
-
-			dropdownToggle.setAttribute(
-				"aria-expanded",
-				"false"
-			);
-
-			nav.classList.remove("nav-open");
-
-			menuToggle.setAttribute(
-				"aria-expanded",
-				"false"
-			);
-
-			menuToggle.innerHTML =
-				'<i data-lucide="menu"></i>';
-
-		}
-
-	});
-
-}
+		});
 
 		document.querySelectorAll(".nav a").forEach(function (link) {
 
 			link.addEventListener("click", function () {
 
-				nav.classList.remove("nav-open");
-				if (dropdownItem && dropdownToggle) {
-					dropdownItem.classList.remove("dropdown-open");
-					dropdownToggle.setAttribute("aria-expanded", "false");
-				}
-				menuToggle.setAttribute("aria-expanded", "false");
-				menuToggle.innerHTML = '<i data-lucide="menu"></i>';
+				closeMenu();
 
 			});
 

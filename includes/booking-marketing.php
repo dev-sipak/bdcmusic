@@ -125,7 +125,7 @@ function booking_plan_card( array $plan, $slug, array $options = array() ) {
 			$options['show_book'] = false;
 		} else {
 			$card .= '<a class="btn btn-book" href="'
-				. booking_esc( booking_preselect_url( $slug, (int) $plan['id'] ) ) . '">'
+				. booking_esc( booking_preselect_url( $slug, (int) $plan['id'], $plan ) ) . '">'
 				. booking_esc( $options['book_label'] ) . '</a>';
 		}
 	}
@@ -339,7 +339,7 @@ function booking_rate_card( $slug, array $groupKeys, $pdb = null, array $options
 			}
 
 			$html .= '<td><a class="btn btn-sm" href="'
-				. booking_esc( booking_preselect_url( $slug, (int) $plan['id'] ) )
+				. booking_esc( booking_preselect_url( $slug, (int) $plan['id'], $plan ) )
 				. '" title="' . booking_esc( 'Book ' . $row['label'] . ' — ' . $plan['name'] ) . '">'
 				. booking_esc( booking_money( $price ) )
 				. ( $note !== '' ? booking_esc( ' ' . $note ) : '' )

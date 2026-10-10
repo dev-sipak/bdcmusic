@@ -134,16 +134,12 @@ SERVICE CARDS
 
 .category-block {
 	padding: 40px;
-	margin-bottom: 36px;
 	background: #fff;
 	border: 1px solid var(--border);
 	border-radius: 24px;
 	box-shadow: var(--shadow);
-	// A grid item defaults to `min-width: auto`, which resolves to its
-	// min-content width. The rate card table inside is much wider than a phone,
-	// so without this the block stayed table-wide and dragged the page into a
-	// horizontal scroll. The table scrolls inside `.table-scroll` instead.
 	min-width: 0;
+	scroll-margin-top: 24px;
 
 	>h3 {
 		margin-bottom: 10px;
@@ -228,13 +224,13 @@ PLANS
 	}
 
 	h3 {
-		margin-bottom: 10px;
-		font-size: clamp(1.6rem, 1vw, 2.25rem);
+		font-size: clamp(1.3rem, 1vw, 2.25rem);
+		color: var(--small-heading);
 	}
 
 	p {
 		padding: 12px 15px;
-		background: #dddddd;
+		background: #eee5ff;
 		margin-top: 20px;
 		color: #161616;
 		border-radius: 12px;
@@ -251,17 +247,18 @@ PLANS
 /*==================================================
 PLAN FEATURES
 ==================================================*/
-
+.category-block .feature-list {
+	padding-top: 0px;
+}
+.category-block .detail-card .feature-list {
+	padding-top: 20px;
+}
 .feature-list {
 	display: grid;
-	// `minmax(0, 1fr)`, not the implicit `auto`. Each `li` carries 34px of left
-	// padding for the tick, so an `auto` track sized to the longest feature's
-	// min-content could exceed a narrow card and push the grid -- and the page --
-	// sideways. Letting the track reach 0 lets the text wrap instead.
 	grid-template-columns: minmax(0, 1fr);
 	gap: 12px;
-	margin-top: 20px;
 	padding: 0;
+	padding-top: 20px;
 	color: var(--muted);
 	list-style: none;
 
@@ -310,12 +307,12 @@ BOOKING
 .booking-body { padding: 40px; }
 .thanks-box { background: #f7fff9; border: 1px solid #ccefd0; border-radius: 18px; padding: 24px; margin-top: 20px; }
 .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
-.detail-card { background: #fafafa; border: 1px solid #ececec; border-radius: 14px; padding: 14px;}
+.detail-card { background: var(--card); border: 1px solid #ececec; border-radius: 14px; padding: 14px;}
 .detail-card .price{margin:0;}
 
 
 
-.iprs-package .plans-grid{
+.iprs-package .plans-grid, .promotion-services .plans-grid{
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 18px;
@@ -434,7 +431,7 @@ RESPONSIVE
 	align-items: center;
 	justify-content: center;
 	margin-bottom: 12px;
-	border-radius: 50%;
+	border-radius: 23px;
 	background: rgba(228, 0, 43, 0.08);
 	color: var(--primary);
 	font-size: 21px;
@@ -510,9 +507,13 @@ RESPONSIVE
 	}
 }
 
-/* Learning Type / Course Selector */
+/* Learning Type / Course Selector
+   The chips are a tab bar over the course blocks below: one program is shown at
+   a time, and classes-section-nav.js keeps the highlighted chip and the visible
+   block in step. The name says what it is rather than what it looks like, so it
+   is not mistaken for a decorative row of tags. */
 
-.instrument-cloud {
+.learning-program-tabs {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -528,7 +529,7 @@ RESPONSIVE
 
 /* Course links */
 
-.instrument-cloud a {
+.learning-program-tabs a {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -550,22 +551,29 @@ RESPONSIVE
 
 /* Hover */
 
-.instrument-cloud a:hover {
+.learning-program-tabs a:hover {
 	background: rgba(255, 255, 255, 0.14);
 	color: #ffffff;
 }
 
-/* Active / selected */
+/* Selected chip
+   This is the one whose course block is showing, marked is-active by
+   classes-section-nav.js. It used to be a:first-child, which pinned the
+   highlight to Singing whatever the visitor had picked. */
 
-.instrument-cloud a:first-child {
+.learning-program-tabs a.is-active {
 	background: #ffffff;
 	color: var(--primary);
+}
+
+.category-block[hidden] {
+	display: none;
 }
 
 /* Tablet */
 
 @media (max-width: 900px) {
-	.instrument-cloud {
+	.learning-program-tabs {
 		width: 100%;
 		max-width: 720px;
 		overflow-x: auto;
@@ -573,11 +581,11 @@ RESPONSIVE
 		scrollbar-width: none;
 	}
 
-	.instrument-cloud::-webkit-scrollbar {
+	.learning-program-tabs::-webkit-scrollbar {
 		display: none;
 	}
 
-	.instrument-cloud a {
+	.learning-program-tabs a {
 		flex: 0 0 auto;
 		padding: 0 20px;
 		font-size: 14px;
@@ -587,19 +595,19 @@ RESPONSIVE
 /* Mobile */
 
 @media (max-width: 600px) {
-	.instrument-cloud {
+	.learning-program-tabs {
 		gap: 6px;
 		padding: 6px;
 		border-radius: 30px;
 	}
 
-	.instrument-cloud a {
+	.learning-program-tabs a {
 		min-height: 42px;
 		padding: 0 16px;
 		font-size: 13px;
 	}
 
-	.instrument-cloud a:first-child::after {
+	.learning-program-tabs a.is-active::after {
 		bottom: -6px;
 		border-left-width: 6px;
 		border-right-width: 6px;
@@ -1033,7 +1041,7 @@ RESPONSIVE
 		align-items: center;
 		justify-content: center;
 
-		border-radius: 50%;
+		border-radius: 21px;
 
 		background: #fff0f3;
 		border: 1px solid #ffd5dd;
@@ -1058,9 +1066,7 @@ RESPONSIVE
 
 		h3 {
 			margin: 0 0 7px;
-
-			color: #111;
-
+			color: var(--small-heading);
 			font-size: 16px;
 			line-height: 1.2;
 			font-weight: 700;
@@ -1068,9 +1074,7 @@ RESPONSIVE
 
 		p {
 			margin: 0;
-
 			color: #666;
-
 			font-size: 11.5px;
 			line-height: 1.55;
 		}

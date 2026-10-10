@@ -40,6 +40,58 @@
 		return values;
 	}
 
+	// The single value a select or hidden input contributes. Selects cannot be
+	// read by parentValues, which only looks at checkable inputs.
+	function controlValue(form, name) {
+		var nodes = form.querySelectorAll('[name="' + name + '"]');
+
+		for (var i = 0; i < nodes.length; i++) {
+			var node = nodes[i];
+
+			if (node.type === 'hidden' || (node.type !== 'radio' && node.type !== 'checkbox')) {
+				return node.value;
+			}
+
+			if (node.checked) {
+				return node.value;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Fill a cascade select (State) with the sub-regions of the value chosen in
+	 * its parent (Country). The whole map travels on the select itself, and the
+	 * previously chosen option is kept when it still belongs to the newly
+	 * chosen parent, so a change is only ever a repopulate, never a clear.
+	 */
+	function populateCascadeSelects(form) {
+		var selects = form.querySelectorAll('[data-booking-cascade]');
+
+		for (var i = 0; i < selects.length; i++) {
+			var select = selects[i];
+			var parent = select.getAttribute('data-booking-cascade');
+			var map = parseMapAttribute(select, 'data-booking-states') || {};
+			var states = map[controlValue(form, parent)] || [];
+			var previous = select.value;
+			var placeholder = select.options[0] ? select.options[0].textContent : 'Select ...';
+
+			select.innerHTML = '<option value="">' + placeholder + '</option>';
+
+			for (var j = 0; j < states.length; j++) {
+				var option = document.createElement('option');
+				option.value = states[j];
+				option.textContent = states[j];
+				select.appendChild(option);
+			}
+
+			if (previous && states.indexOf(previous) !== -1) {
+				select.value = previous;
+			}
+		}
+	}
+
 	function isUnlocked(form, field) {
 		var wanted = (field.getAttribute('data-booking-equals') || '').split('|');
 		var values = parentValues(form, field.getAttribute('data-booking-depends'));
@@ -102,11 +154,14 @@
 	}
 
 	function watchConditionals(form) {
+		populateCascadeSelects(form);
 		applyConditionals(form);
 
 		// Re-check on any change: the parent may be a different control type, and a
-		// select or checkbox group can change without a blur.
+		// select or checkbox group can change without a blur. Cascades are
+		// repopulated first, so the visibility check sees the fresh option set.
 		form.addEventListener('change', function () {
+			populateCascadeSelects(form);
 			applyConditionals(form);
 		});
 	}
@@ -276,6 +331,31 @@
 		}
 	}
 
+	// Date pickers
+	//
+	// A registry field marked `datepicker` is rendered as a text input (the
+	// server keeps validating the ISO format) and handed to Flatpickr here, so
+	// the browser's own date control does not sit on top of the calendar. The
+	// vendor script is loaded before this one, so flatpickr is ready by now; if
+	// it ever failed to load, the field stays a plain text box.
+
+	function initDatepickers(form) {
+		var inputs = form.querySelectorAll('input[data-flatpickr]');
+
+		if (!inputs.length || typeof window.flatpickr === 'undefined') {
+			return;
+		}
+
+		for (var i = 0; i < inputs.length; i++) {
+			window.flatpickr(inputs[i], {
+				dateFormat: 'Y-m-d',
+				minDate: 'today',
+				disableMobile: true,
+				allowInput: false
+			});
+		}
+	}
+
 	// Payment
 
 	function setStatus(statusEl, message, isError) {
@@ -435,6 +515,7 @@
 
 		for (var i = 0; i < forms.length; i++) {
 			watchConditionals(forms[i]);
+			initDatepickers(forms[i]);
 		}
 
 		initGroups();

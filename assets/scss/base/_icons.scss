@@ -38,7 +38,7 @@ svg.brand-icon {
 	height: 1em;
 	flex-shrink: 0;
 	vertical-align: -0.125em;
-	fill: currentColor;
+	fill: var(--secondary);
 }
 
 /* .is-spinning replaces the old font's spin class, for the loading states. */

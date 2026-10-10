@@ -1,6 +1,6 @@
 <?php
-$pageTitle       = 'Contact BDC Music Studio';
-$metaDescription = 'Contact BDC Music Studio for recording, production, distribution, promotion, IPRS, classes, and artist service enquiries.';
+$pageTitle       = 'Contact BDC Music';
+$metaDescription = 'Contact BDC Music for recording, production, distribution, promotion, IPRS, classes, and artist service enquiries.';
 $ogTitle         = $pageTitle;
 $ogDescription   = $metaDescription;
 include_once 'header.php';

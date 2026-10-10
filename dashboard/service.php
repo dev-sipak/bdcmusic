@@ -26,7 +26,7 @@ if ( service_definition( $activeServiceSlug ) === null || ! customer_has_service
 
 $panelPage = 'service:' . $activeServiceSlug;
 
-$pageTitle       = service_nav_label( $activeServiceSlug ) . ' - BDC Music Studio';
+$pageTitle       = service_nav_label( $activeServiceSlug ) . ' - BDC Music';
 $metaDescription = service_blurb( $activeServiceSlug );
 $currentPage     = 'dashboard/service';
 include_once __DIR__ . '/../header.php';

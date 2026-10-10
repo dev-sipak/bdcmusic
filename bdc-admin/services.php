@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/admin-guard.php';
 
 $adminPage = 'services';
 
-$pageTitle       = 'Services & Packages - BDC Music Studio';
-$metaDescription = 'Manage the services the studio sells and every package and price shown on the site from the BDC Music Studio admin panel.';
+$pageTitle       = 'Services & Packages - BDC Music';
+$metaDescription = 'Manage the services the studio sells and every package and price shown on the site from the BDC Music admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
 $adminScripts = array( 'admin-plans.js' );

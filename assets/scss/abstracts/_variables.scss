@@ -3,14 +3,14 @@ DESIGN TOKENS
 ==================================================*/
 
 // Color Tokens
-$primary: #E4002B;
+$primary: #e4002b;
 $secondary: #F5F5F5;
 $dark: #FAFAFA;
 $card: #FFFFFF;
 $border: #E5E7EB;
 $text: #111111;
 $muted: #666666;
-
+$small-heading: #333131;
 $success: #10b981;
 $warning: #f59e0b;
 $error: #ef4444;
@@ -123,6 +123,7 @@ CSS CUSTOM PROPERTIES (auto-generated)
   // Colors
   --primary: #{$primary};
   --secondary: #{$secondary};
+  --small-heading: #{$small-heading};
   --dark: #{$dark};
   --card: #{$card};
   --border: #{$border};

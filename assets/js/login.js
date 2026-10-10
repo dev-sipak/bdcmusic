@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (isSignUp) {
 			title.textContent    = 'Create Account';
-			subtitle.textContent = 'Join BDC Music Studio today';
+			subtitle.textContent = 'Join BDC Music today';
 			submit.textContent   = 'Sign Up';
 			nameField.classList.remove('d-none');
 			phoneField.classList.remove('d-none');

@@ -120,6 +120,17 @@ if ( isset( $_GET['plan_ids'] ) ) {
 	$preselectIds = array( $_GET['plan_id'] );
 }
 
+// The newer links name the package by a readable slug rather than its id. It is
+// resolved against this service's own plans, so a slug from another service or
+// a stale one resolves to nothing and the default package applies instead.
+if ( $service && isset( $_GET['package'] ) ) {
+	$preselectPlan = booking_plan_by_slug( $pdb, (int) $service['id'], clean_text( $_GET['package'] ) );
+
+	if ( $preselectPlan ) {
+		$preselectIds = array( (int) $preselectPlan['id'] );
+	}
+}
+
 $preselectAdded = array();
 
 if ( $service && $preselectIds ) {
@@ -460,7 +471,11 @@ $pageTitle = $service
 	: 'Book a Service';
 $metaDescription = $service
 	? 'Complete your booking for ' . $serviceLabel . ' with BDC Music.'
-	: 'Choose a service and book with BDC Music Studio.';
+	: 'Choose a service and book with BDC Music.';
+
+// Vendored Flatpickr, used by the audio/video deadline calendar. Loaded before
+// main.css so the compiled theme overrides it, and from here rather than a CDN.
+$extraStylesheet = 'vendor/flatpickr/flatpickr.min.css';
 
 include_once __DIR__ . '/header.php';
 ?>
@@ -471,11 +486,6 @@ include_once __DIR__ . '/header.php';
 		<?php // The step is named once, by the progress list below, and the h1 is
 		// the service itself — narrowed to Audio or Video when a bundle settled it. ?>
 		<h1><?php echo $serviceLabel !== '' ? booking_esc( $serviceLabel ) : 'Choose a service'; ?></h1>
-
-		<p class="booking-note">
-			<i data-lucide="info"></i>
-			<span>Note: You can book one service at a time.</span>
-		</p>
 
 		<?php if ( $service ) : ?>
 			<ol class="booking-progress">
@@ -529,13 +539,17 @@ include_once __DIR__ . '/header.php';
 			<div class="booking-layout">
 				<div class="booking-panel">
 					<?php
-					// Back is the previous step in the list, or the service page when this is the
-					// first step for this service.
+					// Back steps to the previous step in the list. The first step
+					// has nothing before it, so the button is left out rather than
+					// dropped back onto the service page.
 					$stepIndex = array_search( $step, $steps, true );
 					$prevStep  = $stepIndex > 0 ? $steps[ $stepIndex - 1 ] : null;
 					$backUrl   = $prevStep
 						? booking_step_url( $prevStep, $service['slug'] )
 						: booking_service_page_url( $service['slug'] );
+					$backLink  = $prevStep
+						? '<a class="btn btn-dark" href="' . booking_esc( $backUrl ) . '">Back</a>'
+						: '';
 					?>
 
 					<?php // ── Step: category ──────────────────────────── ?>
@@ -552,7 +566,7 @@ include_once __DIR__ . '/header.php';
 							<?php echo booking_render_fields( $service['slug'], $details, array(), $errors, 'category' ); ?>
 
 							<div class="booking-nav">
-								<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+								<?php echo $backLink; ?>
 								<div class="booking-nav-right">
 									<button type="submit" class="btn">Continue</button>
 								</div>
@@ -561,11 +575,10 @@ include_once __DIR__ . '/header.php';
 
 					<?php // ── Step: details ────────────────────────────── ?>
 					<?php elseif ( $step === 'details' ) : ?>
-						<h2>Tell us about your project</h2>
-						<p class="booking-intro">
-							Tell us what you need for
-							<strong><?php echo booking_esc( $serviceLabel ); ?></strong>.
-							Fields marked <span class="required-star">*</span> are required.
+						<h2><?php echo booking_esc( booking_details_heading( $service['slug'] ) ); ?></h2>
+						<p class="booking-note">
+							<i data-lucide="info"></i>
+							<span>Note: You can book one service at a time.</span>
 						</p>
 
 						<?php // The side the chosen package settled, as one badge. The icon
@@ -595,7 +608,7 @@ include_once __DIR__ . '/header.php';
 							<?php endif; ?>
 
 							<div class="booking-nav">
-								<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+								<?php echo $backLink; ?>
 								<div class="booking-nav-right">
 									<button type="submit" class="btn">Continue</button>
 								</div>
@@ -612,7 +625,7 @@ include_once __DIR__ . '/header.php';
 							<?php echo booking_render_contact_fields( $contact, $errors ); ?>
 
 							<div class="booking-nav">
-								<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+								<?php echo $backLink; ?>
 								<div class="booking-nav-right">
 									<button type="submit" class="btn">Review booking</button>
 								</div>
@@ -625,26 +638,77 @@ include_once __DIR__ . '/header.php';
 						<p class="booking-intro">Make sure everything below is correct before you continue.</p>
 
 						<div class="booking-review">
+							<?php
+							// The review leads with the first step the customer answered.
+							// For Audio & Video that is the category question; every other
+							// service starts on the details form, so its answers are the
+							// first thing shown and no second details block follows.
+							$firstStep    = $steps[0];
+							$firstHeading = $firstStep === 'category' ? 'Service Category' : 'Your details';
+
+							// Prints one step's <dt>/<dd> rows so the first step and the
+							// details form share the same rendering. Fields hidden by the
+							// customer's answers were never submitted, so they are absent
+							// from $details and skip themselves.
+							$reviewRows = function ( $sectionStep ) use ( $service, $details, $uploads ) {
+								$hasRows = false;
+								$html    = '';
+
+								foreach ( $details as $key => $value ) {
+									$field = booking_field( $service['slug'], $key );
+
+									if ( ! $field || booking_field_step( $field ) !== $sectionStep ) {
+										continue;
+									}
+
+									$hasRows = true;
+									$shown   = is_array( $value ) ? implode( ', ', $value ) : (string) $value;
+
+									$html .= '<dt>' . booking_esc( $field['label'] ) . '</dt>'
+										. '<dd>' . booking_esc( $shown ) . '</dd>';
+								}
+
+								if ( $sectionStep === 'details' && $uploads ) {
+									$hasRows = true;
+									$html   .= '<dt>Files</dt><dd>'
+										. booking_esc( implode( ', ', array_column( $uploads, 'name' ) ) ) . '</dd>';
+								}
+
+								if ( ! $hasRows ) {
+									$html .= '<dd>No additional details provided.</dd>';
+								}
+
+								return $html;
+							};
+							?>
+
 							<div class="booking-review-block">
-								<h3>Service <a class="booking-review-edit" href="<?php echo booking_esc( $backUrl ); ?>">Change</a></h3>
-								<dl class="booking-review-list">
-									<dt>Service</dt>
-									<dd><?php echo booking_esc( $service['name'] ); ?></dd>
-									<?php if ( ! empty( $selection['plans'] ) ) : ?>
-										<dt>Package<?php echo count( $selection['plans'] ) > 1 ? 's' : ''; ?></dt>
-										<dd>
-											<?php foreach ( $selection['plans'] as $lineIndex => $line ) : ?>
-												<?php echo $lineIndex ? '<br>' : ''; ?>
+								<h3><?php echo booking_esc( $firstHeading ); ?>
+									<a class="booking-review-edit"
+									   href="<?php echo booking_esc( booking_step_url( $firstStep, $service['slug'] ) ); ?>">Change</a>
+								</h3>
+								<dl class="booking-review-list"><?php echo $reviewRows( $firstStep ); ?></dl>
+							</div>
+
+							<?php if ( ! empty( $selection['plans'] ) ) : ?>
+								<div class="booking-review-block">
+									<h3>Package<?php echo count( $selection['plans'] ) > 1 ? 's' : ''; ?>
+										<a class="booking-review-edit"
+										   href="<?php echo booking_esc( booking_service_page_url( $service['slug'] ) ); ?>">Change</a>
+									</h3>
+									<dl class="booking-review-list">
+										<?php foreach ( $selection['plans'] as $line ) : ?>
+											<dt>
 												<?php echo booking_esc( $line['name'] ); ?>
 												<?php if ( ! empty( $line['group_label'] ) ) : ?>
 													<small>(<?php echo booking_esc( $line['group_label'] ); ?>)</small>
 												<?php endif; ?>
-												<small><?php echo booking_esc( booking_money( $line['price'] ) ); ?></small>
-											<?php endforeach; ?>
-										</dd>
-									<?php endif; ?>
-								</dl>
-							</div>
+											</dt>
+											<dd><?php echo booking_esc( booking_money( $line['price'] ) ); ?></dd>
+										<?php endforeach; ?>
+									</dl>
+								</div>
+							<?php endif; ?>
 
 							<div class="booking-review-block">
 								<h3>Contact
@@ -669,36 +733,15 @@ include_once __DIR__ . '/header.php';
 								</dl>
 							</div>
 
-							<div class="booking-review-block">
-								<h3>Your details
-									<a class="booking-review-edit"
-									   href="<?php echo booking_esc( booking_step_url( 'details', $service['slug'] ) ); ?>">Change</a>
-								</h3>
-								<dl class="booking-review-list">
-									<?php if ( $details ) : ?>
-										<?php foreach ( $details as $key => $value ) : ?>
-											<?php
-											$field = booking_field( $service['slug'], $key );
-											if ( ! $field ) {
-												continue;
-											}
-											$shown = is_array( $value ) ? implode( ', ', $value ) : (string) $value;
-											?>
-											<dt><?php echo booking_esc( $field['label'] ); ?></dt>
-											<dd><?php echo booking_esc( $shown ); ?></dd>
-										<?php endforeach; ?>
-									<?php else : ?>
-										<dd>No additional details provided.</dd>
-									<?php endif; ?>
-
-									<?php if ( $uploads ) : ?>
-										<dt>Files</dt>
-										<dd>
-											<?php echo booking_esc( implode( ', ', array_column( $uploads, 'name' ) ) ); ?>
-										</dd>
-									<?php endif; ?>
-								</dl>
-							</div>
+							<?php if ( $firstStep !== 'details' ) : ?>
+								<div class="booking-review-block">
+									<h3>Your details
+										<a class="booking-review-edit"
+										   href="<?php echo booking_esc( booking_step_url( 'details', $service['slug'] ) ); ?>">Change</a>
+									</h3>
+									<dl class="booking-review-list"><?php echo $reviewRows( 'details' ); ?></dl>
+								</div>
+							<?php endif; ?>
 						</div>
 
 						<?php if ( $quoteMode ) : ?>
@@ -713,8 +756,16 @@ include_once __DIR__ . '/header.php';
 							<form method="post" action="<?php echo booking_esc( url( 'includes/booking-create.php' ) ); ?>">
 								<?php echo csrf_field(); ?>
 								<input type="hidden" name="action" value="quote">
+								<label class="booking-terms">
+									<input type="checkbox" name="terms_accept" value="1" required>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a>.</span>
+								</label>
+								<label class="booking-terms">
+									<input type="checkbox" name="privacy_accept" value="1" required>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+								</label>
 								<div class="booking-nav">
-									<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+									<?php echo $backLink; ?>
 									<div class="booking-nav-right">
 										<button type="submit" class="btn">Submit for a quote</button>
 									</div>
@@ -722,7 +773,7 @@ include_once __DIR__ . '/header.php';
 							</form>
 						<?php else : ?>
 							<div class="booking-nav">
-								<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+								<?php echo $backLink; ?>
 								<div class="booking-nav-right">
 									<a class="btn" href="<?php echo booking_esc( booking_step_url( 'payment', $service['slug'] ) ); ?>">
 										<?php echo booking_payment_ready() ? 'Continue to payment' : 'Place your order'; ?>
@@ -741,16 +792,35 @@ include_once __DIR__ . '/header.php';
 							// the step becomes placing the order. ?>
 							<?php $payOnline = booking_payment_ready(); ?>
 
+			<?php
+							// The package(s) being bought, named the same way the review step names
+							// them, so the intro can say what the order actually is.
+							$packageSummary = '';
+
+							if ( ! empty( $selection['plans'] ) ) {
+								$packageNames = array();
+
+								foreach ( $selection['plans'] as $line ) {
+									$packageNames[] = $line['name']
+										. ( ! empty( $line['group_label'] ) ? ' (' . $line['group_label'] . ')' : '' );
+								}
+
+								$packageSummary = implode( ', ', $packageNames );
+							}
+
+							$orderLabel = $serviceLabel . ( $packageSummary !== '' ? ' — ' . $packageSummary : '' );
+							?>
+
 							<h2><?php echo $payOnline
 								? 'Pay ' . booking_esc( booking_money( $selection['total'] ) )
 								: 'Place your order'; ?></h2>
 							<p class="booking-intro">
 								<?php if ( $payOnline ) : ?>
 									You will be taken to Razorpay's secure checkout to pay
-									<?php echo booking_esc( booking_money( $selection['total'] ) ); ?>.
+									<?php echo booking_esc( booking_money( $selection['total'] ) ); ?>
+									for <strong><?php echo booking_esc( $orderLabel ); ?></strong>.
 								<?php else : ?>
-									Your order for
-									<strong><?php echo booking_esc( $serviceLabel ); ?></strong>
+									Your order for <strong><?php echo booking_esc( $orderLabel ); ?></strong>
 									is <?php echo booking_esc( booking_money( $selection['total'] ) ); ?>.
 									Place the order now and our team will contact you to take
 									payment.
@@ -766,8 +836,17 @@ include_once __DIR__ . '/header.php';
 								<?php echo csrf_field(); ?>
 								<input type="hidden" name="action" value="pay">
 
+								<label class="booking-terms">
+									<input type="checkbox" name="terms_accept" value="1" required>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a>.</span>
+								</label>
+								<label class="booking-terms">
+									<input type="checkbox" name="privacy_accept" value="1" required>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+								</label>
+
 								<div class="booking-nav">
-									<a class="btn btn-dark" href="<?php echo booking_esc( $backUrl ); ?>">Back</a>
+									<?php echo $backLink; ?>
 									<div class="booking-nav-right">
 										<button type="submit" class="btn" data-booking-pay-button>
 											<?php echo $payOnline
@@ -846,6 +925,7 @@ include_once __DIR__ . '/header.php';
 </main>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="<?php echo booking_esc( $assetPath ); ?>vendor/flatpickr/flatpickr.min.js"></script>
 <script src="<?php echo booking_esc( $assetPath ); ?>js/booking-checkout.js"></script>
 
 <?php include_once __DIR__ . '/footer.php'; ?>

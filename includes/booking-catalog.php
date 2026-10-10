@@ -323,6 +323,56 @@ function booking_plan_by_id( $pdb, $planId ) {
 }
 
 /**
+ * A URL-safe slug for a package, derived from its group and name.
+ *
+ * Packages have no slug column. A service's plan names repeat across its groups
+ * ("Basic" in every Classes group), so the group key is folded in to keep the
+ * slug unique within the one service a URL may name. A flat service has no
+ * group, so only the name is used.
+ *
+ * @param array $plan A row from booking_service_plans() or booking_plans().
+ * @return string
+ */
+function booking_plan_slug( array $plan ) {
+	$parts = array(
+		(string) ( $plan['group_key'] ?? '' ),
+		(string) ( $plan['name'] ?? '' ),
+	);
+
+	$slug = strtolower( preg_replace( '/[^a-z0-9]+/i', '-', implode( ' ', $parts ) ) );
+
+	return trim( $slug, '-' );
+}
+
+/**
+ * One active package of a service by its readable slug.
+ *
+ * The inverse of booking_plan_slug(), scoped to a single service so a slug
+ * belonging to another service can never resolve. Returns null when nothing
+ * matches, which leaves the caller to fall back to the default package.
+ *
+ * @param PDO    $pdb       Connection.
+ * @param int    $serviceId services.id.
+ * @param string $slug      Package slug.
+ * @return array|null A plan row, or null.
+ */
+function booking_plan_by_slug( $pdb, $serviceId, $slug ) {
+	$slug = (string) $slug;
+
+	if ( $slug === '' ) {
+		return null;
+	}
+
+	foreach ( booking_service_plans( $pdb, $serviceId ) as $plan ) {
+		if ( booking_plan_slug( $plan ) === $slug ) {
+			return $plan;
+		}
+	}
+
+	return null;
+}
+
+/**
  * The package a service opens with when no package has been chosen yet.
  *
  * Checkout no longer asks which package to buy, so a link that arrives without

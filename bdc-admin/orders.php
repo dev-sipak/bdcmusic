@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/admin-guard.php';
 
 $adminPage = 'orders';
 
-$pageTitle       = 'Orders Management - BDC Music Studio';
-$metaDescription = 'View, filter, and manage all customer orders across services from the BDC Music Studio admin panel.';
+$pageTitle       = 'Orders Management - BDC Music';
+$metaDescription = 'View, filter, and manage all customer orders across services from the BDC Music admin panel.';
 include_once __DIR__ . '/includes/admin-header.php';
 
   // Only the service list is needed here: the Orders tab renders its rows from

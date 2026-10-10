@@ -1,6 +1,6 @@
 <?php
-$pageTitle = 'Artists | BDC Music Studio';
-$metaDescription = 'Browse talented artists by category on the BDC Music Studio marketplace.';
+$pageTitle = 'Artists | BDC Music';
+$metaDescription = 'Browse talented artists by category on the BDC Music marketplace.';
 include_once '../header.php';
 require_once __DIR__ . '/../includes/pagination.php';
 
@@ -49,7 +49,7 @@ try {
 
 		if ( $cat ) {
 			$categoryName = $cat['name'];
-			$pageTitle = $categoryName . ' Artists | BDC Music Studio';
+			$pageTitle = $categoryName . ' Artists | BDC Music';
 
 			$baseSql = 'SELECT a.id, a.name, a.slug, a.image, a.location, a.bio,
                                ac.name AS category_name, ac.slug AS category_slug
@@ -168,7 +168,7 @@ $heroSubtitle = isset( $categorySubtitles[ $subtitleKey ] ) ? $categorySubtitles
 			<?php endif; ?>
 		</section>
 
-		<section class="artist-cta">
+		<section class="call-to-action">
 			<h2>Looking for the Right Talent?</h2>
 			<p>Post your project and connect with the perfect artists for your production.</p>
 			<a href="<?php echo $basePath; ?>contact/" class="btn btn--primary">Enquire Now</a>

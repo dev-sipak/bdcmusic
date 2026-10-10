@@ -15,7 +15,7 @@ if ( ! $hasDistribution ) {
 	exit;
 }
 
-$pageTitle       = 'My Releases - BDC Music Studio';
+$pageTitle       = 'My Releases - BDC Music';
 $metaDescription = 'Manage your digital music releases.';
 $currentPage     = 'dashboard/releases';
 include_once __DIR__ . '/../header.php';

@@ -1,4 +1,13 @@
-<?php include_once 'header.php'; ?>
+<?php
+
+$pageTitle       = 'BDC Music | Artist Management, Music Production & Distribution';
+$metaDescription = 'Discover BDC Music for artist promotion, music production, audio and video services, online music classes, digital distribution, and music rights support.';
+$ogTitle         = 'BDC Music — Your Complete Music Partner';
+$ogDescription   = 'Explore BDC Music for artist discovery, music production, digital distribution, promotion, music education, and IPRS services.';
+
+include_once 'header.php';
+
+?>
 	<main>
 		<section class="hero hero-bg" id="home">
 			<div class="hero-ambient ambient-b"></div>
@@ -6,7 +15,7 @@
 				<div class="hero-content reveal">
 					<span class="heading-tag">All-in-one music platform</span>
 					<h1>From Your First Track to Global Recognition</h1>
-					<p>Build your music career with BDC—music distribution, promotion, classes, audio & video services, artist marketplace and IPRS services, all under one roof.</p>
+					<p>Build your music career with BDC-music distribution, promotion, classes, audio & video services, artist marketplace and IPRS services, all under one roof.</p>
 					<div class="hero-buttons">
 						<a href="mailto:info@bdcmusic.in" class="btn">Get In Touch</a>
 						<a href="<?php echo $basePath; ?>all-services" class="btn btn-outline">Explore Services</a>
@@ -24,7 +33,7 @@
 
 							<div class="swiper-slide">
 								<div class="hero-card">
-									<img src="<?php echo $assetPath; ?>images/hero-1.png" alt="BDC Music Studio">
+									<img src="<?php echo $assetPath; ?>images/hero-1.png" alt="BDC Music">
 								</div>
 							</div>
 
@@ -51,28 +60,26 @@
 				</div>
 			</div>
 		</section>
-
-		<section class="trust-bar" aria-label="BDC Music highlights">
+		<section class="trust-bar" aria-label="BDC Music achievements">
 			<div class="container trust-grid">
-				<div class="trust-item reveal">
-					<h6>500+ Artists</h6>
-					<p>Supported</p>
+				<div class="trust-item reveal is-visible">
+					<h6>300+</h6>
+					<p>Artists Supported</p>
 				</div>
-				<div class="trust-item reveal">
-					<h6>1000+ Releases</h6>
-					<p>Managed</p>
+				<div class="trust-item reveal is-visible">
+					<h6>200+</h6>
+					<p>Music Releases</p>
 				</div>
-				<div class="trust-item reveal">
-					<h6>Global Distribution</h6>
-					<p>Across major platforms</p>
+				<div class="trust-item reveal is-visible">
+					<h6>100+</h6>
+					<p>Promotions Completed</p>
 				</div>
-				<div class="trust-item reveal">
-					<h6>Professional Production</h6>
-					<p>From recording to mastering</p>
+				<div class="trust-item reveal is-visible">
+					<h6>10+</h6>
+					<p>Years of Experience</p>
 				</div>
 			</div>
 		</section>
-
 		<section class="brand-positioning section-surface py-9" id="about">
 			<div class="container brand-grid">
 				<div class="brand-media reveal">
@@ -112,113 +119,155 @@
 		<section class="ecosystem section-dark py-9" id="services">
 			<div class="container">
 				<div class="section-heading reveal">
-					<span class="heading-tag">What We Cover</span>
-					<h2>Everything you need to create, release and grow your music</h2>
-					<p>From artist discovery and production to education, distribution and rights management, BDC Music provides the services artists need to build sustainable careers.</p>
+					<span class="heading-tag">Our Services</span>
+					<h2>Everything artists need to <span class="highlight-text">create, release</span> and <span class="highlight-text">grow</span> their music</h2>
 				</div>
 
 				<div class="ecosystem-grid">
-
-					<!-- BDC Artists Marketplace -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<img src="<?php echo $assetPath; ?>images/singer.svg" class="red-svg" alt="BDC Artists Marketplace">
+							<i data-lucide="users"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/bdc-artists-marketplace/">
-								BDC Artists Marketplace
-							</a>
+							<a href="<?php echo $basePath; ?>services/bdc-artists-marketplace/">BDC Artists Marketplace</a>
 						</h3>
 						<p>Discover, showcase and connect with talented artists, musicians and creative professionals.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/bdc-artists-marketplace/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
 					</article>
 
-					<!-- Audio & Video Services -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<svg viewBox="0 0 24 24">
-								<rect x="3" y="10" width="2" height="4"/>
-								<rect x="7" y="6" width="2" height="12"/>
-								<rect x="11" y="3" width="2" height="18"/>
-								<rect x="15" y="7" width="2" height="10"/>
-								<rect x="19" y="9" width="2" height="6"/>
-							</svg>
+							<i data-lucide="audio-lines"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/audio-video-services/">
-								Audio &amp; Video Services
-							</a>
+							<a href="<?php echo $basePath; ?>services/audio-video-services/">Audio &amp; Video Services</a>
 						</h3>
 						<p>Professional recording, mixing, mastering, music production and video services for your next release.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/audio-video-services/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
 					</article>
 
-					<!-- Online/Offline Classes -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<svg viewBox="0 0 24 24">
-								<path d="M2 8l10-5 10 5-10 5z"/>
-								<path d="M6 10v5c0 2 3 4 6 4s6-2 6-4v-5"/>
-							</svg>
+							<i data-lucide="graduation-cap"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/online-offline-classes/">
-								Online/Offline Classes
-							</a>
+							<a href="<?php echo $basePath; ?>services/online-offline-classes/">Online/Offline Classes</a>
 						</h3>
 						<p>Learn vocals, instruments, music production and other creative skills through flexible learning options.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/online-offline-classes/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
 					</article>
 
-					<!-- Digital Music Distribution -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<svg viewBox="0 0 24 24">
-								<circle cx="12" cy="12" r="9"/>
-								<path d="M3 12h18"/>
-								<path d="M12 3a14 14 0 0 1 0 18"/>
-								<path d="M12 3a14 14 0 0 0 0 18"/>
-							</svg>
+							<i data-lucide="globe-2"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/digital-music-distribution/">
-								Digital Music Distribution
-							</a>
+							<a href="<?php echo $basePath; ?>services/digital-music-distribution/">Digital Music Distribution</a>
 						</h3>
 						<p>Deliver your music to major streaming platforms with release management and digital distribution support.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/digital-music-distribution/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
 					</article>
 
-					<!-- Promotion Services -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<svg viewBox="0 0 24 24">
-								<path d="M4 18l5-5 3 3 8-8"/>
-								<path d="M15 8h5v5"/>
-							</svg>
+							<i data-lucide="megaphone"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/promotion-services/">
-								Promotion Services
-							</a>
+							<a href="<?php echo $basePath; ?>services/promotion-services/">Promotion Services</a>
 						</h3>
 						<p>Build awareness and reach new audiences through strategic digital marketing, campaigns and music promotion.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/promotion-services/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
 					</article>
 
-					<!-- IPRS Services -->
 					<article class="eco-card glass-card reveal">
 						<span class="eco-icon">
-							<svg viewBox="0 0 24 24">
-								<path d="M6 3h12v18H6z"/>
-								<path d="M9 7h6"/>
-								<path d="M9 11h6"/>
-								<path d="M9 15h4"/>
-							</svg>
+							<i data-lucide="copyright"></i>
 						</span>
 						<h3>
-							<a href="<?php echo $basePath; ?>services/iprs-services/">
-								IPRS Services
-							</a>
+							<a href="<?php echo $basePath; ?>services/iprs-services/">IPRS Services</a>
 						</h3>
 						<p>Support for music rights, royalty registration and copyright-related services to help protect your creative work.</p>
+						<span class="eco-arrow" aria-hidden="true">
+							<a href="<?php echo $basePath; ?>services/iprs-services/"><i data-lucide="arrow-up-right"></i></a>
+						</span>
+					</article>
+				</div>
+			</div>
+		</section>
+		
+		<section class="success section" id="success">
+			<div class="container">
+				<div class="section-heading reveal is-visible">
+					<span class="heading-tag">SUCCESS STORIES</span>
+					<h2>Real artists. Real <span class="highlight-text">growth.</span> Real results.</h2>
+				</div>
+
+				<div class="success-grid">
+					<article class="success-card reveal in" style="transition-delay: 0ms;">
+						<img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900&amp;q=85" alt="Riya Sharma">
+						<div>
+							<h3>Riya Sharma</h3>
+							<small>Singer</small>
+							<div>
+								<b>420K+<small>YouTube Views</small></b>
+								<b>92K+<small>Spotify Streams</small></b>
+								<b>18K+<small>New Followers</small></b>
+								<b>12<small>Songs Released</small></b>
+							</div>
+						</div>
 					</article>
 
+					<article class="success-card reveal in" style="transition-delay: 90ms;">
+						<img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=900&amp;q=85" alt="Arjun Mehta">
+						<div>
+							<h3>Arjun Mehta</h3>
+							<small>Producer</small>
+							<div>
+								<b>1.2M+<small>YouTube Views</small></b>
+								<b>210K+<small>Spotify Streams</small></b>
+								<b>25K+<small>New Followers</small></b>
+								<b>18<small>Songs Released</small></b>
+							</div>
+						</div>
+					</article>
+
+					<article class="success-card reveal in" style="transition-delay: 180ms;">
+						<img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=900&amp;q=85" alt="The Midnight Drive">
+						<div>
+							<h3>The Midnight Drive</h3>
+							<small>Indie Band</small>
+							<div>
+								<b>2.8M+<small>YouTube Views</small></b>
+								<b>320K+<small>Spotify Streams</small></b>
+								<b>42K+<small>New Followers</small></b>
+								<b>24<small>Songs Released</small></b>
+							</div>
+						</div>
+					</article>
+
+					<article class="success-card reveal in" style="transition-delay: 270ms;">
+						<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&amp;q=85" alt="Sneha Iyer">
+						<div>
+							<h3>Sneha Iyer</h3>
+							<small>Singer</small>
+							<div>
+								<b>950K+<small>YouTube Views</small></b>
+								<b>150K+<small>Spotify Streams</small></b>
+								<b>21K+<small>New Followers</small></b>
+								<b>15<small>Songs Released</small></b>
+							</div>
+						</div>
+					</article>
 				</div>
 			</div>
 		</section>
@@ -226,8 +275,8 @@
 		<section class="people py-9" id="people">
 			<div class="container">
 				<div class="section-heading reveal">
-					<span class="heading-tag">Featured artists</span>
-					<h2>Creators building their next chapter with BDC Music</h2>
+					<span class="heading-tag">Discover BDC Talent</span>
+					<h2>Discover amazing artists for your <span class="highlight-text">next project</span></h2>
 				</div>
 				<div class="swiper person-slider">
 					<div class="swiper-wrapper">
@@ -336,12 +385,11 @@
 				</div>
 			</div>
 		</section>
-
-		<section class="academy pt-0 py-9" id="academy">
+		<section class="academy pt-0 pb-9" id="academy">
 			<div class="container">
 				<div class="section-heading reveal">
 					<span class="heading-tag">Education hub</span>
-					<h2>Learn the craft. Build the career.</h2>
+					<h2>Learn the craft. <br/> Build the career<span style="color: var(--primary);">.</span></h2>
 				</div>
 
 				<div class="academy-grid">

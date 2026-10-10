@@ -1,6 +1,6 @@
 <?php
-$pageTitle = 'Online & Offline Music Classes | BDC Music Studio';
-$metaDescription = 'Join BDC Music Studio online and offline classes for singing, music production, instruments, and video editing with clear packages and enquiry support.';
+$pageTitle = 'Online & Offline Music Classes | BDC Music';
+$metaDescription = 'Join BDC Music online and offline classes for singing, music production, instruments, and video editing with clear packages and enquiry support.';
 $ogTitle = $pageTitle;
 $ogDescription = $metaDescription;
 
@@ -47,8 +47,10 @@ foreach ( $courseGroupKeys as $courseLabel => $groupKey ) {
 
 	foreach ( booking_plans( $marketingPdb, $classServiceId, $groupKey ) as $plan ) {
 		$courses[ $courseLabel ][ $plan['name'] ] = [
-			'id'    => (int) $plan['id'],
-			'price' => booking_money( $plan['price'] ),
+			'id'        => (int) $plan['id'],
+			'price'     => booking_money( $plan['price'] ),
+			'group_key' => (string) $plan['group_key'],
+			'name'      => (string) $plan['name'],
 		];
 	}
 }
@@ -235,9 +237,36 @@ $instruments = [
 	'Harmonium',
 	'Saxophone',
 ];
+
+/**
+ * The id given to a course block. The chips in the program selector link to
+ * these ids, so the two are derived from one function here: when the chips were
+ * typed out by hand an anchor silently stopped matching its section and the
+ * browser jumped nowhere.
+ *
+ * @param string $courseName Label as keyed in $planDetails.
+ * @return string
+ */
+$classesSectionId = static function ( $courseName ) {
+	$id = strtolower( str_replace( ' ', '-', $courseName ) );
+	$id = preg_replace( '/[^a-z0-9\-]/', '-', $id );
+	return trim( preg_replace( '/-+/', '-', $id ), '-' );
+};
+
+/**
+ * Chip copy per course. Kept apart from the $planDetails keys because the chip
+ * has to stay short ("Instrument Training") while the section heading carries
+ * the full name ("Instrument Courses").
+ */
+$classesChipLabels = [
+	'Singing'            => 'Singing',
+	'Music Production'   => 'Music Production',
+	'Instrument Courses' => 'Instrument Training',
+	'Video Editing'      => 'Video Editing',
+];
 ?>
 
-<section class="page-hero">
+<section class="page-hero pb-0">
 
 	<div class="container">
 
@@ -299,7 +328,7 @@ href="#choose-package"
 		</div>
 
 		<!-- PROGRAM SELECTION -->
-		<div class="section-block">
+		<div class="section-block pb-0">
 
 			<h2>
 				Choose Your Learning Program
@@ -310,49 +339,25 @@ href="#choose-package"
 				professional-level skills, choose a program designed
 				around your goals.
 			</p>
-
-			<div class="instrument-cloud">
-
-				<a
-					href="#singing"
-				>
-					Singing
-				</a>
-
-				<a
-					href="#music-production"
-				>
-					Music Production
-				</a>
-
-				<a
-					href="#instrument-courses"
-				>
-					Instrument Training
-				</a>
-
-				<a
-					href="#video-editing"
-				>
-					Video Editing
-				</a>
-
+			<div
+				class="learning-program-tabs"
+				data-program-tabs
+				role="tablist"
+				aria-label="Choose your learning program"
+			>
+				<?php
+				foreach ( array_keys( $planDetails ) as $courseIndex => $courseName ) :
+					$courseId      = $classesSectionId( $courseName );
+					$isFirstCourse = $courseIndex === 0;
+					?>
+					<a href="#<?php echo htmlspecialchars( $courseId ); ?>" id="tab-<?php echo htmlspecialchars( $courseId ); ?>" role="tab" aria-controls="<?php echo htmlspecialchars( $courseId ); ?>" aria-selected="<?php echo $isFirstCourse ? 'true' : 'false'; ?>"<?php echo $isFirstCourse ? 'class="is-active"' : ''; ?>><?php echo htmlspecialchars( $classesChipLabels[ $courseName ] ?? $courseName ); ?></a>
+				<?php endforeach; ?>
 			</div>
 
 		</div>
 
 		<!-- PACKAGE COMPARISON -->
-<div class="section-block pt-0" id="choose-package">
-
-			<h2>
-				Choose Your Package
-			</h2>
-
-			<p class="section-intro">
-				Compare our professionally designed learning programs
-				and choose the package that best matches your goals,
-				experience and learning level.
-			</p>
+		<div class="section-block pt-0 pb-0" id="choose-package">
 
 			<div class="comparison-wrap">
 
@@ -362,13 +367,7 @@ href="#choose-package"
 
 					$priceKey = $courseName;
 
-					$sectionId = strtolower(
-						str_replace(
-							' ',
-							'-',
-							$courseName
-						)
-					);
+					$sectionId = $classesSectionId( $courseName );
 
 					?>
 
@@ -376,6 +375,8 @@ href="#choose-package"
 					<div
 						class="category-block"
 						id="<?php echo htmlspecialchars( $sectionId ); ?>"
+						role="tabpanel"
+						aria-labelledby="tab-<?php echo htmlspecialchars( $sectionId ); ?>"
 					>
 
 						<h3>
@@ -497,7 +498,8 @@ href="#choose-package"
 										echo htmlspecialchars(
 											booking_preselect_url(
 												'online-offline-classes',
-												$plan['id']
+												$plan['id'],
+												$plan
 											)
 										);
 										?>"
@@ -520,7 +522,7 @@ href="#choose-package"
 		</div>
 
 		<!-- ASSISTANCE CTA -->
-		<div class="section-block pt-0">
+		<div class="call-to-action">
 
 			<h2>
 				Not Sure Which Package to Choose?
@@ -535,7 +537,7 @@ href="#choose-package"
 			<div class="hero-actions text-center">
 
 				<a
-href="#choose-package"
+href="mailto:info@bdcmusic.in"
 					class="btn"
 				>
 					Talk to Our Team
@@ -550,4 +552,5 @@ href="#choose-package"
 </section>
 
 <script src="<?php echo $assetPath; ?>js/online-offline-classes-form.js"></script>
+<script src="<?php echo $assetPath; ?>js/classes-section-nav.js"></script>
 <?php include_once '../footer.php'; ?>
