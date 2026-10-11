@@ -18,6 +18,7 @@ if ( ! $hasDistribution ) {
 $pageTitle       = 'My Releases - BDC Music';
 $metaDescription = 'Manage your digital music releases.';
 $currentPage     = 'dashboard/releases';
+$extraStylesheet = 'vendor/flatpickr/flatpickr.min.css';
 include_once __DIR__ . '/../header.php';
 
 // Status filter is a route segment (?status=...) rather than a JS tab switch.
@@ -186,7 +187,7 @@ function release_status_url( $base, $status ) {
 							<label class="panel-label" for="rel-golive">Go Live Date</label>
 							<div style="position:relative;flex:1;">
 								<i data-lucide="calendar" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:0.85rem;pointer-events:none;z-index:1;"></i>
-								<input type="date" id="rel-golive" class="panel-input" style="padding-left:34px;">
+								<input type="text" id="rel-golive" class="panel-input" data-flatpickr placeholder="dd/mm/yyyy" style="padding-left:34px;">
 							</div>
 						</div>
 						<div class="panel-detail-row">
@@ -216,6 +217,7 @@ function release_status_url( $base, $status ) {
 
 <?php include __DIR__ . '/includes/panel-config.php'; ?>
 
+<script src="<?php echo $assetPath; ?>vendor/flatpickr/flatpickr.min.js"></script>
 <script src="<?php echo $assetPath; ?>js/shared.js"></script>
 <script src="<?php echo $assetPath; ?>js/customer-dashboard.js"></script>
 <script src="<?php echo $assetPath; ?>js/customer-releases.js"></script>

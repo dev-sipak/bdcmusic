@@ -137,6 +137,9 @@ function service_definitions() {
 			'blurb' => 'Your albums, singles and EPs with their tracks and live platform links.',
 			'meta'  => array(
 				array( 'key' => 'release_title',  'label' => 'Release Title',   'type' => 'text' ),
+				array( 'key' => 'calltune_name',   'label' => 'Calltune Name',   'type' => 'text' ),
+				array( 'key' => 'caller_tune_start', 'label' => 'Caller Tune Start', 'type' => 'text' ),
+				array( 'key' => 'register_label', 'label' => 'Register Label', 'type' => 'text' ),
 				array( 'key' => 'release_type',   'label' => 'Release Type',   'type' => 'text' ),
 				array( 'key' => 'artist_name',    'label' => 'Artist',         'type' => 'text' ),
 				array( 'key' => 'genre',          'label' => 'Genre',          'type' => 'text' ),
@@ -145,6 +148,11 @@ function service_definitions() {
 				array( 'key' => 'isrc',           'label' => 'ISRC',           'type' => 'text' ),
 				array( 'key' => 'upc',            'label' => 'UPC',            'type' => 'text' ),
 				array( 'key' => 'copyright_help', 'label' => 'Copyright Help', 'type' => 'text' ),
+				array( 'key' => 'youtube_link',         'label' => 'YouTube Song Link',    'type' => 'url' ),
+				array( 'key' => 'spotify_artist_link',  'label' => 'Spotify Artist Profile', 'type' => 'url' ),
+				array( 'key' => 'instagram_link',       'label' => 'Instagram',              'type' => 'url' ),
+				array( 'key' => 'facebook_link',        'label' => 'Facebook',               'type' => 'url' ),
+				array( 'key' => 'youtube_channel_link', 'label' => 'YouTube Channel',        'type' => 'url' ),
 			),
 			'arrangement' => array(
 				'headline'     => array( 'label' => 'Distributor Reference', 'icon' => 'barcode' ),

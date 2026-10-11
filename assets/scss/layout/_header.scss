@@ -9,6 +9,19 @@ HEADER
   width: 100%;
   z-index: 99;
   padding: 26px 0;
+  transition: all 0.3s ease;
+  border-radius: 0;
+  backdrop-filter: none;
+  background: transparent;
+}
+
+.header.sticky {
+  position: fixed;
+  top: 0;
+  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 12px 12px;
 }
 
 .header .container {
@@ -21,6 +34,10 @@ HEADER
 .logo img {
   height: 58px;
   width: auto;
+}
+
+.header.sticky .logo img {
+  height: 40px;
 }
 
 @include respond(lg) {

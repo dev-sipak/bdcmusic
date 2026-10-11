@@ -24,7 +24,7 @@ require_once __DIR__ . '/includes/brand-icons.php';
 					<li><a href="https://www.youtube.com/@bdcshortmovies" target="_blank" rel="noopener">BDC Short Movies</a></li>
 					<li><a href="https://www.youtube.com/@bdcshayari" target="_blank" rel="noopener">BDC Shayari</a></li>
 					<li><a href="https://www.youtube.com/@bdcvlogs" target="_blank" rel="noopener">BDC Vlogs</a></li>
-					<li><a href="https://www.youtube.com/@bdcmusicclass" target="_blank" rel="noopener">BDC Music Classes</a></li>
+					<li><a href="https://www.youtube.com/@bdcmusicclasses" target="_blank" rel="noopener">BDC Music Classes</a></li>
 				</ul>
 			</div>
 			<div>

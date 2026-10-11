@@ -69,7 +69,7 @@ try {
 					<span class="adm-nav-badge<?php echo $adminNavBadge > 0 ? '' : ' d-none'; ?>"
 						data-admin-badge="<?php echo htmlspecialchars( $adminNavKey ); ?>"
 						title="<?php echo $adminNavBadge; ?> item<?php echo $adminNavBadge === 1 ? '' : 's'; ?> waiting for review">
-						<?php echo $adminNavBadge; ?>
+						<?php echo ($adminNavKey === 'orders' && $adminNavBadge > 0) ? 'New' : $adminNavBadge; ?>
 					</span>
 				<?php endif; ?>
 			</a>

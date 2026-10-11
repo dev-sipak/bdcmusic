@@ -20,13 +20,14 @@
  *   required    bool
  *   options     value => label, for select/radio/checkbox
  *   min / max   numeric bounds for a `number` field; the value must be a
- *               number, and decimals such as 2.5 are accepted
+ *               number, and decimals such as 2.5 are accepted. On a `file` or
+ *               `files` field they bound how many files may be attached.
+ *   min_days    for a `date` field, the earliest selectable date is this many
+ *               days from today. Enforced by the validator and by Flatpickr.
  *   placeholder input placeholder
  *   icon        Lucide icon name
  *   accept      file extension filter
  *   multiple    allow more than one file
- *   datepicker  render a `date` field as a Flatpickr calendar instead of the
- *               browser's own date control
  *   help        hint text under the control
  *   depends_on  array( 'key' => ..., 'equals' => ... ) - shown only when the
  *               named field currently holds that value
@@ -219,7 +220,7 @@ function booking_fields( $slug ) {    static $cache = array();
 				'Audio' => '.wav,.mp3,.flac',
 				'Video' => '.mp4,.mov',
 			) ),
-			array( 'key' => 'deadline', 'label' => 'Deadline', 'type' => 'date', 'required' => true, 'icon' => 'calendar', 'half' => true, 'datepicker' => true ),
+			array( 'key' => 'deadline', 'label' => 'Deadline', 'type' => 'date', 'required' => true, 'icon' => 'calendar', 'half' => true ),
 		// The page posted delivery_format[]; both dashboards label
 		// delivery_formats, so that is the key stored in meta.
 
@@ -260,6 +261,9 @@ function booking_fields( $slug ) {    static $cache = array();
 				'Album' => 'Album',
 			) ),
 			array( 'key' => 'release_title', 'label' => 'Release Title', 'type' => 'text', 'required' => true, 'icon' => 'music', 'half' => true ),
+			array( 'key' => 'calltune_name', 'label' => 'Calltune Name', 'type' => 'text', 'icon' => 'music', 'half' => true ),
+			array( 'key' => 'caller_tune_start', 'label' => 'Caller Tune Start (hh:mm:ss)', 'type' => 'text', 'icon' => 'clock', 'half' => true, 'placeholder' => '00:00:00' ),
+			array( 'key' => 'register_label', 'label' => 'Register Label', 'type' => 'text', 'icon' => 'tag', 'half' => true, 'readonly' => true, 'value' => 'BDC Music' ),
 			array( 'key' => 'artist_name', 'label' => 'Artist Name', 'type' => 'text', 'required' => true, 'icon' => 'user' ),
 			array( 'key' => 'genre', 'label' => 'Genre', 'type' => 'select', 'required' => true, 'icon' => 'tags', 'half' => true, 'options' => array(
 				'Pop' => 'Pop', 'Rock' => 'Rock', 'Hip Hop' => 'Hip Hop', 'Rap' => 'Rap',
@@ -274,7 +278,7 @@ function booking_fields( $slug ) {    static $cache = array();
 				'Punjabi' => 'Punjabi', 'Gujarati' => 'Gujarati', 'Urdu' => 'Urdu',
 				'Assamese' => 'Assamese', 'Other' => 'Other',
 			) ),
-			array( 'key' => 'release_date', 'label' => 'Preferred Release Date', 'type' => 'date', 'icon' => 'calendar' ),
+			array( 'key' => 'release_date', 'label' => 'Preferred Release Date', 'type' => 'date', 'icon' => 'calendar', 'min_days' => 5, 'help' => 'Choose a date at least 5 days from today.' ),
 			array( 'key' => 'isrc', 'label' => 'Do you have an ISRC code?', 'type' => 'radio', 'icon' => 'hash', 'half' => true, 'options' => array(
 				'Yes' => 'Yes', 'No' => 'No',
 			) ),
@@ -286,10 +290,28 @@ function booking_fields( $slug ) {    static $cache = array();
 			array( 'key' => 'copyright_help', 'label' => 'Do you need copyright help?', 'type' => 'radio', 'icon' => 'copyright', 'half' => true, 'options' => array(
 				'Yes' => 'Yes', 'No' => 'No',
 			) ),
-			array( 'key' => 'youtube_link', 'label' => 'YouTube Link', 'type' => 'url', 'required' => true, 'icon' => 'link', 'placeholder' => 'https://youtube.com/watch?v=...', 'depends_on' => array( 'key' => 'copyright_help', 'equals' => 'Yes' ) ),
+			array( 'key' => 'youtube_link', 'label' => 'YouTube Song Link', 'type' => 'url', 'required' => true, 'icon' => 'link', 'placeholder' => 'https://youtube.com/watch?v=...', 'depends_on' => array( 'key' => 'copyright_help', 'equals' => 'Yes' ) ),
+
+		// Artist profile and social links. All optional, and none of them is
+		// gated on another answer, so the customer can share as much or as
+		// little of their presence as they want.
+
+			array( 'key' => 'profile_links_section', 'label' => 'Profile Links', 'type' => 'section'),
+			array( 'key' => 'spotify_artist_link', 'label' => 'Spotify Artist Profile Link', 'type' => 'url', 'icon' => 'music', 'half' => true, 'placeholder' => 'https://open.spotify.com/artist/...' ),
+			array( 'key' => 'instagram_link', 'label' => 'Instagram Link', 'type' => 'url', 'icon' => 'camera', 'half' => true, 'placeholder' => 'https://instagram.com/...' ),
+			array( 'key' => 'facebook_link', 'label' => 'Facebook Link', 'type' => 'url', 'icon' => 'users', 'half' => true, 'placeholder' => 'https://facebook.com/...' ),
+			array( 'key' => 'youtube_channel_link', 'label' => 'YouTube Channel Link', 'type' => 'url', 'icon' => 'video', 'half' => true, 'placeholder' => 'https://youtube.com/@...' ),
+
 			array( 'key' => 'notes', 'label' => 'Notes', 'type' => 'textarea', 'icon' => 'message-square', 'placeholder' => 'Anything else about the release?' ),
-			array( 'key' => 'audio_file', 'label' => 'Audio File', 'type' => 'file', 'required' => true, 'icon' => 'cloud-upload', 'accept' => '.wav,.mp3' ),
+
+		// Artwork comes first, then the audio: an album uploads its poster/cover
+		// once and then its tracks (1 to 10), while a single uploads the one
+		// audio file. The Rs.199 Release Plan is narrowed to a single track by
+		// booking_distribution_upload_overrides(), applied by the renderer.
+
 			array( 'key' => 'cover_artwork', 'label' => 'Cover Artwork', 'type' => 'file', 'required' => true, 'icon' => 'image', 'accept' => '.jpg,.jpeg,.png' ),
+			array( 'key' => 'tracks', 'label' => 'Album Tracks', 'type' => 'files', 'required' => true, 'icon' => 'list-music', 'accept' => '.wav,.mp3', 'multiple' => true, 'min' => 1, 'max' => 10, 'help' => 'Upload 1 to 10 tracks.', 'depends_on' => array( 'key' => 'release_type', 'equals' => 'Album' ) ),
+			array( 'key' => 'audio_file', 'label' => 'Audio File', 'type' => 'file', 'required' => true, 'icon' => 'cloud-upload', 'accept' => '.wav,.mp3', 'depends_on' => array( 'key' => 'release_type', 'equals' => 'Single' ) ),
 		),
 
 		// Source: services/promotion-services.php:200-380 plus the meta keys
@@ -614,6 +636,67 @@ function booking_collect_uploads( $entry, array $field, array $allowed, $maxSize
 }
 
 /**
+ * Apply per-render/per-request overrides to one field definition.
+ *
+ * The registry describes a service, not an order, so a field whose rules depend
+ * on the package the customer bought is adjusted here instead of duplicated.
+ * The renderer and the validator both call this, so what the browser is shown
+ * and what the server enforces cannot drift apart.
+ *
+ * @param array $field     Field definition.
+ * @param array $overrides Map of field key => array of properties to merge.
+ * @return array
+ */
+function booking_effective_field( array $field, array $overrides = array() ) {
+	$key = isset( $field['key'] ) ? (string) $field['key'] : '';
+
+	if ( $key !== '' && isset( $overrides[ $key ] ) && is_array( $overrides[ $key ] ) ) {
+		$field = array_merge( $field, $overrides[ $key ] );
+	}
+
+	return $field;
+}
+
+/**
+ * The per-order overrides a distribution booking applies to its fields.
+ *
+ * The Rs.199 Release Plan distributes one song, so its track upload is a single
+ * file the customer adds one at a time. Every other package may upload the
+ * album's tracks together, 1 to 10 in one go. Keyed by price rather than plan
+ * id, because the catalogue is data and its ids are not portable; the Rs.199
+ * plan is the one at the 199 price point.
+ *
+ * @param string     $slug      services.slug.
+ * @param float|null $planPrice Price of the chosen package, or null when none.
+ * @return array
+ */
+function booking_distribution_upload_overrides( $slug, $planPrice ) {
+	if ( (string) $slug !== 'digital-distribution' ) {
+		return array();
+	}
+
+	$single = $planPrice !== null && (float) $planPrice <= 199.0;
+
+	if ( $single ) {
+		return array(
+			'tracks' => array(
+				'multiple' => false,
+				'max'      => 1,
+				'help'     => 'Your package distributes one track per release. Upload it here, then create another release for your next track.',
+			),
+		);
+	}
+
+	return array(
+		'tracks' => array(
+			'multiple' => true,
+			'max'      => 10,
+			'help'     => 'Upload 1 to 10 tracks.',
+		),
+	);
+}
+
+/**
  * Validate and sanitise a submitted step's fields.
  *
  * Walks the same definitions the renderer used, so a required field the
@@ -631,9 +714,12 @@ function booking_collect_uploads( $entry, array $field, array $allowed, $maxSize
  *                 is standing in for are listed here.
  * @param string $step  Step identifier, '' to walk every field (the order
  *                      creation re-check, which has the whole draft in hand).
+ * @param array  $overrides Map of field key => property overrides, from
+ *                 booking_distribution_upload_overrides() and the like, so the
+ *                 server enforces the same package rules the renderer showed.
  * @return array array( $values, $errors, $uploads )
  */
-function booking_validate_details( $slug, array $input, array $files, array $alreadyUploaded = array(), $step = '' ) {
+function booking_validate_details( $slug, array $input, array $files, array $alreadyUploaded = array(), $step = '', array $overrides = array() ) {
 	$values   = array();
 	$errors   = array();
 	$uploads  = array();
@@ -642,9 +728,16 @@ function booking_validate_details( $slug, array $input, array $files, array $alr
 	$maxSize  = get_max_file_size( $uploadSv );
 
 	foreach ( booking_fields_for_step( $slug, $step ) as $field ) {
+		$field = booking_effective_field( $field, $overrides );
+
 		$key   = $field['key'];
 		$type  = $field['type'];
 		$req   = ! empty( $field['required'] );
+
+		// A section heading is presentational: nothing is submitted for it.
+		if ( $type === 'section' ) {
+			continue;
+		}
 
 		// A conditional field the customer cannot see is not required, and its
 		// stale value is dropped rather than stored.
@@ -669,8 +762,22 @@ function booking_validate_details( $slug, array $input, array $files, array $alr
 				}
 			}
 
-			if ( $req && ! $got && $stagedCount === 0 ) {
+			$fileCount = count( $got ) + $stagedCount;
+
+			if ( $req && $fileCount === 0 ) {
 				$errors[ $key ][] = 'Please upload ' . lcfirst( $field['label'] ) . '.';
+			} elseif ( $fileCount > 0 ) {
+				// A file or files field may bound how many files it accepts, so
+				// an album cannot be submitted with too few or too many tracks.
+				if ( isset( $field['min'] ) && $fileCount < (int) $field['min'] ) {
+					$errors[ $key ][] = 'Please upload at least ' . (int) $field['min']
+						. ' file' . ( (int) $field['min'] === 1 ? '' : 's' ) . ' for ' . $field['label'] . '.';
+				}
+
+				if ( isset( $field['max'] ) && $fileCount > (int) $field['max'] ) {
+					$errors[ $key ][] = 'Please upload no more than ' . (int) $field['max']
+						. ' file' . ( (int) $field['max'] === 1 ? '' : 's' ) . ' for ' . $field['label'] . '.';
+				}
 			}
 
 			$uploads = array_merge( $uploads, $got );
@@ -780,6 +887,19 @@ function booking_validate_details( $slug, array $input, array $files, array $alr
 		if ( $type === 'date' && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $clean ) ) {
 			$errors[ $key ][] = 'Please enter a valid date for ' . lcfirst( $field['label'] ) . '.';
 			continue;
+		}
+
+		// A date field can require a lead time. The browser calendar blocks the
+		// same range, but the format check above would happily accept a date the
+		// customer's clock never offered, so the earliest date is re-checked
+		// here.
+		if ( $type === 'date' && ! empty( $field['min_days'] ) ) {
+			$earliest = date( 'Y-m-d', strtotime( '+' . (int) $field['min_days'] . ' days' ) );
+
+			if ( strcmp( $clean, $earliest ) < 0 ) {
+				$errors[ $key ][] = 'Please choose a date on or after ' . date( 'd/m/Y', strtotime( $earliest ) ) . '.';
+				continue;
+			}
 		}
 
 		if ( $type === 'tel' ) {
@@ -942,6 +1062,19 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 	$icon  = isset( $field['icon'] ) ? $field['icon'] : 'pencil';
 	$id    = 'bf-' . $key;
 
+	// A section is a group heading, not a control: it stores nothing and is
+	// skipped by the validator, so its only job is to label the fields that
+	// follow it (used to group the artist profile links under one heading).
+	if ( $type === 'section' ) {
+		return '<div class="col-12 booking-form-section"><h3>'
+			. ( ! empty( $field['icon'] ) ? '<i data-lucide="' . booking_esc( $field['icon'] ) . '"></i>' : '' )
+			. booking_esc( $label ) . '</h3></div>';
+	}
+
+	// A cascade select (State) is never hidden: it stays on the page disabled
+	// until its parent has a value, so the Country/State row reads as a pair.
+	$isCascade = ! empty( $field['cascade'] );
+
 	// A hidden conditional field is not required: the validator skips it, and
 	// booking-checkout.js puts `required` back when the field is revealed.
 	$req = ! empty( $field['required'] ) && ! $hidden;
@@ -950,19 +1083,20 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 	$col = ! empty( $field['half'] ) ? 'col-6' : 'col-12';
 
 	// d-none is the visibility class the service pages already use.
-	$colClass = $hidden ? $col . ' d-none' : $col;
+	$colClass = ( $hidden && ! $isCascade ) ? $col . ' d-none' : $col;
 
 	// Carried on the column so booking-checkout.js can show and hide the field
-	// and drop `required` when it is hidden again.
+	// and drop `required` when it is hidden again. A cascade select is never
+	// hidden, so it does not carry the depends hooks.
 	$depAttrs = '';
-	if ( ! empty( $field['depends_on'] ) ) {
+	if ( ! empty( $field['depends_on'] ) && ! $isCascade ) {
 		$depAttrs = ' data-booking-depends="' . booking_esc( $field['depends_on']['key'] ) . '"'
 			. ' data-booking-equals="' . booking_esc( $field['depends_on']['equals'] ) . '"';
 	}
 
 	// The flag below lets booking-checkout.js put `required` back on a field
 	// the customer has revealed, so the browser validates it too.
-	if ( ! empty( $field['depends_on'] ) && ! empty( $field['required'] ) ) {
+	if ( ! empty( $field['depends_on'] ) && ! empty( $field['required'] ) && ! $isCascade ) {
 		$depAttrs .= ' data-booking-required="1"';
 	}
 
@@ -1047,7 +1181,8 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 		// A cascade select (State) fills its options from whichever parent value
 		// (Country) is posted: the server renders the matching states, and the
 		// script is given the whole map so it can rebuild the set on change.
-		$cascadeAttrs = '';
+		$cascadeAttrs    = '';
+		$cascadeDisabled = false;
 		if ( ! empty( $field['cascade'] ) ) {
 			$cascadeAttrs = ' data-booking-cascade="' . booking_esc( $field['cascade'] ) . '"'
 				. ' data-booking-states="'
@@ -1059,6 +1194,10 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 			$stateMap = booking_country_states();
 			$states   = isset( $stateMap[ $parentValue ] ) ? $stateMap[ $parentValue ] : array();
 			$field['options'] = array_combine( $states, $states ) ?: array();
+
+			// With no parent value (or a parent that has no sub-regions, like
+			// Singapore) the select stays visible but cannot be answered.
+			$cascadeDisabled = $parentValue === '' || ! $states;
 		}
 
 		$options = '<option value="">'
@@ -1073,7 +1212,7 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 
 		$control = '<div class="input-icon has-chevron">'
 			. '<i data-lucide="' . booking_esc( $icon ) . '"></i>'
-			. '<select id="' . booking_esc( $id ) . '" name="' . booking_esc( $key ) . '"' . ( $req ? ' required' : '' ) . $cascadeAttrs . '>'
+			. '<select id="' . booking_esc( $id ) . '" name="' . booking_esc( $key ) . '"' . ( $req ? ' required' : '' ) . ( $cascadeDisabled ? ' disabled' : '' ) . $cascadeAttrs . '>'
 			. $options . '</select></div>';
 	} elseif ( $type === 'textarea' ) {
 		$control = '<div class="input-icon textarea-icon">'
@@ -1084,7 +1223,12 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 			. booking_esc( is_scalar( $value ) ? (string) $value : '' )
 			. '</textarea></div>';
 	} elseif ( $type === 'file' || $type === 'files' ) {
-		$multiple = $type === 'files';
+		// A `files` field normally takes several files. A package override can
+		// narrow it to one by setting `multiple` to false, which also drops the
+		// brackets so the browser posts a single entry the collector handles.
+		$multiple = $type === 'files'
+			? ( ! isset( $field['multiple'] ) || $field['multiple'] )
+			: false;
 
 		$control = '<div class="input-icon file-icon">'
 			. '<i data-lucide="cloud-upload"></i>'
@@ -1135,7 +1279,7 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 	} else {
 		$inputType = in_array( $type, array( 'text', 'email', 'tel', 'url', 'date', 'number' ), true ) ? $type : 'text';
 
-		// A calendar field is rendered as text and enhanced by booking-checkout.js
+		// A date field is rendered as text and enhanced by booking-checkout.js
 		// with Flatpickr. A native `date` input would show the browser's own
 		// picker on top of the calendar, so the type is swapped here while the
 		// registry keeps `date` and the validator keeps checking the same ISO
@@ -1144,10 +1288,21 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 		$datepickerAttr = '';
 		$numberAttrs    = '';
 
-		if ( $type === 'date' && ! empty( $field['datepicker'] ) ) {
+		if ( $type === 'date' ) {
 			$inputType      = 'text';
 			$datepickerAttr = ' data-flatpickr';
+
+			// A lead time travels on the input so booking-checkout.js can start
+			// the calendar at the same earliest date the validator uses.
+			if ( ! empty( $field['min_days'] ) ) {
+				$datepickerAttr .= ' data-flatpickr-min-days="' . (int) $field['min_days'] . '"';
+			}
 		}
+
+		// Date fields show the format as a guide unless the registry states one.
+		$placeholder = $type === 'date' && ! isset( $field['placeholder'] )
+			? 'dd/mm/yyyy'
+			: ( isset( $field['placeholder'] ) ? $field['placeholder'] : '' );
 
 		// A number field takes decimals (2.5), so the step is `any` rather than
 		// the browser default of 1. min/max are emitted when the registry sets
@@ -1164,14 +1319,17 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
 			}
 		}
 
+		$fieldValue = isset( $field['value'] ) && is_scalar( $field['value'] ) ? (string) $field['value'] : ( is_scalar( $value ) ? (string) $value : '' );
+		$readonlyAttr = ! empty( $field['readonly'] ) ? ' readonly' : '';
 		$control = '<div class="input-icon">'
 			. '<i data-lucide="' . booking_esc( $icon ) . '"></i>'
 			. '<input id="' . booking_esc( $id ) . '" type="' . $inputType . '" name="' . booking_esc( $key ) . '"'
 			. $datepickerAttr
 			. $numberAttrs
-			. ' value="' . booking_esc( is_scalar( $value ) ? (string) $value : '' ) . '"'
-			. ( isset( $field['placeholder'] ) ? ' placeholder="' . booking_esc( $field['placeholder'] ) . '"' : '' )
-			. ( $req ? ' required' : '' ) . '></div>';
+			. ' value="' . booking_esc( $fieldValue ) . '"'
+			. ( $placeholder !== '' ? ' placeholder="' . booking_esc( $placeholder ) . '"' : '' )
+			. ( $req ? ' required' : '' )
+			. $readonlyAttr . '></div>';
 	}
 
 	return '<div class="' . $colClass . '"' . $depAttrs . '>'
@@ -1200,13 +1358,17 @@ function booking_render_field( array $field, $value = null, array $uploads = arr
  * @param array  $uploads Accepted uploads.
  * @param array  $errors  Errors keyed by field key.
  * @param string $step    Step identifier, '' for every field.
+ * @param array  $overrides Map of field key => property overrides, from the
+ *                package the customer bought, so the browser is shown the same
+ *                rules the validator will enforce.
  * @return string HTML, a .row of fields.
  */
-function booking_render_fields( $slug, array $values = array(), array $uploads = array(), array $errors = array(), $step = '' ) {
+function booking_render_fields( $slug, array $values = array(), array $uploads = array(), array $errors = array(), $step = '', array $overrides = array() ) {
 	$fields = booking_fields_for_step( $slug, $step );
 	$keys   = array();
 
-	foreach ( $fields as $field ) {
+	foreach ( $fields as $index => $field ) {
+		$fields[ $index ]      = booking_effective_field( $field, $overrides );
 		$keys[ $field['key'] ] = true;
 	}
 

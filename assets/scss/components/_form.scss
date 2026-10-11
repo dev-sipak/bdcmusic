@@ -68,13 +68,13 @@
 	select,
 	textarea {
 		width: 100%;
+		font: inherit;
 		margin: 2px 0;
 		border: 1px solid var(--border);
 		border-radius: 12px;
 		padding: 12px 14px;
 		background: #fafafa;
 		color: var(--text);
-		font: inherit;
 		transition: var(--transition);
 
 		&:hover {

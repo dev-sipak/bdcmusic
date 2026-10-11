@@ -286,6 +286,14 @@ function booking_next_step( array $steps, $step ) {
 	return $steps[ $index + 1 ];
 }
 
+// The chosen package can narrow what the details form accepts (the Rs.199
+// distribution plan allows a single track). Resolved from the draft so the
+// details POST is validated against the same package the form was shown for.
+$draftPlan       = booking_plan( $pdb, (int) ( $draft['plan_id'] ?? 0 ) );
+$uploadOverrides = $service
+	? booking_distribution_upload_overrides( $service['slug'], $draftPlan ? (float) $draftPlan['price'] : null )
+	: array();
+
 // Handle a submission
 
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
@@ -334,7 +342,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 				}
 
 				list( $cleanDetails, $detailErrors, $newUploads ) =
-					booking_validate_details( $service['slug'], $posted, $_FILES, $staged, 'details' );
+					booking_validate_details( $service['slug'], $posted, $_FILES, $staged, 'details', $uploadOverrides );
 
 				// A newly uploaded file replaces whatever was staged for that field. New uploads
 				// are recorded even when validation fails, or a rejected submission leaves files
@@ -501,7 +509,7 @@ include_once __DIR__ . '/header.php';
 			</ol>
 		<?php endif; ?>
 
-		<?php echo booking_render_error_notice( $errors ); ?>
+
 
 		<?php if ( ! $service ) : ?>
 
@@ -595,7 +603,7 @@ include_once __DIR__ . '/header.php';
 
 						<form method="post" enctype="multipart/form-data" novalidate>
 							<?php echo csrf_field(); ?>
-							<?php echo booking_render_fields( $service['slug'], $details, $uploads, $errors, 'details' ); ?>
+							<?php echo booking_render_fields( $service['slug'], $details, $uploads, $errors, 'details', $uploadOverrides ); ?>
 
 							<?php if ( $quoteMode ) : ?>
 								<div class="booking-quote-note">
@@ -758,11 +766,7 @@ include_once __DIR__ . '/header.php';
 								<input type="hidden" name="action" value="quote">
 								<label class="booking-terms">
 									<input type="checkbox" name="terms_accept" value="1" required>
-									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a>.</span>
-								</label>
-								<label class="booking-terms">
-									<input type="checkbox" name="privacy_accept" value="1" required>
-									<span>I agree to the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a> and the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
 								</label>
 								<div class="booking-nav">
 									<?php echo $backLink; ?>
@@ -838,11 +842,7 @@ include_once __DIR__ . '/header.php';
 
 								<label class="booking-terms">
 									<input type="checkbox" name="terms_accept" value="1" required>
-									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a>.</span>
-								</label>
-								<label class="booking-terms">
-									<input type="checkbox" name="privacy_accept" value="1" required>
-									<span>I agree to the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+									<span>I agree to the <a href="<?php echo booking_esc( url( 'terms-and-conditions' ) ); ?>" target="_blank" rel="noopener">Terms and Conditions</a> and the <a href="<?php echo booking_esc( url( 'privacy-policy' ) ); ?>" target="_blank" rel="noopener">Privacy Policy</a>.</span>
 								</label>
 
 								<div class="booking-nav">

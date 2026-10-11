@@ -179,6 +179,15 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
+	var goLiveInput = document.getElementById('rel-golive');
+	if (goLiveInput && typeof window.flatpickr !== 'undefined') {
+		window.flatpickr(goLiveInput, {
+			dateFormat: 'Y-m-d',
+			disableMobile: true,
+			allowInput: false
+		});
+	}
+
 	var createForm = document.getElementById('create-release-form');
 	if (createForm) {
 		createForm.addEventListener('submit', function (e) {

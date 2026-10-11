@@ -500,10 +500,6 @@
 	}
 }
 
-.booking-terms + .booking-terms {
-	margin-top: 10px;
-}
-
 // Navigation
 
 .booking-nav {
@@ -527,59 +523,129 @@
 		margin-left: auto;
 	}
 }
-
-// Flatpickr calendar
-//
-// The audio/video deadline is a Flatpickr field. The vendor stylesheet is
-// loaded before main.css on the booking page, so these rules, built from the
-// brand tokens, take over its defaults.
+/* =========================================
+   Premium Flatpickr Calendar
+   ========================================= */
 
 .flatpickr-calendar {
+	background: var(--card);
 	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	box-shadow: var(--shadow-md);
+	border-radius: 16px;
+	box-shadow:
+		0 12px 32px rgba(20, 25, 40, 0.08),
+		0 2px 6px rgba(20, 25, 40, 0.04);
 	font-family: var(--font-body);
+	padding: 0;
+	overflow: hidden;
+	box-sizing: border-box;
+
+	&.arrowTop::before,
+	&.arrowTop::after,
+	&.arrowBottom::before,
+	&.arrowBottom::after {
+		display: none;
+	}
+
+	&.open {
+		box-shadow:
+			0 14px 36px rgba(20, 25, 40, 0.09),
+			0 3px 8px rgba(20, 25, 40, 0.04);
+	}
 }
 
+/* ---------- Month header ---------- */
+
 .flatpickr-months {
+	background: var(--primary);
+	position: relative;
+
 	.flatpickr-month {
-		height: 44px;
+		height: 52px;
 		background: var(--primary);
 		color: #fff;
-		border-radius: var(--radius-md) var(--radius-md) 0 0;
+		fill: #fff;
 	}
 
 	.flatpickr-prev-month,
 	.flatpickr-next-month {
+		top: 0;
+		height: 52px;
+		width: 42px;
+		padding: 17px 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: opacity 0.2s ease;
+
 		svg {
+			width: 12px;
+			height: 12px;
 			fill: #fff;
+			transition: transform 0.2s ease;
 		}
 
-		&:hover svg {
-			fill: #fff;
+		&:hover {
+			opacity: 0.8;
 		}
+	}
+
+	.flatpickr-prev-month:hover svg {
+		transform: translateX(-2px);
+	}
+
+	.flatpickr-next-month:hover svg {
+		transform: translateX(2px);
 	}
 }
 
 .flatpickr-current-month {
-	padding-top: 10px;
-	font-size: 0.95rem;
+	padding-top: 14px;
+	font-size: 14px;
+	font-weight: 500;
+	height: 52px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 5px;
 
-	.cur-month,
+	.cur-month {
+		font-weight: 600;
+	}
+
+	.numInputWrapper {
+		width: 52px;
+	}
+
 	.numInput.cur-year {
+		color: #fff;
 		font-weight: 700;
 	}
 
-	.numInput.cur-year {
-		color: #fff;
+	.numInputWrapper:hover {
+		background: rgba(255, 255, 255, 0.08);
+		border-radius: 5px;
 	}
 
-	// The month is a native select. Its closed state sits on the brand header,
-	// so it stays white there, but the option list it opens gets a readable
-	// dark-on-light treatment instead of inheriting the header's white text.
+	.numInputWrapper span {
+		border-color: rgba(255, 255, 255, 0.4);
+
+		&:after {
+			border-bottom-color: #fff;
+			border-top-color: #fff;
+		}
+	}
+
 	.flatpickr-monthDropdown-months {
 		background: transparent;
 		color: #fff;
+		font-weight: 600;
+		border: 0;
+		border-radius: 5px;
+		cursor: pointer;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.08);
+		}
 
 		option {
 			background: var(--card);
@@ -588,66 +654,197 @@
 	}
 }
 
-span.flatpickr-weekday {
-	background: var(--primary);
-	color: rgba(255, 255, 255, 0.85);
-	font-weight: 600;
+/* ---------- Weekday row ---------- */
+
+.flatpickr-weekdays {
+	background: #f8f9fc;
+	height: 32px;
+	border-bottom: 1px solid rgba(20, 25, 40, 0.06);
 }
 
-.flatpickr-day {
-	border-radius: var(--radius-sm);
+span.flatpickr-weekday {
+	height: 32px;
+	line-height: 32px;
+	background: transparent;
+	color: var(--muted);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+}
+
+/* ---------- Calendar body ---------- */
+
+.flatpickr-days {
+	width: 100%;
+	border: 0;
+}
+
+.dayContainer {
+	min-width: 100%;
+	max-width: 100%;
+	width: 100%;
+	padding: 6px 8px;
+	box-sizing: border-box;
+	justify-content: space-around;
+}
+
+/* ---------- Individual dates ---------- */
+
+.flatpickr-calendar .flatpickr-day {
+	flex-basis: 14.2857143%;
+	max-width: 36px;
+	height: 34px;
+	line-height: 32px;
+	margin: 2px 0;
+	border: 1px solid transparent;
+	border-radius: 9px;
 	color: var(--text);
+	font-size: 12px;
+	font-weight: 500;
+	transition:
+		background-color 0.16s ease,
+		border-color 0.16s ease,
+		color 0.16s ease,
+		box-shadow 0.16s ease;
+
+	/* Hover and keyboard focus */
 
 	&:hover,
 	&:focus {
-		background: rgba($primary, 0.1);
+		background: rgba($primary, 0.08);
 		border-color: transparent;
-		color: var(--text);
+		color: var(--primary);
 	}
 
-	&.today {
-		border-color: var(--primary);
+	/* Dates from adjacent months */
 
-		// The vendor's own hover/focus states are a grey-blue outside the
-		// palette; they need overriding at matching specificity.
+	&.prevMonthDay,
+	&.nextMonthDay {
+		color: var(--muted);
+		opacity: 0.6;
+	}
+
+	/* Today's date */
+
+	&.today:not(.selected):not(.startRange):not(.endRange) {
+		border-color: var(--primary);
+		color: var(--primary);
+		background: var(--card);
+		font-weight: 700;
+
 		&:hover,
 		&:focus {
-			background: rgba($primary, 0.1);
+			background: rgba($primary, 0.08);
 			border-color: var(--primary);
-			color: var(--text);
+			color: var(--primary);
 		}
 	}
 
+	/* Selected date and range endpoints */
+
 	&.selected,
 	&.startRange,
-	&.endRange {
+	&.endRange,
+	&.selected.inRange,
+	&.startRange.inRange,
+	&.endRange.inRange {
 		background: var(--primary);
 		border-color: var(--primary);
 		color: #fff;
+		font-weight: 700;
+		box-shadow: 0 2px 5px rgba($primary, 0.14);
+		border-radius: 9px;
 
-		// Same reason as `.today`: the vendor turns a hovered or focused
-		// selection blue.
 		&:hover,
 		&:focus {
 			background: var(--primary);
 			border-color: var(--primary);
 			color: #fff;
+			box-shadow: 0 2px 5px rgba($primary, 0.14);
 		}
 	}
 
+	/* Dates between range endpoints */
+
 	&.inRange {
-		background: rgba($primary, 0.12);
+		background: rgba($primary, 0.09);
 		border-color: transparent;
+		box-shadow: none;
+		color: var(--text);
+		border-radius: 0;
+
+		&:hover {
+			background: rgba($primary, 0.15);
+		}
 	}
 
-	&.prevMonthDay,
-	&.nextMonthDay {
-		color: var(--muted);
+	/* Range boundaries */
+
+	&.startRange {
+		border-radius: 9px 0 0 9px;
 	}
+
+	&.endRange {
+		border-radius: 0 9px 9px 0;
+	}
+
+	&.startRange.endRange {
+		border-radius: 9px;
+	}
+
+	/* Disabled dates */
 
 	&.flatpickr-disabled,
 	&.flatpickr-disabled:hover {
 		background: transparent;
-		color: rgba($primary, 0.25);
+		border-color: transparent;
+		color: var(--muted);
+		opacity: 0.4;
+		cursor: not-allowed;
+		box-shadow: none;
 	}
 }
+
+/* ---------- Month/year controls ---------- */
+
+.flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+	font-family: var(--font-body);
+}
+
+/* ---------- Mobile sizing ---------- */
+
+@media (max-width: 480px) {
+	.flatpickr-calendar {
+		border-radius: 14px;
+	}
+
+	.flatpickr-months .flatpickr-month,
+	.flatpickr-months .flatpickr-prev-month,
+	.flatpickr-months .flatpickr-next-month {
+		height: 48px;
+	}
+
+	.flatpickr-current-month {
+		height: 48px;
+		padding-top: 12px;
+	}
+
+	.dayContainer {
+		padding: 6px 5px;
+	}
+
+	.flatpickr-calendar .flatpickr-day {
+		max-width: 34px;
+		height: 34px;
+		line-height: 32px;
+		font-size: 12px;
+	}
+}
+/* Hide the 6th row if it extends beyond 5 weeks */
+.flatpickr-days {
+  max-height: 200px;
+  overflow: hidden;
+}
+.booking-form-section h3{padding-top: 20px; border-top: 1px solid var(--border); font-size: 22px; }

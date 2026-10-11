@@ -21,10 +21,13 @@ include_once 'header.php';
 						<a href="<?php echo $basePath; ?>all-services" class="btn btn-outline">Explore Services</a>
 					</div>
 					<div class="hero-trust" aria-label="BDC Music trust indicators">
-						<div class="hero-trust-item">
-							<span class="trust-rating">★ 4.9/5</span>
-							<span>Trusted by independent creators</span>
+						<div class="avatar-stack" aria-label="Artists">
+							<span><img src="<?php echo $assetPath; ?>images/artist/rohit-tiwari.webp" alt=""></span>
+							<span><img src="<?php echo $assetPath; ?>images/artist/alaap-gahlaut.webp" alt=""></span>
+							<span><img src="<?php echo $assetPath; ?>images/artist/sitara.webp" alt=""></span>
+							<span><img src="<?php echo $assetPath; ?>images/artist/gunjan-jha.webp" alt=""></span>
 						</div>
+						<p>Trusted by 500+ emerging artists<br>across India and beyond.</p>
 					</div>
 				</div>
 				<div class="hero-visual">
@@ -37,11 +40,11 @@ include_once 'header.php';
 								</div>
 							</div>
 
-							<div class="swiper-slide">
+							<!-- <div class="swiper-slide">
 								<div class="hero-card">
-									<img src="<?php echo $assetPath; ?>images/hero-2.png" alt="Music Production">
+									<img src="<?php// echo $assetPath; ?>images/hero-2.png" alt="Music Production">
 								</div>
-							</div>
+							</div> -->
 
 							<div class="swiper-slide">
 								<div class="hero-card">
@@ -80,7 +83,7 @@ include_once 'header.php';
 				</div>
 			</div>
 		</section>
-		<section class="brand-positioning section-surface py-9" id="about">
+		<!-- <section class="brand-positioning section-surface py-9" id="about">
 			<div class="container brand-grid">
 				<div class="brand-media reveal">
 					<div class="brand-image-stack">
@@ -114,8 +117,61 @@ include_once 'header.php';
 					<a href="<?php echo $basePath; ?>all-services" class="btn">Explore BDC Services</a>
 				</div>
 			</div>
-		</section>
+		</section> -->
+		<section class="journey section-surface py-9" id="releases">
+			<div class="container">
+				<div class="section-heading reveal">
+					<span class="heading-tag">Your Journey With BDC</span>
+					<h2>We are with you at every step<br>of your music career</h2>
+				</div>
 
+				<div class="journey-track">
+					<div class="journey-line"><span></span></div>
+
+					<article class="journey-step reveal">
+						<b>01</b>
+						<span class="step-icon"><i data-lucide="sparkles"></i></span>
+						<h3>Create</h3>
+						<p>Develop your sound<br>and identity.</p>
+					</article>
+
+					<article class="journey-step reveal">
+						<b>02</b>
+						<span class="step-icon"><i data-lucide="disc-3"></i></span>
+						<h3>Release</h3>
+						<p>Distribute your music<br>worldwide.</p>
+					</article>
+
+					<article class="journey-step reveal">
+						<b>03</b>
+						<span class="step-icon"><i data-lucide="trending-up"></i></span>
+						<h3>Promote</h3>
+						<p>Build your audience<br>and visibility.</p>
+					</article>
+
+					<article class="journey-step reveal">
+						<b>04</b>
+						<span class="step-icon"><i data-lucide="users"></i></span>
+						<h3>Grow</h3>
+						<p>Turn listeners into<br>loyal fans.</p>
+					</article>
+
+					<article class="journey-step reveal">
+						<b>05</b>
+						<span class="step-icon"><i data-lucide="compass"></i></span>
+						<h3>Discover</h3>
+						<p>Unlock exciting<br>opportunities.</p>
+					</article>
+
+					<article class="journey-step reveal">
+						<b>06</b>
+						<span class="step-icon"><i data-lucide="indian-rupee"></i></span>
+						<h3>Monetize</h3>
+						<p>Build a sustainable<br>music career.</p>
+					</article>
+				</div>
+			</div>
+		</section>
 		<section class="ecosystem section-dark py-9" id="services">
 			<div class="container">
 				<div class="section-heading reveal">
@@ -214,10 +270,10 @@ include_once 'header.php';
 
 				<div class="success-grid">
 					<article class="success-card reveal in" style="transition-delay: 0ms;">
-						<img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900&amp;q=85" alt="Riya Sharma">
+						<img src="<?php echo $assetPath; ?>images/artist/ayush-sachdeva.webp" alt="Ayush Sachdeva">
 						<div>
-							<h3>Riya Sharma</h3>
-							<small>Singer</small>
+							<h3>Ayush Sachdeva</h3>
+							<small>Reel Star</small>
 							<div>
 								<b>420K+<small>YouTube Views</small></b>
 								<b>92K+<small>Spotify Streams</small></b>
@@ -228,10 +284,10 @@ include_once 'header.php';
 					</article>
 
 					<article class="success-card reveal in" style="transition-delay: 90ms;">
-						<img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=900&amp;q=85" alt="Arjun Mehta">
+						<img src="<?php echo $assetPath; ?>images/artist/nishaad.webp" alt="Nishaad">
 						<div>
-							<h3>Arjun Mehta</h3>
-							<small>Producer</small>
+							<h3>Nishaad</h3>
+							<small>Singer</small>
 							<div>
 								<b>1.2M+<small>YouTube Views</small></b>
 								<b>210K+<small>Spotify Streams</small></b>
@@ -242,10 +298,10 @@ include_once 'header.php';
 					</article>
 
 					<article class="success-card reveal in" style="transition-delay: 180ms;">
-						<img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=900&amp;q=85" alt="The Midnight Drive">
+						<img src="<?php echo $assetPath; ?>images/artist/amit-sati.webp" alt="Amit Sati">
 						<div>
-							<h3>The Midnight Drive</h3>
-							<small>Indie Band</small>
+							<h3>Amit Sati</h3>
+							<small>Director</small>
 							<div>
 								<b>2.8M+<small>YouTube Views</small></b>
 								<b>320K+<small>Spotify Streams</small></b>
@@ -256,10 +312,10 @@ include_once 'header.php';
 					</article>
 
 					<article class="success-card reveal in" style="transition-delay: 270ms;">
-						<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&amp;q=85" alt="Sneha Iyer">
+						<img src="<?php echo $assetPath; ?>images/artist/rajendra-rajawat.webp" alt="Rajendra Rajawat">
 						<div>
-							<h3>Sneha Iyer</h3>
-							<small>Singer</small>
+							<h3>Rajendra Rajawat</h3>
+							<small>Actor</small>
 							<div>
 								<b>950K+<small>YouTube Views</small></b>
 								<b>150K+<small>Spotify Streams</small></b>

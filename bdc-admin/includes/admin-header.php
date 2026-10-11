@@ -20,6 +20,11 @@ header( 'Expires: 0' );
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+	<?php // A page can name one extra stylesheet, loaded before main.css so the
+	// compiled theme can override it. Vendored libraries use this rather than a CDN. ?>
+	<?php if ( ! empty( $extraStylesheet ) ) : ?>
+		<link rel="stylesheet" href="<?php echo $assetPath . htmlspecialchars( $extraStylesheet ); ?>">
+	<?php endif; ?>
 	<link rel="stylesheet" href="<?php echo $assetPath; ?>dist/main.css">
 	<link rel="icon" href="<?php echo $assetPath; ?>images/favicon.png" type="image/png">
 </head>

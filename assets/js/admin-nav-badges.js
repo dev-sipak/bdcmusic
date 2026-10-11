@@ -41,12 +41,13 @@ moment the work behind it is done instead of at the next poll.
 			const key = badge.getAttribute("data-admin-badge");
 			const value = Number(counts[key] || 0);
 
-			badge.textContent = value;
+			const key = badge.getAttribute("data-admin-badge");
+			badge.textContent = (key === "orders" && value > 0) ? "New" : value;
 			badge.title = value + " item" + (value === 1 ? "" : "s") + " waiting for review";
 			// Hidden rather than showing a zero: an empty badge still reads as a
 			// notification, and it keeps the label from being pushed sideways.
 			badge.classList.toggle("d-none", value === 0);
-			badge.setAttribute("aria-label", value + " waiting for review");
+			badge.setAttribute("aria-label", (key === "orders" && value > 0) ? "New" : value + " waiting for review");
 		});
 	}
 

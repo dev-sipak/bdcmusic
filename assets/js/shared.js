@@ -314,3 +314,4 @@ function initFaqAccordion() {
 		});
 	});
 }
+// Header sticky on scroll

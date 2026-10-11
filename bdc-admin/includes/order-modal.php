@@ -116,11 +116,11 @@
 					</div>
 					<div class="modal-field">
 						<label class="panel-label" id="modal-starts-label" for="modal-starts-on">Start Date</label>
-						<input type="date" class="panel-input" id="modal-starts-on">
+						<input type="text" class="panel-input" id="modal-starts-on" data-flatpickr placeholder="dd/mm/yyyy">
 					</div>
 					<div class="modal-field">
 						<label class="panel-label" id="modal-ends-label" for="modal-ends-on">End Date</label>
-						<input type="date" class="panel-input" id="modal-ends-on">
+						<input type="text" class="panel-input" id="modal-ends-on" data-flatpickr placeholder="dd/mm/yyyy">
 					</div>
 					<div class="modal-field modal-field-wide">
 						<label class="panel-label" for="modal-arrangement-notes">Notes</label>

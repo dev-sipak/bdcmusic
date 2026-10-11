@@ -8,6 +8,7 @@ $adminPage = 'orders';
 
 $pageTitle       = 'Orders Management - BDC Music';
 $metaDescription = 'View, filter, and manage all customer orders across services from the BDC Music admin panel.';
+$extraStylesheet = 'vendor/flatpickr/flatpickr.min.css';
 include_once __DIR__ . '/includes/admin-header.php';
 
   // Only the service list is needed here: the Orders tab renders its rows from
@@ -102,6 +103,8 @@ $adminScripts = array( 'admin-dashboard.js' );
 
 	<?php include __DIR__ . '/includes/order-modal.php'; ?>
 </section>
+
+<script src="<?php echo $assetPath; ?>vendor/flatpickr/flatpickr.min.js"></script>
 
 <?php include __DIR__ . '/includes/admin-config.php'; ?>
 

@@ -59,7 +59,7 @@ include_once '../header.php';
 				The BDC Artist Marketplace is a professional platform that
 				connects verified creative professionals with individuals,
 				brands, agencies and production companies looking for talent.
-				Whether you are a singer, producer, actor, musician, dancer,
+				Whether you are a singer, music producer, actor, musician, dancer,
 				or filmmaker, you can showcase your portfolio and receive
 				direct booking opportunities.
 			</p>
@@ -106,7 +106,7 @@ include_once '../header.php';
 					</span>
 
 					<div class="creative-category-content">
-						<h3>Producer</h3>
+						<h3>Music Producer</h3>
 						<p>
 							Beat production, mixing and music production.
 						</p>
@@ -134,7 +134,7 @@ include_once '../header.php';
 					</span>
 
 					<div class="creative-category-content">
-						<h3>Actor</h3>
+						<h3>Actor/Actress</h3>
 						<p>
 							Films, advertisements, web series and events.
 						</p>

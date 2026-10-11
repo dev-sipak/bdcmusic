@@ -216,6 +216,31 @@ document.addEventListener('DOMContentLoaded', function () {
 		ends_on:      'modal-ends-label'
 	};
 
+	// The two arrangement dates are Flatpickr fields, kept in sync with the
+	// vendor library. The Orders page loads the vendor script and its
+	// stylesheet; the other admin pages that load this file do not, so the
+	// initialisation bails out and the fields stay plain text boxes.
+
+	const datepickers = {};
+
+	function initArrangementDatepickers() {
+		if (typeof window.flatpickr === 'undefined' || Object.keys(datepickers).length) return;
+
+		const ids = ['modal-starts-on', 'modal-ends-on'];
+		for (let i = 0; i < ids.length; i++) {
+			const el = document.getElementById(ids[i]);
+			if (el) {
+				datepickers[ids[i]] = window.flatpickr(el, {
+					dateFormat: 'Y-m-d',
+					disableMobile: true,
+					allowInput: false
+				});
+			}
+		}
+	}
+
+	initArrangementDatepickers();
+
 	function fillArrangementForm(order) {
 		var section = document.getElementById('modal-arrangement-section');
 		var labels  = order.arrangementFields || {};
@@ -242,7 +267,15 @@ document.addEventListener('DOMContentLoaded', function () {
 			// A service can hide a field it has no use for.
 			if (field) field.classList.toggle('d-none', !meta);
 			if (label && meta) label.textContent = meta.label;
-			if (field) field.value = record[column] || '';
+			if (!field) return;
+			// Writing straight into a Flatpickr input desyncs its internal date,
+			// so the dates go through the API while every other control takes a value.
+			var fp = datepickers[field.id];
+			if (fp) {
+				fp.setDate(record[column] || null, true);
+			} else {
+				field.value = record[column] || '';
+			}
 		});
 
 		var progressSelect = document.getElementById('modal-progress');

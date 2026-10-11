@@ -62,9 +62,10 @@
 
 	/**
 	 * Fill a cascade select (State) with the sub-regions of the value chosen in
-	 * its parent (Country). The whole map travels on the select itself, and the
-	 * previously chosen option is kept when it still belongs to the newly
-	 * chosen parent, so a change is only ever a repopulate, never a clear.
+	 * its parent (Country) and enable it in step. The whole map travels on the
+	 * select itself, and the previously chosen option is kept when it still
+	 * belongs to the newly chosen parent, so a change is only ever a repopulate,
+	 * never a clear. With no parent value the select stays visible but disabled.
 	 */
 	function populateCascadeSelects(form) {
 		var selects = form.querySelectorAll('[data-booking-cascade]');
@@ -76,6 +77,7 @@
 			var states = map[controlValue(form, parent)] || [];
 			var previous = select.value;
 			var placeholder = select.options[0] ? select.options[0].textContent : 'Select ...';
+			var enabled = states.length > 0;
 
 			select.innerHTML = '<option value="">' + placeholder + '</option>';
 
@@ -86,6 +88,8 @@
 				select.appendChild(option);
 			}
 
+			select.disabled = !enabled;
+
 			if (previous && states.indexOf(previous) !== -1) {
 				select.value = previous;
 			}
@@ -94,7 +98,16 @@
 
 	function isUnlocked(form, field) {
 		var wanted = (field.getAttribute('data-booking-equals') || '').split('|');
-		var values = parentValues(form, field.getAttribute('data-booking-depends'));
+		var name = field.getAttribute('data-booking-depends');
+
+		// A checkbox parent is a set (parentValues), but a select or hidden parent
+		// carries one value that only controlValue can read.
+		var values = parentValues(form, name);
+		var single = controlValue(form, name);
+
+		if (single !== '') {
+			values.push(single);
+		}
 
 		for (var i = 0; i < values.length; i++) {
 			if (wanted.indexOf(values[i]) !== -1) {
@@ -347,9 +360,21 @@
 		}
 
 		for (var i = 0; i < inputs.length; i++) {
+			// A field may carry a lead time (data-flatpickr-min-days), so the
+			// calendar opens on the same earliest date the server accepts. With
+			// none, the field simply may not name a past date.
+			var minDays = parseInt(inputs[i].getAttribute('data-flatpickr-min-days'), 10);
+			var minDate = 'today';
+
+			if (!isNaN(minDays) && minDays > 0) {
+				minDate = new Date();
+				minDate.setHours(0, 0, 0, 0);
+				minDate.setDate(minDate.getDate() + minDays);
+			}
+
 			window.flatpickr(inputs[i], {
 				dateFormat: 'Y-m-d',
-				minDate: 'today',
+				minDate: minDate,
 				disableMobile: true,
 				allowInput: false
 			});

@@ -69,10 +69,10 @@ $draft  = booking_draft();
 $action = isset( $_POST['action'] ) ? clean_text( $_POST['action'] ) : '';
 
 // A booking cannot be placed without accepting the terms and the privacy
-// policy. The checkboxes ride on whichever form carries the final submit
+// policy. The single checkbox rides on whichever form carries the final submit
 // (review for quote-mode, payment for a priced service), and the browser marks
-// them `required`; this is the real gate.
-if ( empty( $_POST['terms_accept'] ) || empty( $_POST['privacy_accept'] ) ) {
+// it `required`; this is the real gate.
+if ( empty( $_POST['terms_accept'] ) ) {
 	booking_json( array( 'success' => false, 'message' => 'Please accept the Terms and Conditions and the Privacy Policy to continue.' ) );
 }
 
@@ -296,11 +296,18 @@ if ( $contactErrors ) {
 	booking_json( array( 'success' => false, 'message' => 'Please complete your contact details.' ) );
 }
 
+// The package decided what the details form accepted (the Rs.199 distribution
+// plan allows a single track), so the same overrides are applied to the final
+// re-check. Read from the draft, which is where the customer's choice lives.
+$draftPlan = booking_plan( $pdb, (int) ( $draft['plan_id'] ?? 0 ) );
+
 list( $details, $detailErrors ) = booking_validate_details(
 	$service['slug'],
 	(array) ( $draft['details'] ?? array() ),
 	array(),
-	(array) ( $draft['uploads'] ?? array() )
+	(array) ( $draft['uploads'] ?? array() ),
+	'',
+	booking_distribution_upload_overrides( $service['slug'], $draftPlan ? (float) $draftPlan['price'] : null )
 );
 
 if ( $detailErrors ) {
