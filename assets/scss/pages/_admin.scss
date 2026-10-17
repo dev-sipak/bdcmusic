@@ -551,6 +551,20 @@ ADMIN TABLE
 	border-color: var(--primary);
 }
 
+/* The delete controls are .adm-view-btn in red. The colour lives here rather
+   than in an inline style, so the icon flips to white on hover with the rest
+   of the button instead of staying red on a red fill. */
+.adm-danger-btn {
+	color: #ef4444;
+	border-color: #fca5a5;
+}
+
+.adm-danger-btn:hover {
+	background: #ef4444;
+	border-color: #ef4444;
+	color: #fff;
+}
+
 /*==================================================
 ADMIN FILTER BAR
 ==================================================*/

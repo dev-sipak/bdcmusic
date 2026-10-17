@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			var msg = e.message || '';
 			if (msg.length > 60) { msg = msg.substring(0, 60) + '...'; }
 
-			var eyeIcon = '<button class="btn enquiry-view-btn" data-id="' + esc(e.id) + '" title="View Enquiry" style="background:transparent;border:none;cursor:pointer;padding:4px 8px;color:var(--primary);font-size:1rem;">' +
-				'<i data-lucide="eye"></i></button>';
+			var eyeIcon = '<button class="adm-view-btn enquiry-view-btn" data-id="' + esc(e.id) + '" title="View Enquiry"><i data-lucide="eye"></i></button>';
 
 			return '<tr>' +
 				'<td><strong>' + esc(e.name) + '</strong></td>' +

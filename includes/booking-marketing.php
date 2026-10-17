@@ -190,8 +190,27 @@ function booking_plan_grid( $slug, $pdb = null, array $options = array() ) {
 		}
 	}
 
+	// An admin edit that clears the group key saves a name-derived one, so the
+	// four Membership tiers can end up with four keys while still sharing one
+	// group label. Keying the row on the group label rather than the key keeps
+	// them in a single row: same label means same group, whatever the keys say.
+	$labels = array();
 	foreach ( $groupKeys as $group ) {
-		$plans = booking_plans( $pdb, (int) $service['id'], (string) $group['key'] );
+		$labels[ (string) ( $group['label'] ?? '' ) ] = true;
+	}
+
+	$collapseRow = count( $groupKeys ) > 1
+		&& count( $labels ) === 1
+		&& (string) array_key_first( $labels ) !== '';
+
+	foreach ( $groupKeys as $group ) {
+		$plans = $collapseRow
+			? booking_service_plans( $pdb, (int) $service['id'] )
+			: booking_plans( $pdb, (int) $service['id'], (string) $group['key'] );
+
+		if ( $collapseRow ) {
+			$group['label'] = '';
+		}
 
 		if ( ! $plans ) {
 			continue;
@@ -213,6 +232,10 @@ function booking_plan_grid( $slug, $pdb = null, array $options = array() ) {
 		}
 
 		$cards .= '</div>';
+
+		if ( $collapseRow ) {
+			break;
+		}
 	}
 
 	return $cards;

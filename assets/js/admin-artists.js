@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						: '<span class="panel-status-badge status-cancelled">Inactive</span>') + '</td>' +
 				'<td>' +
 					'<button class="adm-view-btn adm-edit-artist" data-id="' + esc(a.id) + '"><i data-lucide="pen"></i></button> ' +
-					'<button class="adm-view-btn adm-delete-artist" data-id="' + esc(a.id) + '" style="color:#ef4444;border-color:#fca5a5;"><i data-lucide="trash-2"></i></button>' +
+					'<button class="adm-view-btn adm-danger-btn adm-delete-artist" data-id="' + esc(a.id) + '"><i data-lucide="trash-2"></i></button>' +
 				'</td>' +
 			'</tr>';
 		}).join('');
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		tr.innerHTML =
 			'<td><input type="text" class="panel-input pricing-service" value="' + esc(serviceType || '') + '" placeholder="e.g. Each Video"></td>' +
 			'<td><input type="number" class="panel-input pricing-price" value="' + esc(price || '') + '" placeholder="0.00" step="0.01" min="0"></td>' +
-			'<td><button type="button" class="adm-view-btn remove-pricing-row" style="color:#ef4444;border-color:#fca5a5;"><i data-lucide="x"></i></button></td>';
+			'<td><button type="button" class="adm-view-btn adm-danger-btn remove-pricing-row"><i data-lucide="x"></i></button></td>';
 		tbody.appendChild(tr);
 
 		tr.querySelector('.remove-pricing-row').addEventListener('click', function () {

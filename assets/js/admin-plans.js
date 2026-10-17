@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						: '<span class="panel-status-badge status-cancelled">Inactive</span>') + '</td>' +
 				'<td>' +
 					'<button class="adm-view-btn adm-edit-service" data-id="' + esc(s.id) + '"><i data-lucide="pen"></i></button> ' +
-					'<button class="adm-view-btn adm-delete-service" data-id="' + esc(s.id) + '" style="color:#ef4444;border-color:#fca5a5;"><i data-lucide="trash-2"></i></button>' +
+					'<button class="adm-view-btn adm-danger-btn adm-delete-service" data-id="' + esc(s.id) + '"><i data-lucide="trash-2"></i></button>' +
 				'</td>' +
 			'</tr>';
 		}).join('');
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						: '<span class="panel-status-badge status-cancelled">Inactive</span>') + '</td>' +
 				'<td>' +
 					'<button class="adm-view-btn adm-edit-plan" data-id="' + esc(p.id) + '"><i data-lucide="pen"></i></button> ' +
-					'<button class="adm-view-btn adm-delete-plan" data-id="' + esc(p.id) + '" style="color:#ef4444;border-color:#fca5a5;"><i data-lucide="trash-2"></i></button>' +
+					'<button class="adm-view-btn adm-danger-btn adm-delete-plan" data-id="' + esc(p.id) + '"><i data-lucide="trash-2"></i></button>' +
 				'</td>' +
 			'</tr>';
 		}).join('');

@@ -42,7 +42,7 @@ include_once 'header.php';
 
 							<!-- <div class="swiper-slide">
 								<div class="hero-card">
-									<img src="<?php// echo $assetPath; ?>images/hero-2.png" alt="Music Production">
+									<img src="<?php echo $assetPath; ?>images/hero-2.png" alt="Music Production">
 								</div>
 							</div> -->
 
@@ -121,7 +121,7 @@ include_once 'header.php';
 		<section class="journey section-surface py-9" id="releases">
 			<div class="container">
 				<div class="section-heading reveal">
-					<span class="heading-tag">Your Journey With BDC</span>
+					<span class="heading-tag">Your Journey With BDC Music</span>
 					<h2>We are with you at every step<br>of your music career</h2>
 				</div>
 
